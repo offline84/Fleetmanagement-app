@@ -1,33 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using DbContext = Microsoft.EntityFrameworkCore.DbContext;
-using Fleetmanagement_app_Groep1.Entities;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using System;
 
-namespace Fleetmanagement_app_Groep1.Database
+namespace Fleetmanagement_app_Groep1.Migrations
 {
-    public class FleetmanagerContext : DbContext
+    public partial class InitialMigration : Migration
     {
-       
-        public FleetmanagerContext(DbContextOptions<FleetmanagerContext> options ) : base(options)
+        protected override void Up(MigrationBuilder migrationBuilder)
         {
-
-        }
-
-        public DbSet<Bestuurder> Bestuurders {get; set;}
-        public DbSet<Voertuig> Voertuigen {get; set;}
-        public DbSet<Tankkaart> Tankkaarten {get; set;}
-
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-        //modelBuilder.Entity<Bestuurder>()
- 
-        //    .HasKey(b => b.PersoneelsId)
-        //    .HasOne(b => b.Tankkaart)
-        //    .WithOne(t=> t.Bestuurder)
-        //    .HasForeignKey<Bestuurder>(t => t.TankkaartId)
-        //    .HasPrincipalKey<Tankkaart>(t => t.Kaartnummer);
-        modelBuilder.CreateTable(
+            migrationBuilder.CreateTable(
                 name: "Bestuurders",
                 columns: table => new
                 {
@@ -87,8 +67,6 @@ namespace Fleetmanagement_app_Groep1.Database
                        onDelete: ReferentialAction.NoAction
                        );
                });
-        
         }
-
     }
 }
