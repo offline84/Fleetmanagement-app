@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -14,16 +15,13 @@ namespace Fleetmanagement_app_Groep1.Entities
         public DateTime GeldigheidsDatum {get; set;}
 
         [Required]
-        [MaxLength(6)]
-        [MinLength(4)]
+        [MaxLength(8), MinLength(4)]
         public int Pincode {get; set;}
 
-        public ICollection<Brandstof> MogelijkeBrandstoffen {get; set;}
-            = new List<Brandstof>();
+        public virtual ICollection<ToewijzingBrandstofTankkaart> MogelijkeBrandstoffen {get; set;}
+            = new List<ToewijzingBrandstofTankkaart>();
 
-        public string? BestuurdersId {get; set;}
-
-        public Bestuurder Bestuurder {get; set;}
+        public virtual Koppeling Koppeling {get; set;}
 
         public bool IsGeblokkeerd {get; set;}
 
@@ -31,5 +29,22 @@ namespace Fleetmanagement_app_Groep1.Entities
 
         [Timestamp]
         public DateTime LaatstGeupdate {get; set;}
+    }
+
+   
+    public class ToewijzingBrandstofTankkaart
+    {
+        [Key]
+        public Guid Id {get; set;}
+
+        [Required]
+        public string TankkaartId {get; set;}
+
+        public virtual Tankkaart Tankkaart {get; set;}
+
+        [Required]
+        public Guid BrandstofId { get; set; }
+
+        public virtual Brandstof Brandstof {get; set;}
     }
 }

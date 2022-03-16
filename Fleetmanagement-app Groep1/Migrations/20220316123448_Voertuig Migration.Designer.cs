@@ -4,14 +4,16 @@ using Fleetmanagement_app_Groep1.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Fleetmanagement_app_Groep1.Migrations
 {
     [DbContext(typeof(FleetmanagerContext))]
-    partial class FleetmanagerContextModelSnapshot : ModelSnapshot
+    [Migration("20220316123448_Voertuig Migration")]
+    partial class VoertuigMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

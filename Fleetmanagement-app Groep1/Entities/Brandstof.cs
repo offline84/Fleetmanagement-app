@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Fleetmanagement_app_Groep1.Entities
@@ -11,5 +12,11 @@ namespace Fleetmanagement_app_Groep1.Entities
         [Required]
         [MaxLength(50)]
         public string TypeBrandstof {get; set;}
+
+        public virtual ICollection<Voertuig> Voertuigen {get; set;}
+
+        public virtual ICollection<ToewijzingBrandstofTankkaart> Toewijzingen {get; set;}
+
+
     }
 }
