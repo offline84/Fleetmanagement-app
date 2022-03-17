@@ -7,15 +7,20 @@ using System.Threading.Tasks;
 
 namespace Fleetmanagement_app_Groep1.Entities
 {
-    public class Rijbewijs
+    public class ToewijzingBrandstofTankkaart
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public Guid Id {get; set;}
 
         [Required]
-        public string TypeRijbewijs {get; set;}
+        public string Tankkaartnummer {get; set;}
 
-        public ICollection<ToewijzingRijbewijsBestuurder> ToewijzingenBestuurder {get; set;}
+        public virtual Tankkaart Tankkaart {get; set;}
+
+        [Required]
+        public Guid BrandstofId { get; set; }
+
+        public virtual Brandstof Brandstof {get; set;}
     }
 }

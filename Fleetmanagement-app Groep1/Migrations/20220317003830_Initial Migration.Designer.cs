@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fleetmanagement_app_Groep1.Migrations
 {
     [DbContext(typeof(FleetmanagerContext))]
-    [Migration("20220316123448_Voertuig Migration")]
-    partial class VoertuigMigration
+    [Migration("20220317003830_Initial Migration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,10 +23,12 @@ namespace Fleetmanagement_app_Groep1.Migrations
 
             modelBuilder.Entity("Fleetmanagement_app_Groep1.Entities.Bestuurder", b =>
                 {
-                    b.Property<string>("PersoneelsId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("Rijksregisternummer")
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
 
                     b.Property<string>("Achternaam")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -44,15 +46,11 @@ namespace Fleetmanagement_app_Groep1.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Naam")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("Rijksregisternummer")
-                        .IsRequired()
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
-
-                    b.HasKey("PersoneelsId");
+                    b.HasKey("Rijksregisternummer");
 
                     b.ToTable("Bestuurder");
                 });
@@ -70,7 +68,7 @@ namespace Fleetmanagement_app_Groep1.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brandstof");
+                    b.ToTable("Brandstoffen");
                 });
 
             modelBuilder.Entity("Fleetmanagement_app_Groep1.Entities.Categorie", b =>
@@ -94,21 +92,28 @@ namespace Fleetmanagement_app_Groep1.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("PersoneelsId")
-                        .IsRequired()
+                    b.Property<string>("Chassisnummer")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("VoertuigId")
+                    b.Property<string>("Kaartnummer")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Rijksregisternummer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(11)");
 
                     b.HasKey("KoppelingsId");
 
-                    b.HasIndex("PersoneelsId")
-                        .IsUnique();
-
-                    b.HasIndex("VoertuigId")
+                    b.HasIndex("Chassisnummer")
                         .IsUnique()
-                        .HasFilter("[VoertuigId] IS NOT NULL");
+                        .HasFilter("[Chassisnummer] IS NOT NULL");
+
+                    b.HasIndex("Kaartnummer")
+                        .IsUnique()
+                        .HasFilter("[Kaartnummer] IS NOT NULL");
+
+                    b.HasIndex("Rijksregisternummer")
+                        .IsUnique();
 
                     b.ToTable("Koppeling");
                 });
@@ -119,17 +124,11 @@ namespace Fleetmanagement_app_Groep1.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("BestuurderPersoneelsId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("TypeRijbewijs")
                         .IsRequired()
-                        .HasMaxLength(4)
-                        .HasColumnType("nvarchar(4)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BestuurderPersoneelsId");
 
                     b.ToTable("Rijbewijs");
                 });
@@ -147,6 +146,80 @@ namespace Fleetmanagement_app_Groep1.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Status");
+                });
+
+            modelBuilder.Entity("Fleetmanagement_app_Groep1.Entities.Tankkaart", b =>
+                {
+                    b.Property<string>("Kaartnummer")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("GeldigheidsDatum")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsGearchiveerd")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsGeblokkeerd")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LaatstGeupdate")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Pincode")
+                        .HasMaxLength(8)
+                        .HasColumnType("int");
+
+                    b.HasKey("Kaartnummer");
+
+                    b.ToTable("Tankkaarten");
+                });
+
+            modelBuilder.Entity("Fleetmanagement_app_Groep1.Entities.ToewijzingBrandstofTankkaart", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BrandstofId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Tankkaartnummer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BrandstofId");
+
+                    b.HasIndex("Tankkaartnummer");
+
+                    b.ToTable("Toewijzingen_Brandstof_Tankkaart");
+                });
+
+            modelBuilder.Entity("Fleetmanagement_app_Groep1.Entities.ToewijzingRijbewijsBestuurder", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RijbewijsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Rijksregisternummer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(11)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RijbewijsId");
+
+                    b.HasIndex("Rijksregisternummer");
+
+                    b.ToTable("Toewijzingen_Rijbewijs_Bestuurder");
                 });
 
             modelBuilder.Entity("Fleetmanagement_app_Groep1.Entities.Voertuig", b =>
@@ -211,8 +284,8 @@ namespace Fleetmanagement_app_Groep1.Migrations
                 {
                     b.OwnsOne("Fleetmanagement_app_Groep1.Entities.Adres", "Adres", b1 =>
                         {
-                            b1.Property<string>("BestuurderPersoneelsId")
-                                .HasColumnType("nvarchar(450)");
+                            b1.Property<string>("BestuurderRijksregisternummer")
+                                .HasColumnType("nvarchar(11)");
 
                             b1.Property<int>("Huisnummer")
                                 .HasColumnType("int");
@@ -227,12 +300,12 @@ namespace Fleetmanagement_app_Groep1.Migrations
                             b1.Property<string>("Straat")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.HasKey("BestuurderPersoneelsId");
+                            b1.HasKey("BestuurderRijksregisternummer");
 
                             b1.ToTable("Bestuurder");
 
                             b1.WithOwner("Bestuurder")
-                                .HasForeignKey("BestuurderPersoneelsId");
+                                .HasForeignKey("BestuurderRijksregisternummer");
 
                             b1.Navigation("Bestuurder");
                         });
@@ -242,26 +315,63 @@ namespace Fleetmanagement_app_Groep1.Migrations
 
             modelBuilder.Entity("Fleetmanagement_app_Groep1.Entities.Koppeling", b =>
                 {
+                    b.HasOne("Fleetmanagement_app_Groep1.Entities.Voertuig", "Voertuig")
+                        .WithOne("Koppeling")
+                        .HasForeignKey("Fleetmanagement_app_Groep1.Entities.Koppeling", "Chassisnummer");
+
+                    b.HasOne("Fleetmanagement_app_Groep1.Entities.Tankkaart", "Tankkaart")
+                        .WithOne("Koppeling")
+                        .HasForeignKey("Fleetmanagement_app_Groep1.Entities.Koppeling", "Kaartnummer");
+
                     b.HasOne("Fleetmanagement_app_Groep1.Entities.Bestuurder", "Bestuurder")
                         .WithOne("Koppeling")
-                        .HasForeignKey("Fleetmanagement_app_Groep1.Entities.Koppeling", "PersoneelsId")
+                        .HasForeignKey("Fleetmanagement_app_Groep1.Entities.Koppeling", "Rijksregisternummer")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Fleetmanagement_app_Groep1.Entities.Voertuig", "Voertuig")
-                        .WithOne("Koppeling")
-                        .HasForeignKey("Fleetmanagement_app_Groep1.Entities.Koppeling", "VoertuigId");
-
                     b.Navigation("Bestuurder");
+
+                    b.Navigation("Tankkaart");
 
                     b.Navigation("Voertuig");
                 });
 
-            modelBuilder.Entity("Fleetmanagement_app_Groep1.Entities.Rijbewijs", b =>
+            modelBuilder.Entity("Fleetmanagement_app_Groep1.Entities.ToewijzingBrandstofTankkaart", b =>
                 {
-                    b.HasOne("Fleetmanagement_app_Groep1.Entities.Bestuurder", null)
-                        .WithMany("Rijbewijzen")
-                        .HasForeignKey("BestuurderPersoneelsId");
+                    b.HasOne("Fleetmanagement_app_Groep1.Entities.Brandstof", "Brandstof")
+                        .WithMany("Toewijzingen")
+                        .HasForeignKey("BrandstofId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Fleetmanagement_app_Groep1.Entities.Tankkaart", "Tankkaart")
+                        .WithMany("MogelijkeBrandstoffen")
+                        .HasForeignKey("Tankkaartnummer")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Brandstof");
+
+                    b.Navigation("Tankkaart");
+                });
+
+            modelBuilder.Entity("Fleetmanagement_app_Groep1.Entities.ToewijzingRijbewijsBestuurder", b =>
+                {
+                    b.HasOne("Fleetmanagement_app_Groep1.Entities.Rijbewijs", "Rijbewijs")
+                        .WithMany("ToewijzingenBestuurder")
+                        .HasForeignKey("RijbewijsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Fleetmanagement_app_Groep1.Entities.Bestuurder", "Bestuurder")
+                        .WithMany("ToewijzingenRijbewijs")
+                        .HasForeignKey("Rijksregisternummer")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Bestuurder");
+
+                    b.Navigation("Rijbewijs");
                 });
 
             modelBuilder.Entity("Fleetmanagement_app_Groep1.Entities.Voertuig", b =>
@@ -295,11 +405,13 @@ namespace Fleetmanagement_app_Groep1.Migrations
                 {
                     b.Navigation("Koppeling");
 
-                    b.Navigation("Rijbewijzen");
+                    b.Navigation("ToewijzingenRijbewijs");
                 });
 
             modelBuilder.Entity("Fleetmanagement_app_Groep1.Entities.Brandstof", b =>
                 {
+                    b.Navigation("Toewijzingen");
+
                     b.Navigation("Voertuigen");
                 });
 
@@ -308,9 +420,21 @@ namespace Fleetmanagement_app_Groep1.Migrations
                     b.Navigation("Voertuigen");
                 });
 
+            modelBuilder.Entity("Fleetmanagement_app_Groep1.Entities.Rijbewijs", b =>
+                {
+                    b.Navigation("ToewijzingenBestuurder");
+                });
+
             modelBuilder.Entity("Fleetmanagement_app_Groep1.Entities.Status", b =>
                 {
                     b.Navigation("Voertuigen");
+                });
+
+            modelBuilder.Entity("Fleetmanagement_app_Groep1.Entities.Tankkaart", b =>
+                {
+                    b.Navigation("Koppeling");
+
+                    b.Navigation("MogelijkeBrandstoffen");
                 });
 
             modelBuilder.Entity("Fleetmanagement_app_Groep1.Entities.Voertuig", b =>
