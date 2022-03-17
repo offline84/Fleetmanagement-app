@@ -1,4 +1,5 @@
 using Fleetmanagement_app_Groep1.Database;
+using Fleetmanagement_app_Groep1.Entities;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Fleetmanagement_app_Groep1
 {
@@ -25,12 +27,14 @@ namespace Fleetmanagement_app_Groep1
                     if (!(context.Database.CanConnect()))
                         //Maak de databank
                         context.Database.Migrate();
+
                 }
                 catch (Exception e)
                 {
                     var logbook = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
                     Debug.WriteLine(e);
                 }
+                
             }
 
             host.Run();
