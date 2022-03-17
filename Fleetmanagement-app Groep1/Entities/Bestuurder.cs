@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,8 +10,18 @@ namespace Fleetmanagement_app_Groep1.Entities
 {
     public class Bestuurder
     {
+        // Rijbewijzen zijn verplicht bij aanmaken Bestuurder , maar Objecten kunnen niet doorgegeven worden in ctor aangezien zij niet gebonden kunnen worden aan de DB
+        public Bestuurder(string naam, string achternaam, DateTime geboorteDatum, string rijksregisternummer)
+        {
+            Naam = naam;
+            Achternaam = achternaam;
+            GeboorteDatum = geboorteDatum;
+            Rijksregisternummer = rijksregisternummer;
+        }
+
         [Key]
-        public string PersoneelsId {get; set;}
+        [StringLength(11)]
+        public string Rijksregisternummer {get; set;}
 
         [MaxLength(50)]
         public string Naam { get; set; }
@@ -23,12 +34,10 @@ namespace Fleetmanagement_app_Groep1.Entities
         [Timestamp]
         public DateTime GeboorteDatum {get; set;}
 
-        [Required]
-        [StringLength(11)]
-        public string Rijksregisternummer {get; set;}
-
-        public virtual ICollection<Rijbewijs> Rijbewijzen { get; set;}
-            = new List<Rijbewijs>();
+        public virtual ICollection<ToewijzingRijbewijsBestuurder> ToewijzingenRijbewijs { get; set; }
+        
+        [NotMapped()]
+        public virtual ICollection<Rijbewijs> Rijbewijzen {get; private set; }
 
         public virtual Koppeling Koppeling {get; set;}
 
@@ -38,14 +47,5 @@ namespace Fleetmanagement_app_Groep1.Entities
         public DateTime LaatstGeupdate {get; set;}
     }
 
-    [Owned]
-    public class Adres
-    {
-        public string Straat {get; set;}
-        public int Huisnummer {get; set;}
-        public string Stad {get; set;}
-        [MaxLength(50)]
-        public int Postcode {get; set;}
-        public Bestuurder Bestuurder {get; set;}
-    }
+    
 }

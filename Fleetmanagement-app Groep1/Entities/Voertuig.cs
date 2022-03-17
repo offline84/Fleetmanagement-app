@@ -1,11 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Fleetmanagement_app_Groep1.Entities
 {
     public class Voertuig
     {
+        public Voertuig(string chassisnummer, string merk, string model, Guid brandstofId, Guid categorieId)
+        {
+            Chassisnummer = chassisnummer;
+            Merk = merk;
+            Model = model;
+            CategorieId = categorieId;
+            BrandstofId = brandstofId;
+        }
+
         [Key]
         public string Chassisnummer { get; set; }
 
@@ -27,6 +35,7 @@ namespace Fleetmanagement_app_Groep1.Entities
 
         public virtual Brandstof Brandstof { get; set; }
 
+        [Required]
         public Guid CategorieId { get; set; }
 
         public virtual Categorie Categorie { get; set; }
@@ -34,6 +43,7 @@ namespace Fleetmanagement_app_Groep1.Entities
         [MaxLength(50)]
         public string Kleur { get; set; }
 
+        [Required]
         [MaxLength(2)]
         public int AantalDeuren { get; set; }
 
@@ -47,28 +57,5 @@ namespace Fleetmanagement_app_Groep1.Entities
 
         [Timestamp]
         public DateTime LaatstGeupdate { get; set; }
-    }
-
-    public class Status
-    {
-        [Key]
-        public Guid Id {get; set;}
-
-        [Required]
-        public string Staat { get; set; }
-        
-        public virtual ICollection<Voertuig> Voertuigen { get; set; }
-
-    }
-
-    public class Categorie
-    {
-        [Key]
-        public Guid Id { get; set; }
-
-        [Required]
-        public string TypeWagen { get; set; }
-
-        public virtual ICollection<Voertuig> Voertuigen { get; set; }
     }
 }

@@ -2,20 +2,18 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Fleetmanagement_app_Groep1.Entities
 {
-    public class Rijbewijs
+    public class Status
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public Guid Id {get; set;}
+        public Guid Id { get; set; }
 
         [Required]
-        public string TypeRijbewijs {get; set;}
+        public string Staat { get; set; }
 
-        public ICollection<ToewijzingRijbewijsBestuurder> ToewijzingenBestuurder {get; set;}
+        public virtual ICollection<Voertuig> Voertuigen { get; set; }
     }
 }
