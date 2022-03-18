@@ -23,6 +23,7 @@ namespace Fleetmanagement_app_Groep1.Database
         public DbSet<Categorie> GetCategories {get; set;}
         public DbSet<Status> GetStatusen {get; set;}
         public DbSet<Brandstof> GetBrandstoffen {get; set;}
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -94,6 +95,7 @@ namespace Fleetmanagement_app_Groep1.Database
                     rb.HasOne(b => b.Bestuurder).WithMany(t => t.ToewijzingenRijbewijs).HasForeignKey(fk => fk.Rijksregisternummer);
                    rb.HasOne(r => r.Rijbewijs).WithMany(t => t.ToewijzingenBestuurder).HasForeignKey(fk => fk.RijbewijsId);
                 });
+
 
             modelBuilder.Entity<Rijbewijs>().HasData
                 (
