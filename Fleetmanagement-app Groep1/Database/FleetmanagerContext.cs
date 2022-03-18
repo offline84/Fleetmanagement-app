@@ -19,6 +19,12 @@ namespace Fleetmanagement_app_Groep1.Database
         public DbSet<ToewijzingBrandstofTankkaart> ToewijzingBrandstofTankkaarten {get; set;}
         public DbSet<ToewijzingRijbewijsBestuurder> ToewijzingRijbewijsBestuurders {get; set;}
 
+        public DbSet<Rijbewijs> GetRijbewijzen {get; set;}
+        public DbSet<Categorie> GetCategories {get; set;}
+        public DbSet<Status> GetStatusen {get; set;}
+        public DbSet<Brandstof> GetBrandstoffen {get; set;}
+        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Koppeling>(k =>
@@ -90,73 +96,74 @@ namespace Fleetmanagement_app_Groep1.Database
                    rb.HasOne(r => r.Rijbewijs).WithMany(t => t.ToewijzingenBestuurder).HasForeignKey(fk => fk.RijbewijsId);
                 });
 
-            //modelBuilder.Entity<Rijbewijs>().HasData
-            //    (
-            //    new Rijbewijs(){TypeRijbewijs = "AM"},
-            //    new Rijbewijs(){TypeRijbewijs = "A"},
-            //    new Rijbewijs(){TypeRijbewijs = "A1"},
-            //    new Rijbewijs(){TypeRijbewijs = "A2"},
-            //    new Rijbewijs(){TypeRijbewijs = "B M12"},
-            //    new Rijbewijs(){TypeRijbewijs = "B"},
-            //    new Rijbewijs(){TypeRijbewijs = "B+E"},
-            //    new Rijbewijs(){TypeRijbewijs = "C"},
-            //    new Rijbewijs(){TypeRijbewijs = "C1"},
-            //    new Rijbewijs(){TypeRijbewijs = "C+E"},
-            //    new Rijbewijs(){TypeRijbewijs = "C1+E"},
-            //    new Rijbewijs(){TypeRijbewijs = "D"},
-            //    new Rijbewijs(){TypeRijbewijs = "D1"},
-            //    new Rijbewijs(){TypeRijbewijs = "D1+E"},
-            //    new Rijbewijs(){TypeRijbewijs = "D+E"},
-            //    new Rijbewijs(){TypeRijbewijs = "G"}
-            //    );
 
-            //modelBuilder.Entity<Categorie>().HasData
-            //    (
-            //        new Categorie(){TypeWagen = "Hatchback"},
-            //        new Categorie(){TypeWagen = "Sedan"},
-            //        new Categorie(){TypeWagen = "Station"},
-            //        new Categorie(){TypeWagen = "Cabriolet"},
-            //        new Categorie(){TypeWagen = "Coupé"},
-            //        new Categorie(){TypeWagen = "MVP"},
-            //        new Categorie(){TypeWagen = "SUV"},
-            //        new Categorie(){TypeWagen = "4X4"},
-            //        new Categorie(){TypeWagen = "Cross-Over"},
-            //        new Categorie(){TypeWagen = "Dos a dos"},
-            //        new Categorie(){TypeWagen = "GT"},
-            //        new Categorie(){TypeWagen = "Pick- up"},
-            //        new Categorie(){TypeWagen = "Roadster"},
-            //        new Categorie(){TypeWagen = "Bestelwagen"},
-            //        new Categorie(){TypeWagen = "Lichte Vracht"},
-            //        new Categorie(){TypeWagen = "Vrachtwagen"},
-            //        new Categorie(){TypeWagen = "Mini van"},
-            //        new Categorie(){TypeWagen = "bus"}
-            //    );
+            modelBuilder.Entity<Rijbewijs>().HasData
+                (
+                new Rijbewijs() {Id = Guid.NewGuid(), TypeRijbewijs = "AM" },
+                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "A" },
+                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "A1" },
+                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "A2" },
+                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "B M12" },
+                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "B" },
+                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "B+E" },
+                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "C" },
+                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "C1" },
+                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "C+E" },
+                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "C1+E" },
+                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "D" },
+                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "D1" },
+                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "D1+E" },
+                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "D+E" },
+                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "G" }
+                );
 
-            //modelBuilder.Entity<Brandstof>().HasData
-            //    (
-            //        new Brandstof(){Id = Guid.Parse("d28888e9-2ba9-473a-a40f-e38cb54f9b35"), TypeBrandstof = "Benzine"},
-            //        new Brandstof(){Id = Guid.Parse("da2fd609-d754-4feb-8acd-c4f9ff13ba96"), TypeBrandstof = "Diesel"},
-            //        new Brandstof(){Id = Guid.Parse("2902b665-1190-4c70-9915-b9c2d7680450"), TypeBrandstof = "euro 98"},
-            //        new Brandstof(){Id = Guid.Parse("102b566b-ba1f-404c-b2df-e2cde39ade09"), TypeBrandstof = "euro 95"},
-            //        new Brandstof(){Id = Guid.Parse("5b3621c0-7b12-4e80-9c8b-3398cba7ee05"), TypeBrandstof = "LPG"},
-            //        new Brandstof(){Id = Guid.Parse("2aadd2df-7caf-45ab-9355-7f6332985a87"), TypeBrandstof = "AdBlue"},
-            //        new Brandstof(){Id = Guid.Parse("2ee49fe3-edf2-4f91-8409-3eb25ce6ca51"), TypeBrandstof = "Elektrisch"},
-            //        new Brandstof(){Id = Guid.Parse("5b1c2b4d-48c7-402a-80c3-cc796ad49c6b"), TypeBrandstof = "Hybride Diesel Elektrisch"},
-            //        new Brandstof(){Id = Guid.Parse("d8663e5e-7494-4f81-8739-6e0de1bea7ee"), TypeBrandstof = "Hybride Benzine Elektrisch"},
-            //        new Brandstof(){Id = Guid.Parse("d173e20d-159e-4127-9ce9-b0ac2564ad97"), TypeBrandstof = "Waterstof"},
-            //        new Brandstof(){Id = Guid.Parse("40ff5488-fdab-45b5-bc3a-14302d59869a"), TypeBrandstof = "Biobrandstof"},
-            //        new Brandstof(){Id = Guid.Parse("2baab6b6-a44a-4c34-9232-e02966ca7e80"), TypeBrandstof = "Groengas"},
-            //        new Brandstof(){Id = Guid.Parse("50b106ca-f711-4b6f-9405-8c8b8fdce7c2"), TypeBrandstof = "CNG"}
-            //    );
+            modelBuilder.Entity<Categorie>().HasData
+                (
+                    new Categorie() { Id = Guid.NewGuid(), TypeWagen = "Hatchback" },
+                    new Categorie() { Id = Guid.NewGuid(), TypeWagen = "Sedan" },
+                    new Categorie() { Id = Guid.NewGuid(), TypeWagen = "Station" },
+                    new Categorie() { Id = Guid.NewGuid(), TypeWagen = "Cabriolet" },
+                    new Categorie() { Id = Guid.NewGuid(), TypeWagen = "Coupé" },
+                    new Categorie() { Id = Guid.NewGuid(), TypeWagen = "MVP" },
+                    new Categorie() { Id = Guid.NewGuid(), TypeWagen = "SUV" },
+                    new Categorie() { Id = Guid.NewGuid(), TypeWagen = "4X4" },
+                    new Categorie() { Id = Guid.NewGuid(), TypeWagen = "Cross-Over" },
+                    new Categorie() { Id = Guid.NewGuid(), TypeWagen = "Dos a dos" },
+                    new Categorie() { Id = Guid.NewGuid(), TypeWagen = "GT" },
+                    new Categorie() { Id = Guid.NewGuid(), TypeWagen = "Pick- up" },
+                    new Categorie() { Id = Guid.NewGuid(), TypeWagen = "Roadster" },
+                    new Categorie() { Id = Guid.NewGuid(), TypeWagen = "Bestelwagen" },
+                    new Categorie() { Id = Guid.NewGuid(), TypeWagen = "Lichte Vracht" },
+                    new Categorie() { Id = Guid.NewGuid(), TypeWagen = "Vrachtwagen" },
+                    new Categorie() { Id = Guid.NewGuid(), TypeWagen = "Mini van" },
+                    new Categorie() { Id = Guid.NewGuid(), TypeWagen = "bus" }
+                );
 
-            //modelBuilder.Entity<Status>().HasData
-            //    (
-            //        new Status(){Staat = "aankoop"},
-            //        new Status(){Staat = "garage"},
-            //        new Status(){Staat = "in bedrijf"},
-            //        new Status(){Staat = "uitgeschreven"},
-            //        new Status(){Staat = "onderhoud nodig"}
-            //    );
+            modelBuilder.Entity<Brandstof>().HasData
+                (
+                    new Brandstof() { Id = Guid.NewGuid(), TypeBrandstof = "Benzine" },
+                    new Brandstof() { Id = Guid.NewGuid(), TypeBrandstof = "Diesel" },
+                    new Brandstof() { Id = Guid.NewGuid(), TypeBrandstof = "euro 98" },
+                    new Brandstof() { Id = Guid.NewGuid(), TypeBrandstof = "euro 95" },
+                    new Brandstof() { Id = Guid.NewGuid(), TypeBrandstof = "LPG" },
+                    new Brandstof() { Id = Guid.NewGuid(), TypeBrandstof = "AdBlue" },
+                    new Brandstof() { Id = Guid.NewGuid(), TypeBrandstof = "Elektrisch" },
+                    new Brandstof() { Id = Guid.NewGuid(), TypeBrandstof = "Hybride Diesel Elektrisch" },
+                    new Brandstof() { Id = Guid.NewGuid(), TypeBrandstof = "Hybride Benzine Elektrisch" },
+                    new Brandstof() { Id = Guid.NewGuid(), TypeBrandstof = "Waterstof" },
+                    new Brandstof() { Id = Guid.NewGuid(), TypeBrandstof = "Biobrandstof" },
+                    new Brandstof() { Id = Guid.NewGuid(), TypeBrandstof = "Groengas" },
+                    new Brandstof() { Id = Guid.NewGuid(), TypeBrandstof = "CNG" }
+                );
+
+            modelBuilder.Entity<Status>().HasData
+                (
+                    new Status() { Id = Guid.NewGuid(), Staat = "aankoop" },
+                    new Status() { Id = Guid.NewGuid(), Staat = "garage" },
+                    new Status() { Id = Guid.NewGuid(), Staat = "in bedrijf" },
+                    new Status() { Id = Guid.NewGuid(), Staat = "uitgeschreven" },
+                    new Status() { Id = Guid.NewGuid(), Staat = "onderhoud nodig" }
+                );
         }
     }
 }

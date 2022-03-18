@@ -4,14 +4,16 @@ using Fleetmanagement_app_Groep1.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Fleetmanagement_app_Groep1.Migrations
 {
     [DbContext(typeof(FleetmanagerContext))]
-    partial class FleetmanagerContextModelSnapshot : ModelSnapshot
+    [Migration("20220317232131_Seeding Data")]
+    partial class SeedingData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,7 +69,6 @@ namespace Fleetmanagement_app_Groep1.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Brandstoffen");
-
 
                     b.HasData(
                         new
@@ -413,80 +414,6 @@ namespace Fleetmanagement_app_Groep1.Migrations
                             Id = new Guid("8a421e86-0b31-43ec-99e1-346432f3053a"),
                             Staat = "onderhoud nodig"
                         });
-                });
-
-            modelBuilder.Entity("Fleetmanagement_app_Groep1.Entities.Tankkaart", b =>
-                {
-                    b.Property<string>("Kaartnummer")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("GeldigheidsDatum")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("date");
-
-                    b.Property<bool>("IsGearchiveerd")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsGeblokkeerd")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LaatstGeupdate")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Pincode")
-                        .HasMaxLength(8)
-                        .HasColumnType("int");
-
-                    b.HasKey("Kaartnummer");
-
-                    b.ToTable("Tankkaarten");
-                });
-
-            modelBuilder.Entity("Fleetmanagement_app_Groep1.Entities.ToewijzingBrandstofTankkaart", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("BrandstofId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Tankkaartnummer")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BrandstofId");
-
-                    b.HasIndex("Tankkaartnummer");
-
-                    b.ToTable("Toewijzingen_Brandstof_Tankkaart");
-                });
-
-            modelBuilder.Entity("Fleetmanagement_app_Groep1.Entities.ToewijzingRijbewijsBestuurder", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("RijbewijsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Rijksregisternummer")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(11)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RijbewijsId");
-
-                    b.HasIndex("Rijksregisternummer");
-
-                    b.ToTable("Toewijzingen_Rijbewijs_Bestuurder");
                 });
 
             modelBuilder.Entity("Fleetmanagement_app_Groep1.Entities.Tankkaart", b =>
