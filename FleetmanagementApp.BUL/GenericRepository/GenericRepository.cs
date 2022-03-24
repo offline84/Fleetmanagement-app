@@ -1,51 +1,63 @@
 ﻿using Fleetmanagement_app_Groep1.Database;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace FleetmanagementApp.BUL.GenericRepository
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        private FleetmanagerContext _context = null;
-        private DbSet<T> dbSet = null;
+        protected FleetmanagerContext _context;
+        internal DbSet<T> _dbSet;
+        protected readonly ILogger _logger;
+
+        public GenericRepository(FleetmanagerContext context, ILogger logger)
+        {
+            _context = context;
+            _dbSet = context.Set<T>();
+            _logger = logger;
+        }
+
 
         public GenericRepository(FleetmanagerContext fleetmanagerContext)
         {
             _context = fleetmanagerContext;
-            dbSet = _context.Set<T>();
+            _dbSet = _context.Set<T>();
         }
 
-        public void Create(T obj)
+        public virtual async Task<bool> Add(T entity)
         {
-            dbSet.Add(obj);
+            await _dbSet.AddAsync(entity);
+            return true;
         }
 
-        public void Delete(object id)
+        public virtual async Task<bool> Delete(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<T> GetAll()
+        public virtual async Task<IEnumerable<T>> GetAll()
         {
-            return dbSet.ToList();
+            return await _dbSet.ToListAsync();
         }
 
-        public T GetById(object id)
+        public virtual async Task<T> GetById(Guid id)
         {
-            return dbSet.Find(id);
+            return await _dbSet.FindAsync(id);
         }
 
-        public void Update(T obj)
+        public virtual Task<bool> Update(T obj)
         {
-            dbSet.Attach(obj);
-            _context.Entry(obj).State = EntityState.Modified;
+            throw new NotImplementedException();
         }
 
-        public void Save()
+        public virtual async Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate)
         {
-            _context.SaveChanges();
+            return await _dbSet.Where(predicate).ToListAsync();
         }
     }
 }
