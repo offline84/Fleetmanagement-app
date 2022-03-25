@@ -1,10 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Fleetmanagement_app_Groep1.Entities
 {
@@ -21,7 +18,7 @@ namespace Fleetmanagement_app_Groep1.Entities
 
         [Key]
         [StringLength(11)]
-        public string Rijksregisternummer {get; set;}
+        public string Rijksregisternummer { get; set; }
 
         [MaxLength(50)]
         public string Naam { get; set; }
@@ -29,23 +26,21 @@ namespace Fleetmanagement_app_Groep1.Entities
         [MaxLength(50)]
         public string Achternaam { get; set; }
 
-        public virtual Adres Adres {get; set;}
+        public virtual Adres Adres { get; set; }
 
         [Timestamp]
-        public DateTime GeboorteDatum {get; set;}
+        public DateTime GeboorteDatum { get; set; }
 
         public virtual ICollection<ToewijzingRijbewijsBestuurder> ToewijzingenRijbewijs { get; set; }
-        
+
         [NotMapped()]
-        public virtual ICollection<Rijbewijs> Rijbewijzen {get; private set; }
+        public virtual ICollection<Rijbewijs> Rijbewijzen { get; private set; }
 
-        public virtual Koppeling Koppeling {get; set;}
+        public virtual Koppeling Koppeling { get; set; }
 
-        public bool IsGearchiveerd {get; set;}
+        public bool IsGearchiveerd { get; set; }
 
         [Timestamp]
-        public DateTime LaatstGeupdate {get; set;}
+        public DateTime LaatstGeupdate { get; set; }
     }
-
-    
 }

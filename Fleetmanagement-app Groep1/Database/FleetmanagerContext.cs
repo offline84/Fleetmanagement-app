@@ -14,16 +14,15 @@ namespace Fleetmanagement_app_Groep1.Database
         public DbSet<Voertuig> Voertuigen { get; set; }
         public DbSet<Tankkaart> Tankkaarten { get; set; }
 
-        public DbSet<Koppeling> Koppelingen {get; set;}
+        public DbSet<Koppeling> Koppelingen { get; set; }
 
-        public DbSet<ToewijzingBrandstofTankkaart> ToewijzingBrandstofTankkaarten {get; set;}
-        public DbSet<ToewijzingRijbewijsBestuurder> ToewijzingRijbewijsBestuurders {get; set;}
+        public DbSet<ToewijzingBrandstofTankkaart> ToewijzingBrandstofTankkaarten { get; set; }
+        public DbSet<ToewijzingRijbewijsBestuurder> ToewijzingRijbewijsBestuurders { get; set; }
 
-        public DbSet<Rijbewijs> GetRijbewijzen {get; set;}
-        public DbSet<Categorie> GetCategories {get; set;}
-        public DbSet<Status> GetStatusen {get; set;}
-        public DbSet<Brandstof> GetBrandstoffen {get; set;}
-        
+        public DbSet<Rijbewijs> GetRijbewijzen { get; set; }
+        public DbSet<Categorie> GetCategories { get; set; }
+        public DbSet<Status> GetStatusen { get; set; }
+        public DbSet<Brandstof> GetBrandstoffen { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -86,35 +85,34 @@ namespace Fleetmanagement_app_Groep1.Database
                     bk.HasOne(bk => bk.Brandstof).WithMany(t => t.Toewijzingen).HasForeignKey(fk => fk.BrandstofId);
                 });
 
-             modelBuilder.Entity<ToewijzingRijbewijsBestuurder>(rb =>
-                {
-                    rb.ToTable("Toewijzingen_Rijbewijs_Bestuurder");
-                    rb.HasKey(t => t.Id);
-                    rb.Property(p => p.Rijksregisternummer).IsRequired();
-                    rb.Property(p => p.RijbewijsId).IsRequired();
-                    rb.HasOne(b => b.Bestuurder).WithMany(t => t.ToewijzingenRijbewijs).HasForeignKey(fk => fk.Rijksregisternummer);
+            modelBuilder.Entity<ToewijzingRijbewijsBestuurder>(rb =>
+               {
+                   rb.ToTable("Toewijzingen_Rijbewijs_Bestuurder");
+                   rb.HasKey(t => t.Id);
+                   rb.Property(p => p.Rijksregisternummer).IsRequired();
+                   rb.Property(p => p.RijbewijsId).IsRequired();
+                   rb.HasOne(b => b.Bestuurder).WithMany(t => t.ToewijzingenRijbewijs).HasForeignKey(fk => fk.Rijksregisternummer);
                    rb.HasOne(r => r.Rijbewijs).WithMany(t => t.ToewijzingenBestuurder).HasForeignKey(fk => fk.RijbewijsId);
-                });
-
+               });
 
             modelBuilder.Entity<Rijbewijs>().HasData
                 (
-                new Rijbewijs() {Id = Guid.NewGuid(), TypeRijbewijs = "AM" },
-                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "A" },
-                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "A1" },
-                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "A2" },
-                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "B M12" },
-                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "B" },
-                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "B+E" },
-                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "C" },
-                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "C1" },
-                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "C+E" },
-                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "C1+E" },
-                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "D" },
-                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "D1" },
-                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "D1+E" },
-                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "D+E" },
-                new Rijbewijs() {Id = Guid.NewGuid(),  TypeRijbewijs = "G" }
+                new Rijbewijs() { Id = Guid.NewGuid(), TypeRijbewijs = "AM" },
+                new Rijbewijs() { Id = Guid.NewGuid(), TypeRijbewijs = "A" },
+                new Rijbewijs() { Id = Guid.NewGuid(), TypeRijbewijs = "A1" },
+                new Rijbewijs() { Id = Guid.NewGuid(), TypeRijbewijs = "A2" },
+                new Rijbewijs() { Id = Guid.NewGuid(), TypeRijbewijs = "B M12" },
+                new Rijbewijs() { Id = Guid.NewGuid(), TypeRijbewijs = "B" },
+                new Rijbewijs() { Id = Guid.NewGuid(), TypeRijbewijs = "B+E" },
+                new Rijbewijs() { Id = Guid.NewGuid(), TypeRijbewijs = "C" },
+                new Rijbewijs() { Id = Guid.NewGuid(), TypeRijbewijs = "C1" },
+                new Rijbewijs() { Id = Guid.NewGuid(), TypeRijbewijs = "C+E" },
+                new Rijbewijs() { Id = Guid.NewGuid(), TypeRijbewijs = "C1+E" },
+                new Rijbewijs() { Id = Guid.NewGuid(), TypeRijbewijs = "D" },
+                new Rijbewijs() { Id = Guid.NewGuid(), TypeRijbewijs = "D1" },
+                new Rijbewijs() { Id = Guid.NewGuid(), TypeRijbewijs = "D1+E" },
+                new Rijbewijs() { Id = Guid.NewGuid(), TypeRijbewijs = "D+E" },
+                new Rijbewijs() { Id = Guid.NewGuid(), TypeRijbewijs = "G" }
                 );
 
             modelBuilder.Entity<Categorie>().HasData
