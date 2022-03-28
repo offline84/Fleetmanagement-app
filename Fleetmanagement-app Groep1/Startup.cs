@@ -1,4 +1,5 @@
 using Fleetmanagement_app_Groep1.Database;
+using FleetmanagementApp.BUL.UnitOfWork;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
@@ -21,6 +22,8 @@ namespace Fleetmanagement_app_Groep1
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             services.AddDbContext<FleetmanagerContext>(options =>
             {
                 //Ophalen van connectionstring uit database
