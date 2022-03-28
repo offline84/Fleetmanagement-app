@@ -9,16 +9,14 @@ namespace Fleetmanagement_app_Groep1.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id {get; set;}
+        public Guid Id { get; set; }
 
         [Required]
         [MaxLength(50)]
-        public string TypeBrandstof {get; set;}
+        public string TypeBrandstof { get; set; }
 
-        public virtual ICollection<Voertuig> Voertuigen {get; set;}
+        public virtual ICollection<Voertuig> Voertuigen { get; set; }
 
-        public virtual ICollection<ToewijzingBrandstofTankkaart> Toewijzingen {get; set;}
-
-
+        public virtual ICollection<ToewijzingBrandstofTankkaart> Toewijzingen { get; set; }
     }
 }
