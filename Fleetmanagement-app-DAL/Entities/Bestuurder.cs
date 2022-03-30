@@ -34,7 +34,8 @@ namespace Fleetmanagement_app_Groep1.Entities
         public virtual ICollection<ToewijzingRijbewijsBestuurder> ToewijzingenRijbewijs { get; set; }
 
         [NotMapped()]
-        public virtual ICollection<Rijbewijs> Rijbewijzen { get; private set; }
+        public virtual ICollection<Rijbewijs> Rijbewijzen { get; set; }
+            = new List<Rijbewijs>();
 
         public virtual Koppeling Koppeling { get; set; }
 

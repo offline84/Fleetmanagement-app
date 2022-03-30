@@ -10,6 +10,10 @@ namespace Fleetmanagement_app_Groep1.Database
         {
         }
 
+        public FleetmanagerContext(Func<DbContextOptions<FleetmanagerContext>> options)
+        {
+        }
+
         public DbSet<Bestuurder> Bestuurders { get; set; }
         public DbSet<Voertuig> Voertuigen { get; set; }
         public DbSet<Tankkaart> Tankkaarten { get; set; }
