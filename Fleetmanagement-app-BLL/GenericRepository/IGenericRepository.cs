@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace FleetmanagementApp.BUL.GenericRepository
+namespace Fleetmanagement_app_BLL.GenericRepository
 {
     public interface IGenericRepository<T> where T : class
     {

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FleetmanagementApp.BUL.Repository
+namespace Fleetmanagement_app_BLL.Repository
 {
     public interface IVoertuigBuilderRepository
     {

@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Fleetmanagement-app-BLL.csproj.DotSettings" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="UnitOfWork\" />
   </ItemGroup>
 

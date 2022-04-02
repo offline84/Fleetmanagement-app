@@ -1,8 +1,8 @@
 ﻿using Fleetmanagement_app_Groep1.Database;
 using Fleetmanagement_app_Groep1.Entities;
 using Fleetmanagement_app_Groep1.Helpers;
-using FleetmanagementApp.BUL.Repository;
-using FleetmanagementApp.BUL.Repository.Builders;
+using Fleetmanagement_app_BLL.Repository;
+using Fleetmanagement_app_BLL.Repository.Builders;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;

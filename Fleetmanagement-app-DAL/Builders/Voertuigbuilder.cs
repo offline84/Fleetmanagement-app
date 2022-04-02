@@ -1,10 +1,10 @@
 ﻿using Fleetmanagement_app_Groep1.Entities;
-using FleetmanagementApp.BUL.Repository;
+using Fleetmanagement_app_BLL.Repository;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Text;
 
-namespace FleetmanagementApp.BUL.Repository.Builders
+namespace Fleetmanagement_app_BLL.Repository.Builders
 {
     public class Voertuigbuilder
     {

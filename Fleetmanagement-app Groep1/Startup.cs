@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using FleetmanagementApp.BUL.UnitOfWork;
+using Fleetmanagement_app_BLL.UnitOfWork;
 
 namespace Fleetmanagement_app_Groep1
 {
