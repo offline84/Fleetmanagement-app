@@ -5,11 +5,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Fleetmanagement-app Groep1\Fleetmanagement-app Groep1.csproj" />
+    <Folder Include="UnitOfWork\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Repository\" />
+    <ProjectReference Include="..\Fleetmanagement-app-DAL\Fleetmanagement-app-DAL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

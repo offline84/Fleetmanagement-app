@@ -6,7 +6,6 @@ namespace Fleetmanagement_app_Groep1.Entities
 {
     public class Tankkaart
     {
-
         public Tankkaart(string kaartnummer, DateTime geldigheidsDatum)
         {
             Kaartnummer = kaartnummer;

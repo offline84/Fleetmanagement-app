@@ -5,13 +5,13 @@ namespace Fleetmanagement_app_Groep1.Entities
 {
     public class Voertuig
     {
-        public Voertuig(string chassisnummer, string merk, string model, Guid brandstofId, Guid categorieId)
+
+        /// <summary>
+        /// Voertuig kan enkel door de Builder aangemaakt worden, hierdoor voorkomen we dat ongeldige data opgevangen wordt 
+        /// en niet leiden zal tot onvolledige gegevens of fouten van het schrijven naar de database.
+        /// </summary>
+        protected internal Voertuig()
         {
-            Chassisnummer = chassisnummer;
-            Merk = merk;
-            Model = model;
-            CategorieId = categorieId;
-            BrandstofId = brandstofId;
         }
 
         [Key]
@@ -43,7 +43,6 @@ namespace Fleetmanagement_app_Groep1.Entities
         [MaxLength(50)]
         public string Kleur { get; set; }
 
-        [Required]
         [MaxLength(2)]
         public int AantalDeuren { get; set; }
 

@@ -1,52 +1,66 @@
 ﻿using Fleetmanagement_app_Groep1.Database;
-using FleetmanagementApp.BUL.Models;
 using Microsoft.Extensions.Logging;
-using AutoMapper;
 using Fleetmanagement_app_Groep1.Entities;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System;
 using Microsoft.EntityFrameworkCore;
 using FleetmanagementApp.BUL.GenericRepository;
+using System.Linq;
 
 namespace FleetmanagementApp.BUL.Repository
 {
-    public class BestuurderRepository : GenericRepository<BestuurderModel>, IBestuurderRepository
+    public class BestuurderRepository : GenericRepository<Bestuurder>, IBestuurderRepository
     {
-        private Mapper _bestuurderMapper;
         private FleetmanagerContext _context;
         public BestuurderRepository(FleetmanagerContext context, ILogger logger) : base(context, logger)
         {
             _context = context;
-            var _configBestuurder = new MapperConfiguration(cfg => cfg.CreateMap<Bestuurder, BestuurderModel>());
-            _bestuurderMapper = new Mapper(_configBestuurder);
         }
 
-        public override async Task<bool> Add(BestuurderModel model)
+        public async Task<bool> Add(Bestuurder bestuurder)
         {
-            throw new NotImplementedException();
+            List<ToewijzingRijbewijsBestuurder> toewijzingen = new List<ToewijzingRijbewijsBestuurder>();
+            bestuurder.Naam = bestuurder.Naam.Trim();
+            bestuurder.Achternaam = bestuurder.Achternaam.Trim();
+            bestuurder.Rijksregisternummer = bestuurder.Rijksregisternummer.Trim();
+
+            if(bestuurder.Rijksregisternummer == "" | 
+                bestuurder.Naam == "" | 
+                bestuurder.Achternaam == "" |
+                bestuurder.GeboorteDatum == null |
+                bestuurder.Rijbewijzen.Count == 0)
+          
+                return false;
+
+            foreach (var rijbewijs in bestuurder.Rijbewijzen)
+            {
+                ToewijzingRijbewijsBestuurder trb = new ToewijzingRijbewijsBestuurder();
+                trb.Rijbewijs = rijbewijs;
+                trb.Bestuurder = bestuurder;
+
+                toewijzingen.Add(trb);
+            }
+
+            await _context.ToewijzingRijbewijsBestuurders.AddRangeAsync(toewijzingen);
+            await _dbSet.AddAsync(bestuurder);
+
+            return true;
         }
 
-        public virtual async Task<bool> Delete(Guid id)
+        public override async Task<IEnumerable<Bestuurder>> GetAll()
         {
-            throw new NotImplementedException();
+            var entiteiten = await _context.Bestuurders.ToListAsync<Bestuurder>();
+            return entiteiten;
         }
 
-        public virtual async Task<IEnumerable<BestuurderModel>> GetAll()
+        public override async Task<Bestuurder> GetById(string id)
         {
-            var entiteiten = await _context.Bestuurders.ToListAsync();
-            var models = _bestuurderMapper.Map<List<Bestuurder>, List<BestuurderModel>>(entiteiten);
-            return models;
+            var bestuurder = await _context.Bestuurders.FindAsync(id);
+            return bestuurder;
         }
 
-        public override async Task<BestuurderModel> GetById(Guid id)
-        {
-            var entiteit = await _context.Bestuurders.FindAsync(id);
-            var model = _bestuurderMapper.Map<Bestuurder, BestuurderModel>(entiteit);
-            return model;
-        }
-
-        public virtual Task<bool> Update(BestuurderModel model)
+        public List<Rijbewijs> GetDriverLicensesForDriver(string rijksregisternummer)
         {
             throw new NotImplementedException();
         }

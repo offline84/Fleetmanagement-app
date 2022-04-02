@@ -40,12 +40,23 @@ namespace FleetmanagementApp.BUL.GenericRepository
             throw new NotImplementedException();
         }
 
+        //Overload van Delete method van de hoofdklassen "id = string"
+        public virtual async Task<bool> Delete(string id)
+        {
+            throw new NotImplementedException();
+        }
+
         public virtual async Task<IEnumerable<T>> GetAll()
         {
             return await _dbSet.ToListAsync();
         }
 
         public virtual async Task<T> GetById(Guid id)
+        {
+            return await _dbSet.FindAsync(id);
+        }
+        //Overload van GetbyId method van de hoofdklassen "id = string"
+        public virtual async Task<T> GetById(string id)
         {
             return await _dbSet.FindAsync(id);
         }
