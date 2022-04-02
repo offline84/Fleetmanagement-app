@@ -10,6 +10,10 @@ namespace Fleetmanagement_app_Groep1.Database
         {
         }
 
+        public FleetmanagerContext(Func<DbContextOptions<FleetmanagerContext>> options)
+        {
+        }
+
         public DbSet<Bestuurder> Bestuurders { get; set; }
         public DbSet<Voertuig> Voertuigen { get; set; }
         public DbSet<Tankkaart> Tankkaarten { get; set; }
@@ -19,10 +23,10 @@ namespace Fleetmanagement_app_Groep1.Database
         public DbSet<ToewijzingBrandstofTankkaart> ToewijzingBrandstofTankkaarten { get; set; }
         public DbSet<ToewijzingRijbewijsBestuurder> ToewijzingRijbewijsBestuurders { get; set; }
 
-        public DbSet<Rijbewijs> GetRijbewijzen { get; set; }
-        public DbSet<Categorie> GetCategories { get; set; }
-        public DbSet<Status> GetStatusen { get; set; }
-        public DbSet<Brandstof> GetBrandstoffen { get; set; }
+        public DbSet<Rijbewijs> Rijbewijs { get; set; }
+        public DbSet<Categorie> Categorie { get; set; }
+        public DbSet<Status> Status { get; set; }
+        public DbSet<Brandstof> Brandstof { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
