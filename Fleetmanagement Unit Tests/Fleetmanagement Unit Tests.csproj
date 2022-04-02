@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Fleetmanagement-app Groep1\Fleetmanagement-app Groep1.csproj" />
     <ProjectReference Include="..\Fleetmanagement-app-DAL\Fleetmanagement-app-DAL.csproj" />
+    <ProjectReference Include="..\FleetmanagementApp.BUL\FleetmanagementApp.BUL.csproj" />
   </ItemGroup>
 
 </Project>

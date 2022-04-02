@@ -1,5 +1,4 @@
 using Fleetmanagement_app_Groep1.Database;
-using FleetmanagementApp.BUL.UnitOfWork;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
@@ -7,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using FleetmanagementApp.BUL.UnitOfWork;
 
 namespace Fleetmanagement_app_Groep1
 {

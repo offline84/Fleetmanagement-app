@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fleetmanagement-app Groep1"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fleetmanagement-app-DAL", "..\Fleetmanagement-app-DAL\Fleetmanagement-app-DAL.csproj", "{267EDA84-8814-4146-B4E4-5F31C0796E9D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetmanagementApp.BUL", "..\..\..\..\..\Desktop\Entities\FleetmanagementApp.BUL\FleetmanagementApp.BUL.csproj", "{59E30144-9246-4C57-B053-8235C651218E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetmanagementApp.BUL", "..\FleetmanagementApp.BUL\FleetmanagementApp.BUL.csproj", "{59E30144-9246-4C57-B053-8235C651218E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fleetmanagement Unit Tests", "..\Fleetmanagement Unit Tests\Fleetmanagement Unit Tests.csproj", "{34DCD292-5D9D-408B-B84F-EB8C4C605973}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fleetmanagement Unit Tests", "..\Fleetmanagement Unit Tests\Fleetmanagement Unit Tests.csproj", "{34DCD292-5D9D-408B-B84F-EB8C4C605973}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
