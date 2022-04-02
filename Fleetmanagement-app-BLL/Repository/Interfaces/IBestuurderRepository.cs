@@ -1,9 +1,9 @@
 ﻿using Fleetmanagement_app_Groep1.Entities;
-using FleetmanagementApp.BUL.GenericRepository;
+using Fleetmanagement_app_BLL.GenericRepository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace FleetmanagementApp.BUL.Repository
+namespace Fleetmanagement_app_BLL.Repository
 {
     public interface IBestuurderRepository : IGenericRepository<Bestuurder>
     {

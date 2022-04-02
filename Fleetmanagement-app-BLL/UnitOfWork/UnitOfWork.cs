@@ -1,10 +1,10 @@
 ﻿using Fleetmanagement_app_Groep1.Database;
-using FleetmanagementApp.BUL.Repository;
+using Fleetmanagement_app_BLL.Repository;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
-namespace FleetmanagementApp.BUL.UnitOfWork
+namespace Fleetmanagement_app_BLL.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork, IDisposable
     {

@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Fleetmanagement-app-BLL.csproj.DotSettings" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="UnitOfWork\" />
   </ItemGroup>
 
@@ -17,10 +21,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="11.0.1" />
   </ItemGroup>
 
 </Project>

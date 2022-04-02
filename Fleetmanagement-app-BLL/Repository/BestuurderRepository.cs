@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System;
 using Microsoft.EntityFrameworkCore;
-using FleetmanagementApp.BUL.GenericRepository;
+using Fleetmanagement_app_BLL.GenericRepository;
 using System.Linq;
 
-namespace FleetmanagementApp.BUL.Repository
+namespace Fleetmanagement_app_BLL.Repository
 {
     public class BestuurderRepository : GenericRepository<Bestuurder>, IBestuurderRepository
     {
