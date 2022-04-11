@@ -20,7 +20,7 @@ namespace Fleetmanagement_app_BLL.Repository
 
         public override async Task<bool> Add(Tankkaart tankkaart)
         {
-            List<ToewijzingBrandstofTankkaart> toewijzingbrandstof = new List<ToewijzingBrandstofTankkaart>();
+            List<ToewijzingBrandstofTankkaart> toewijzingenbrandstof = new List<ToewijzingBrandstofTankkaart>();
             tankkaart.Kaartnummer = tankkaart.Kaartnummer.Trim();
 
             if (tankkaart.GeldigheidsDatum == null | tankkaart.Kaartnummer == "")
@@ -28,25 +28,50 @@ namespace Fleetmanagement_app_BLL.Repository
                 return false;
             }
 
-            await _context.ToewijzingBrandstofTankkaarten.AddRangeAsync(toewijzingbrandstof);
+            foreach (var brandstof in tankkaart.MogelijkeBrandstoffen)
+            {
+                ToewijzingBrandstofTankkaart toewijzingBrandTank = new ToewijzingBrandstofTankkaart();
+                toewijzingBrandTank.Tankkaart = tankkaart;
+                toewijzingBrandTank.Tankkaartnummer = tankkaart.Kaartnummer;
+                //To check
+                toewijzingBrandTank.Brandstof = brandstof.Brandstof;
+                toewijzingBrandTank.BrandstofId = brandstof.Brandstof.Id;
+
+                toewijzingenbrandstof.Add(toewijzingBrandTank);
+            }
+
+            await _context.ToewijzingBrandstofTankkaarten.AddRangeAsync(toewijzingenbrandstof);
             await _dbSet.AddAsync(tankkaart);
 
             return true;
         }
 
-        public override async Task<bool> Delete(string id)
+        public override async Task<bool> Delete(string kaartnummer)
         {
-            throw new NotImplementedException();      
+
+            var tankkaart = await GetById(kaartnummer);
+            tankkaart.IsGearchiveerd = true;
+            foreach (var toewijzingBrandstof in tankkaart.MogelijkeBrandstoffen)
+            {
+                //delete Toewijzingen? Niet nodig denk ik.
+            }
+            // verwijder referentie naar koppeling wel nodig.
+
+            return true;   
         }
 
+        //overrid nodig?
         public override async Task<IEnumerable<Tankkaart>> GetAll()
         {
-            throw new NotImplementedException();
+            var tankkaarten = await _context.Tankkaarten.ToListAsync();
+            return tankkaarten;
         }
 
-        public override async Task<Tankkaart> GetById(string id)
+        //overrid nodig?
+        public override async Task<Tankkaart> GetById(string kaartnummer)
         {
-            throw new NotImplementedException();
+            var tankkaart = await _context.Tankkaarten.FindAsync(kaartnummer);
+            return tankkaart;
         }
 
         public override Task<bool> Update(Tankkaart tankkaart)
@@ -55,6 +80,11 @@ namespace Fleetmanagement_app_BLL.Repository
         }
 
         public override async Task<IEnumerable<Tankkaart>> Find(Expression<Func<Tankkaart, bool>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> Blokkeren(Tankkaart tankkaart)
         {
             throw new NotImplementedException();
         }
