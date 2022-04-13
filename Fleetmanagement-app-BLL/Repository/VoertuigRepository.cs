@@ -1,7 +1,7 @@
-﻿using Fleetmanagement_app_DAL.Builders;
+using Fleetmanagement_app_DAL.Builders;
 using Fleetmanagement_app_DAL.Database;
 using Fleetmanagement_app_DAL.Entities;
-using FleetmanagementApp.BUL.GenericRepository;
+using Fleetmanagement_app_BLL.GenericRepository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
@@ -11,7 +11,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace FleetmanagementApp.BUL.Repository
+namespace Fleetmanagement_app_BLL.Repository
 {
     public class VoertuigRepository : GenericRepository<Voertuig>, IVoertuigRepository
     {

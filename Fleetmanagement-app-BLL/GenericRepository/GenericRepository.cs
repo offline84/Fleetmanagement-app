@@ -7,7 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace FleetmanagementApp.BUL.GenericRepository
+namespace Fleetmanagement_app_BLL.GenericRepository
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {

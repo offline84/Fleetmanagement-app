@@ -1,7 +1,7 @@
 ﻿using Fleetmanagement_app_DAL.Entities;
-using FleetmanagementApp.BUL.GenericRepository;
+using Fleetmanagement_app_BLL.GenericRepository;
 
-namespace FleetmanagementApp.BUL.Repository
+namespace Fleetmanagement_app_BLL.Repository
 {
     public interface ITankkaartRepository : IGenericRepository<Tankkaart>
     {

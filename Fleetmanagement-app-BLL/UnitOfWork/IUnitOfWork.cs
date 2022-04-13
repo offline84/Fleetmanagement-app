@@ -1,7 +1,7 @@
-﻿using FleetmanagementApp.BUL.Repository;
+﻿using Fleetmanagement_app_BLL.Repository;
 using System.Threading.Tasks;
 
-namespace FleetmanagementApp.BUL.UnitOfWork
+namespace Fleetmanagement_app_BLL.UnitOfWork
 {
     public interface IUnitOfWork
     {

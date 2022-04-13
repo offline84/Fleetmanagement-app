@@ -28,7 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Fleetmanagement-app-DAL\Fleetmanagement-app-DAL.csproj" />
-    <ProjectReference Include="..\FleetmanagementApp.BUL\FleetmanagementApp.BUL.csproj" />
+    <ProjectReference Include="..\Fleetmanagement-app-BLL\Fleetmanagement-app-BLL.csproj" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
