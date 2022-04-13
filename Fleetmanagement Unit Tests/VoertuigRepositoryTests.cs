@@ -1,8 +1,8 @@
-﻿using Fleetmanagement_app_DAL.Builders;
+﻿using Fleetmanagement_app_BLL.Repository;
+using Fleetmanagement_app_DAL.Builders;
 using Fleetmanagement_app_DAL.Database;
 using Fleetmanagement_app_DAL.Entities;
 using Fleetmanagement_app_Groep1.Helpers;
-using FleetmanagementApp.BUL.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Linq;
@@ -17,18 +17,16 @@ namespace Fleetmanagement_Unit_Tests
         private ILoggerFactory _loggerFactory = new LoggerFactory();
 
         public VoertuigRepositoryTests()
-        {  
+        {
             _repo = new VoertuigRepository(_context, _loggerFactory.CreateLogger("VoertuigRepositoryTests"));
         }
-
 
         internal Voertuigbuilder GetVoertuig1()
         {
             var brandstof = _context.Brandstof.FirstOrDefault();
-            var status =  _context.Status.Where(s => s.Staat == "in bedrijf").FirstOrDefault();
+            var status = _context.Status.Where(s => s.Staat == "in bedrijf").FirstOrDefault();
             var categorie = _context.Categorie.FirstOrDefault();
-            
-            
+
             var voertuig = new Voertuigbuilder(_repo)
             {
                 Chassisnummer = "VF3 7BRFVE12345678",
@@ -49,10 +47,9 @@ namespace Fleetmanagement_Unit_Tests
         internal Voertuigbuilder GetVoertuig2()
         {
             var brandstof = _context.Brandstof.FirstOrDefault();
-            var status =  _context.Status.Where(s => s.Staat == "in aankoop").FirstOrDefault();
+            var status = _context.Status.Where(s => s.Staat == "in aankoop").FirstOrDefault();
             var categorie = _context.Categorie.FirstOrDefault();
-            
-            
+
             var voertuig = new Voertuigbuilder(_repo)
             {
                 Chassisnummer = "VF3 7BRFVE12345678",
@@ -73,13 +70,12 @@ namespace Fleetmanagement_Unit_Tests
         internal void Cleanup(Voertuig voertuig)
         {
             var distinctVoertuig = _context.Voertuigen.Where(v => v.Chassisnummer == voertuig.Chassisnummer).AsNoTracking().FirstOrDefault();
-            
-            if(distinctVoertuig != null)
+
+            if (distinctVoertuig != null)
             {
                 _context.Voertuigen.Remove(voertuig);
                 _context.SaveChanges();
             }
-            
         }
 
         [Fact]
@@ -109,7 +105,6 @@ namespace Fleetmanagement_Unit_Tests
         [Fact]
         public async void EenChassisnummerMagMaarAan1WagenToegekendZijnEnMaaktToevoegenVanEenTweedeZelfdeOnmogelijk()
         {
-
             var builder = GetVoertuig1();
             var voertuig = builder.Build();
 
@@ -121,18 +116,14 @@ namespace Fleetmanagement_Unit_Tests
             var builder2 = GetVoertuig2();
             var voertuig2 = builder2.Build();
 
-
             var isAdded = await _repo.Add(voertuig2);
 
             Assert.False(isAdded);
-
-
         }
 
         [Fact]
         public void EenNummerplaatMagMaarAan1WagenToegekendZijnEnMaaktToevoegenVanEenTweedeZelfdeOnmogelijk()
         {
-
         }
     }
 }

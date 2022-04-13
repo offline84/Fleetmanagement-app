@@ -10,26 +10,24 @@ namespace Fleetmanagement_app_Groep1.Helpers
     ///     Deze helper omvat het ophalen van de connection string uit de appsettings.json file en wordt via inversion of control geinjecteerd in FleetmanagerContext.
     /// </summary>
     public static class DbContextHelper
-{
+    {
         /// <summary>
         ///     GetDbContextOptions() omvat het ophalen van de connection string uit de appsettings.json file en bouwt de DbContextOption op voor de correcte database (hier: sql).
         /// </summary>
         /// <returns>
         ///     DbContextOptions<FleetmanagerContext>
-        /// </returns> 
+        /// </returns>
 
-    public static DbContextOptions<FleetmanagerContext> GetDbContextOptions()
-    {
-        IConfiguration configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
-            .Build();
+        public static DbContextOptions<FleetmanagerContext> GetDbContextOptions()
+        {
+            IConfiguration configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
 
-
-      return new DbContextOptionsBuilder<FleetmanagerContext>()
-                .EnableSensitiveDataLogging()
-                .UseSqlServer(configuration.GetConnectionString("Default")).Options;
-
+            return new DbContextOptionsBuilder<FleetmanagerContext>()
+                      .EnableSensitiveDataLogging()
+                      .UseSqlServer(configuration.GetConnectionString("Default")).Options;
+        }
     }
-}
 }

@@ -5,6 +5,6 @@ namespace Fleetmanagement_app_DAL.Builders
 {
     public interface IVoertuigBuilderRepository
     {
-        void New( Voertuig voertuig);
+        void New(Voertuig voertuig);
     }
 }

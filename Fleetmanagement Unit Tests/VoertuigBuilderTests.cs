@@ -1,7 +1,7 @@
-﻿using Fleetmanagement_app_DAL.Builders;
+﻿using Fleetmanagement_app_BLL.Repository;
+using Fleetmanagement_app_DAL.Builders;
 using Fleetmanagement_app_DAL.Database;
 using Fleetmanagement_app_Groep1.Helpers;
-using FleetmanagementApp.BUL.Repository;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -15,14 +15,12 @@ namespace Fleetmanagement_Unit_Tests
         private static readonly ILogger _logger;
         private VoertuigRepository _repo = new VoertuigRepository(_context, _logger);
 
-
         internal Voertuigbuilder GetVoertuig1()
         {
             var brandstof = _context.Brandstof.FirstOrDefault();
-            var status =  _context.Status.Where(s => s.Staat == "in bedrijf").FirstOrDefault();
+            var status = _context.Status.Where(s => s.Staat == "in bedrijf").FirstOrDefault();
             var categorie = _context.Categorie.FirstOrDefault();
-            
-            
+
             var voertuig = new Voertuigbuilder(_repo)
             {
                 Chassisnummer = "VF3 7BRFVE12345678",
@@ -40,12 +38,11 @@ namespace Fleetmanagement_Unit_Tests
             return voertuig;
         }
 
-
         [Theory]
         [InlineData("")]
         [InlineData(" ")]
         [InlineData("      ")]
-        public  void StringVariabelenInConstructorMogenNietEmptyZijn(string value)
+        public void StringVariabelenInConstructorMogenNietEmptyZijn(string value)
         {
             var voertuig = GetVoertuig1();
             voertuig.Chassisnummer = value;
@@ -72,7 +69,7 @@ namespace Fleetmanagement_Unit_Tests
             var voertuig = GetVoertuig1();
             voertuig.Categorie = null;
 
-            Assert.False(voertuig.IsValid());            
+            Assert.False(voertuig.IsValid());
             Assert.Throws<InvalidOperationException>(() => voertuig.Build());
         }
 
@@ -82,7 +79,7 @@ namespace Fleetmanagement_Unit_Tests
             var voertuig = GetVoertuig1();
             voertuig.Brandstof = null;
 
-            Assert.False(voertuig.IsValid());          
+            Assert.False(voertuig.IsValid());
             Assert.Throws<InvalidOperationException>(() => voertuig.Build());
         }
 
@@ -96,7 +93,6 @@ namespace Fleetmanagement_Unit_Tests
 
             bouwvoertuig.Status = _context.Status.Where(s => s.Staat == "in aankoop").FirstOrDefault();
             var voertuig = bouwvoertuig.Build();
-           
 
             Assert.NotNull(voertuig);
 
@@ -114,7 +110,6 @@ namespace Fleetmanagement_Unit_Tests
             bouwvoertuig.Status = null;
 
             Assert.Throws<InvalidOperationException>(() => bouwvoertuig.Build());
-
         }
     }
 }

@@ -9,7 +9,9 @@ namespace Fleetmanagement_app_BLL.UnitOfWork
         IVoertuigRepository Voertuig { get; }
         ITankkaartRepository Tankkaart { get; }
         IKoppelingRepository Koppeling { get; }
+
         Task CompleteAsync();
+
         void Dispose();
     }
 }
