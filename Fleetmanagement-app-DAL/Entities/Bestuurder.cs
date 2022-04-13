@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Fleetmanagement_app_Groep1.Entities
+namespace Fleetmanagement_app_DAL.Entities
 {
     public class Bestuurder
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
-namespace Fleetmanagement_app_Groep1.Entities
+namespace Fleetmanagement_app_DAL.Entities
 {
     [Owned]
     public class Adres

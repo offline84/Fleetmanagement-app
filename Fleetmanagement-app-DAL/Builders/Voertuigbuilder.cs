@@ -1,10 +1,9 @@
-﻿using Fleetmanagement_app_Groep1.Entities;
-using FleetmanagementApp.BUL.Repository;
-using Microsoft.Extensions.Logging;
+﻿
+using Fleetmanagement_app_DAL.Entities;
 using System;
 using System.Text;
 
-namespace FleetmanagementApp.BUL.Repository.Builders
+namespace Fleetmanagement_app_DAL.Builders
 {
     public class Voertuigbuilder
     {
@@ -35,21 +34,24 @@ namespace FleetmanagementApp.BUL.Repository.Builders
 
         public Voertuig Build()
         {
-          
+
+            if(Nummerplaat.Trim()== "")
+                    if(Status != null && Status.Staat != "in aankoop")
+                        throw new InvalidOperationException("Geen nummerplaat kan enkel als de status van het voertuig -in aankoop- is. \n" + Error());
+                    else if(Status == null)
+                        throw new InvalidOperationException("Geen nummerplaat kan enkel als de status van het voertuig -in aankoop- is. \n" + Error());
+
+
             if(!IsValid()) 
                 throw new InvalidOperationException(Error());
-
-            if(Nummerplaat.Trim() == "" && Status != null && Status.Staat != "in aankoop")
-                throw new InvalidOperationException("Voertuigen zonder nummerplaat kunnen enkel als deze de status -in aankoop- hebben");
-
 
 
             var result = new Voertuig
             {
-                Chassisnummer = this.Chassisnummer.ToUpper(),
-                Merk = this.Merk,
-                Model = this.Model,
-                Nummerplaat = this.Nummerplaat,
+                Chassisnummer = this.Chassisnummer.ToUpper().Trim(),
+                Merk = this.Merk.Trim(),
+                Model = this.Model.Trim(),
+                Nummerplaat = this.Nummerplaat.Trim(),
                 Brandstof = this.Brandstof,
                 BrandstofId = this.Brandstof.Id,
                 Categorie = this.Categorie,
@@ -57,12 +59,17 @@ namespace FleetmanagementApp.BUL.Repository.Builders
                 AantalDeuren = AantalDeuren.Value,
                 Bouwjaar = this.Bouwjaar.Value,
                 Kleur = this.Kleur,
-                Status = this.Status,
-                StatusId = this.Status.Id,
                 LaatstGeupdate = DateTime.Now,
                 Koppeling = this.Koppeling,
                 
             };
+
+            if(Status != null)
+            {
+                result.Status = this.Status;
+                result.StatusId = this.Status.Id;
+            }
+
             return result;
         }
 
@@ -79,11 +86,11 @@ namespace FleetmanagementApp.BUL.Repository.Builders
         private string Error()
         {
             var errormessage = new StringBuilder();
-            if (Chassisnummer.Trim() == "") errormessage.AppendLine("Model ontbreekt");
-            if (Merk.Trim() == "") errormessage.AppendLine("Merk ontbreekt");
-            if(Chassisnummer.Trim() == "") errormessage.AppendLine("Chassisnummer ontbreekt");
-            if(Categorie == null) errormessage.AppendLine("Categorie / Type wagen ontbreekt");
-            if(Brandstof == null) errormessage.AppendLine("Type brandstof ontbreekt");
+            if (Chassisnummer.Trim() == "") errormessage.AppendLine("Model ontbreekt. \n");
+            if (Merk.Trim() == "") errormessage.AppendLine("Merk ontbreekt. \n");
+            if(Chassisnummer.Trim() == "") errormessage.AppendLine("Chassisnummer ontbreekt. \n");
+            if(Categorie == null) errormessage.AppendLine("Categorie / Type wagen ontbreekt. \n");
+            if(Brandstof == null) errormessage.AppendLine("Type brandstof ontbreekt. \n");
 
             return errormessage.ToString();
             

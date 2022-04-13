@@ -1,4 +1,4 @@
-﻿using Fleetmanagement_app_Groep1.Database;
+﻿using Fleetmanagement_app_DAL.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,6 +13,8 @@ namespace FleetmanagementApp.BUL.GenericRepository
     {
         protected FleetmanagerContext _context;
         internal DbSet<T> _dbSet;
+        private FleetmanagerContext context;
+        private ILogger logger;
         protected readonly ILogger _logger;
 
         public GenericRepository(FleetmanagerContext context, ILogger logger)
@@ -23,9 +25,9 @@ namespace FleetmanagementApp.BUL.GenericRepository
         }
 
 
-        public GenericRepository(FleetmanagerContext fleetmanagerContext)
+        public GenericRepository(FleetmanagerContext context)
         {
-            _context = fleetmanagerContext;
+            _context = context;
             _dbSet = _context.Set<T>();
         }
 

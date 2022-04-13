@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Fleetmanagement_app_Groep1.Entities
+namespace Fleetmanagement_app_DAL.Entities
 {
     public class Voertuig
     {
@@ -54,7 +54,6 @@ namespace Fleetmanagement_app_Groep1.Entities
 
         public bool IsGearchiveerd { get; set; }
 
-        [Timestamp]
         public DateTime LaatstGeupdate { get; set; }
     }
 }
