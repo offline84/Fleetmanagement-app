@@ -1,5 +1,5 @@
-using Fleetmanagement_app_DAL.Database;
 using Fleetmanagement_app_BLL.Repository;
+using Fleetmanagement_app_DAL.Database;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
@@ -26,10 +26,12 @@ namespace Fleetmanagement_app_BLL.UnitOfWork
             Tankkaart = new TankkaartRepository(context, _logger);
             Koppeling = new KoppelingRepository(context, _logger);
         }
+
         public async Task CompleteAsync()
         {
             await _context.SaveChangesAsync();
         }
+
         public void Dispose()
         {
             _context.Dispose();

@@ -1,7 +1,6 @@
-using Fleetmanagement_app_DAL.Builders;
+using Fleetmanagement_app_BLL.GenericRepository;
 using Fleetmanagement_app_DAL.Database;
 using Fleetmanagement_app_DAL.Entities;
-using Fleetmanagement_app_BLL.GenericRepository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
@@ -18,48 +17,47 @@ namespace Fleetmanagement_app_BLL.Repository
         private FleetmanagerContext _context;
         private readonly ILogger _logger;
         private DbSet<Voertuig> _dbSet;
+
         public VoertuigRepository(FleetmanagerContext context, ILogger logger) : base(context, logger)
         {
             _logger = logger;
             _context = context;
             _dbSet = _context.Voertuigen;
         }
-          
+
         /// <summary>
-        ///     Add() voegt het voertuig toe aan de database. 
+        ///     Add() voegt het voertuig toe aan de database.
         /// </summary>
         /// <remarks>
         ///     Let wel: voertuig dient eerst gebouwd te worden via de buildersklasse vooraleer mee te geven aan de method.
         /// </remarks>
         /// <param name="voertuig"></param>
         /// <returns>boolean</returns>
-        /// 
+        ///
         public override async Task<bool> Add(Voertuig voertuig)
         {
             try
             {
-
-                if(_dbSet.Where(v => v.Chassisnummer == voertuig.Chassisnummer).Any())
+                if (_dbSet.Where(v => v.Chassisnummer == voertuig.Chassisnummer).Any())
                 {
-                   _logger.LogWarning("De database bevat reeds een voertuig met hetzelfde chassisnummer!", voertuig.Chassisnummer);
+                    _logger.LogWarning("De database bevat reeds een voertuig met hetzelfde chassisnummer!", voertuig.Chassisnummer);
                     return false;
                 }
-               
-                if(voertuig.Nummerplaat.Trim() != "")
+
+                if (voertuig.Nummerplaat.Trim() != "")
                 {
-                    if(_dbSet.Where(v => v.Nummerplaat.ToUpper() == voertuig.Nummerplaat.ToUpper()).Any())
+                    if (_dbSet.Where(v => v.Nummerplaat.ToUpper() == voertuig.Nummerplaat.ToUpper()).Any())
                     {
                         _logger.LogWarning("De database bevat reeds een voertuig met dezelfde nummerplaat!", voertuig.Nummerplaat);
                         return false;
                     }
                 }
-               
 
-                voertuig.LaatstGeupdate =DateTime.Now;
+                voertuig.LaatstGeupdate = DateTime.Now;
                 await _dbSet.AddAsync(voertuig);
                 return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogWarning(e, e.Message);
                 return false;
@@ -103,9 +101,9 @@ namespace Fleetmanagement_app_BLL.Repository
             voertuig.Merk = voertuig.Merk.Trim();
             voertuig.Model = voertuig.Model.Trim();
 
-            if(voertuig.Chassisnummer == ""| voertuig.Merk == "" | voertuig.Model == "")
+            if (voertuig.Chassisnummer == "" | voertuig.Merk == "" | voertuig.Model == "")
                 return false;
-            
+
             return true;
         }
 
@@ -113,6 +111,5 @@ namespace Fleetmanagement_app_BLL.Repository
         {
             throw new NotImplementedException();
         }
-
     }
 }

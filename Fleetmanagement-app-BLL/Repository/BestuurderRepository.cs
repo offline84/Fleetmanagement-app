@@ -1,18 +1,18 @@
-﻿using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Fleetmanagement_app_BLL.GenericRepository;
 using Fleetmanagement_app_DAL.Database;
 using Fleetmanagement_app_DAL.Entities;
-using Fleetmanagement_app_BLL.GenericRepository;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Fleetmanagement_app_BLL.Repository
 {
     public class BestuurderRepository : GenericRepository<Bestuurder>, IBestuurderRepository
     {
         private FleetmanagerContext _context;
+
         public BestuurderRepository(FleetmanagerContext context, ILogger logger) : base(context, logger)
         {
             _context = context;
@@ -25,12 +25,12 @@ namespace Fleetmanagement_app_BLL.Repository
             bestuurder.Achternaam = bestuurder.Achternaam.Trim();
             bestuurder.Rijksregisternummer = bestuurder.Rijksregisternummer.Trim();
 
-            if(bestuurder.Rijksregisternummer == "" | 
-                bestuurder.Naam == "" | 
+            if (bestuurder.Rijksregisternummer == "" |
+                bestuurder.Naam == "" |
                 bestuurder.Achternaam == "" |
                 bestuurder.GeboorteDatum == null |
                 bestuurder.Rijbewijzen.Count == 0)
-          
+
                 return false;
 
             foreach (var rijbewijs in bestuurder.Rijbewijzen)

@@ -24,7 +24,6 @@ namespace Fleetmanagement_app_BLL.GenericRepository
             _logger = logger;
         }
 
-
         public GenericRepository(FleetmanagerContext context)
         {
             _context = context;
@@ -57,6 +56,7 @@ namespace Fleetmanagement_app_BLL.GenericRepository
         {
             return await _dbSet.FindAsync(id);
         }
+
         //Overload van GetbyId method van de hoofdklassen "id = string"
         public virtual async Task<T> GetById(string id)
         {
