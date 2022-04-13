@@ -1,16 +1,18 @@
-﻿using Fleetmanagement_app_Groep1.Entities;
+﻿using Fleetmanagement_app_DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 
-namespace Fleetmanagement_app_Groep1.Database
+namespace Fleetmanagement_app_DAL.Database
 {
     public class FleetmanagerContext : DbContext
     {
+        /// <summary>
+        /// De FleetmanagerContext klasse verzorgt de connectie met de database d.m.v. DbSets die via deze klasse kunnen aangeroepen worden. 
+        /// Deze klasse erft over van de EFCore klasse DbContext.
+        /// </summary>
+        /// <param name="options"></param>
+        
         public FleetmanagerContext(DbContextOptions<FleetmanagerContext> options) : base(options)
-        {
-        }
-
-        public FleetmanagerContext(Func<DbContextOptions<FleetmanagerContext>> options)
         {
         }
 
@@ -28,6 +30,11 @@ namespace Fleetmanagement_app_Groep1.Database
         public DbSet<Status> Status { get; set; }
         public DbSet<Brandstof> Brandstof { get; set; }
 
+        /// <summary>
+        ///     OnModelCreating verzorgt de correcte relaties tussen de tabellen en seed de nodige tabellen met data.
+        ///     Deze method dient als blueprint voor de migrations.
+        /// </summary>
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Koppeling>(k =>
@@ -75,7 +82,6 @@ namespace Fleetmanagement_app_Groep1.Database
                     t.ToTable("Tankkaarten");
                     t.HasKey(k => k.Kaartnummer);
                     t.Property(p => p.GeldigheidsDatum).IsRequired().HasColumnType("date");
-                    //.HasConversion();
                     t.HasOne(t => t.Koppeling).WithOne(k => k.Tankkaart).HasForeignKey<Koppeling>(k => k.Kaartnummer);
                 });
 

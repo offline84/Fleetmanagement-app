@@ -1,4 +1,3 @@
-using Fleetmanagement_app_Groep1.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
@@ -6,7 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Fleetmanagement_app_BLL.UnitOfWork;
+using FleetmanagementApp.BUL.UnitOfWork;
+using Fleetmanagement_app_DAL.Database;
+using Microsoft.Extensions.Logging;
 
 namespace Fleetmanagement_app_Groep1
 {
@@ -23,6 +24,7 @@ namespace Fleetmanagement_app_Groep1
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddSingleton<ILoggerFactory, LoggerFactory>();
 
             services.AddDbContext<FleetmanagerContext>(options =>
             {

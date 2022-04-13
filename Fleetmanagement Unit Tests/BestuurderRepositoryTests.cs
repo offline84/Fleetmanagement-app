@@ -1,13 +1,9 @@
-using Fleetmanagement_app_Groep1.Database;
-using Fleetmanagement_app_Groep1.Entities;
+using Fleetmanagement_app_DAL.Database;
+using Fleetmanagement_app_DAL.Entities;
 using Fleetmanagement_app_Groep1.Helpers;
-using Fleetmanagement_app_BLL.Repository;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using FleetmanagementApp.BUL.Repository;
 using Microsoft.Extensions.Logging;
-using Moq;
 using System;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Fleetmanagement_Unit_Tests

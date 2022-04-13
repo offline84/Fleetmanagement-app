@@ -1,13 +1,10 @@
-﻿using Fleetmanagement_app_Groep1.Database;
-using Fleetmanagement_app_Groep1.Entities;
+﻿using Fleetmanagement_app_DAL.Builders;
+using Fleetmanagement_app_DAL.Database;
 using Fleetmanagement_app_Groep1.Helpers;
-using Fleetmanagement_app_BLL.Repository;
-using Fleetmanagement_app_BLL.Repository.Builders;
+using FleetmanagementApp.BUL.Repository;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Xunit;
 
 namespace Fleetmanagement_Unit_Tests
@@ -101,7 +98,23 @@ namespace Fleetmanagement_Unit_Tests
             var voertuig = bouwvoertuig.Build();
            
 
-            Assert.IsType<Voertuig>(voertuig);
+            Assert.NotNull(voertuig);
+
+            bouwvoertuig.Nummerplaat = "ABC-123";
+            voertuig = bouwvoertuig.Build();
+
+            Assert.NotNull(voertuig);
+        }
+
+        [Fact]
+        public void GeenStatus_InAankoop_ZonderNummerplaatGeeftFoutmelding()
+        {
+            var bouwvoertuig = GetVoertuig1();
+            bouwvoertuig.Nummerplaat = "";
+            bouwvoertuig.Status = null;
+
+            Assert.Throws<InvalidOperationException>(() => bouwvoertuig.Build());
+
         }
     }
 }

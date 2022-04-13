@@ -1,5 +1,5 @@
-﻿using Fleetmanagement_app_Groep1.Database;
-using Fleetmanagement_app_Groep1.Entities;
+using Fleetmanagement_app_DAL.Database;
+using Fleetmanagement_app_DAL.Entities;
 using Fleetmanagement_app_BLL.GenericRepository;
 using Microsoft.Extensions.Logging;
 

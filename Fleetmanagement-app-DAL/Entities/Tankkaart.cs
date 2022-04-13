@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Fleetmanagement_app_Groep1.Entities
+namespace Fleetmanagement_app_DAL.Entities
 {
     public class Tankkaart
     {

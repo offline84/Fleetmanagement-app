@@ -1,9 +1,7 @@
-﻿using Fleetmanagement_app_Groep1.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Fleetmanagement_app_DAL.Entities;
 
-namespace Fleetmanagement_app_BLL.Repository
+namespace Fleetmanagement_app_DAL.Builders
+
 {
     public interface IVoertuigBuilderRepository
     {

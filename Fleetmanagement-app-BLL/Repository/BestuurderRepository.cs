@@ -1,10 +1,10 @@
-﻿using Fleetmanagement_app_Groep1.Database;
-using Microsoft.Extensions.Logging;
-using Fleetmanagement_app_Groep1.Entities;
+﻿using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System;
 using Microsoft.EntityFrameworkCore;
+using Fleetmanagement_app_DAL.Database;
+using Fleetmanagement_app_DAL.Entities;
 using Fleetmanagement_app_BLL.GenericRepository;
 using System.Linq;
 
