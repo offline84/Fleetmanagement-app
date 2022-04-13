@@ -14,8 +14,15 @@ namespace Fleetmanagement_Unit_Tests
     public class TankkaartRepositoryTests
     {
         private static FleetmanagerContext _context = new FleetmanagerContext(DbContextHelper.GetDbContextOptions());
-        private static readonly ILogger _logger;
-        private TankkaartRepository _TankkaartRepository = new TankkaartRepository(_context, _logger);
+        private ILoggerFactory _loggerfactory = new LoggerFactory();
+        //public ILogger _logger;
+        private TankkaartRepository _repo; // = new TankkaartRepository(_context, _logger);
+
+        public TankkaartRepositoryTests()
+        {
+            ILoggerFactory loggerfactory = new LoggerFactory();
+            _repo = new TankkaartRepository(_context, _loggerfactory.CreateLogger("Tankkartlogs"));
+        }
 
         internal Tankkaart TestCreateTankkaart(string kaartnummer, DateTime geldigheidsDatum, int pincode)
         {
@@ -34,7 +41,7 @@ namespace Fleetmanagement_Unit_Tests
             var tankkaart = TestCreateTankkaart(kaartnummer, geldigheidsDatum, pincode);
 
             Assert.NotNull(tankkaart);
-            Assert.True(await _TankkaartRepository.Add(tankkaart));
+            Assert.True(await _repo.Add(tankkaart));
         }
 
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fleetmanagement_app_Groep1.Entities
 {
@@ -22,7 +23,10 @@ namespace Fleetmanagement_app_Groep1.Entities
         public int Pincode { get; set; }
 
         public virtual ICollection<ToewijzingBrandstofTankkaart> MogelijkeBrandstoffen { get; set; }
-            = new List<ToewijzingBrandstofTankkaart>();
+
+        [NotMapped()]
+        public virtual ICollection<Brandstof> Brandstoffen { get; set; }
+            = new List<Brandstof>();
 
         public virtual Koppeling Koppeling { get; set; }
 
