@@ -1,4 +1,4 @@
-using Fleetmanagement_app_Groep1.Database;
+using Fleetmanagement_app_DAL.Database;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

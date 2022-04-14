@@ -1,4 +1,4 @@
-﻿using Fleetmanagement_app_Groep1.Database;
+﻿using Fleetmanagement_app_DAL.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,6 +13,8 @@ namespace Fleetmanagement_app_BLL.GenericRepository
     {
         protected FleetmanagerContext _context;
         internal DbSet<T> _dbSet;
+        private FleetmanagerContext context;
+        private ILogger logger;
         protected readonly ILogger _logger;
 
         public GenericRepository(FleetmanagerContext context, ILogger logger)
@@ -22,10 +24,9 @@ namespace Fleetmanagement_app_BLL.GenericRepository
             _logger = logger;
         }
 
-
-        public GenericRepository(FleetmanagerContext fleetmanagerContext)
+        public GenericRepository(FleetmanagerContext context)
         {
-            _context = fleetmanagerContext;
+            _context = context;
             _dbSet = _context.Set<T>();
         }
 
@@ -55,6 +56,7 @@ namespace Fleetmanagement_app_BLL.GenericRepository
         {
             return await _dbSet.FindAsync(id);
         }
+
         //Overload van GetbyId method van de hoofdklassen "id = string"
         public virtual async Task<T> GetById(string id)
         {

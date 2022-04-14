@@ -1,13 +1,8 @@
-using Fleetmanagement_app_Groep1.Database;
-using Fleetmanagement_app_Groep1.Entities;
+using Fleetmanagement_app_DAL.Database;
+using Fleetmanagement_app_DAL.Entities;
 using Fleetmanagement_app_Groep1.Helpers;
-using Fleetmanagement_app_BLL.Repository;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Moq;
 using System;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Fleetmanagement_Unit_Tests
@@ -20,7 +15,7 @@ namespace Fleetmanagement_Unit_Tests
 
         internal Bestuurder GetBestuurder1()
         {
-            var bestuurder = new Bestuurder("Maiko", "Samyn", new DateTime(17/06/1984), "84061703993");
+            var bestuurder = new Bestuurder("Maiko", "Samyn", new DateTime(17 / 06 / 1984), "84061703993");
 
             Adres adres = new Adres()
             {
@@ -31,28 +26,27 @@ namespace Fleetmanagement_Unit_Tests
             };
 
             bestuurder.Adres = adres;
-            Rijbewijs r = new Rijbewijs(){TypeRijbewijs = "X++"};
+            Rijbewijs r = new Rijbewijs() { TypeRijbewijs = "X++" };
 
             bestuurder.Rijbewijzen.Add(r);
 
             return bestuurder;
         }
-       
+
         [Fact]
         public async void AddingBestuurderToDBTest()
         {
             //Arrange
-            
+
             var bestuurder = this.GetBestuurder1();
-            
+
             // Assert
 
             Assert.NotNull(bestuurder);
             Assert.Equal(61, bestuurder.Adres.Huisnummer);
 
-            Assert.True(await _bestuurdersRepository.Add(bestuurder)); 
+            Assert.True(await _bestuurdersRepository.Add(bestuurder));
         }
-
 
         [Fact]
         public async void BestuurderMoetNaamHebbenTest()

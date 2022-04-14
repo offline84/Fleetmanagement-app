@@ -1,13 +1,12 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Fleetmanagement_app_Groep1.Entities
+namespace Fleetmanagement_app_DAL.Entities
 {
     public class Voertuig
     {
-
         /// <summary>
-        /// Voertuig kan enkel door de Builder aangemaakt worden, hierdoor voorkomen we dat ongeldige data opgevangen wordt 
+        /// Voertuig kan enkel door de Builder aangemaakt worden, hierdoor voorkomen we dat ongeldige data opgevangen wordt
         /// en niet leiden zal tot onvolledige gegevens of fouten van het schrijven naar de database.
         /// </summary>
         protected internal Voertuig()
@@ -54,7 +53,6 @@ namespace Fleetmanagement_app_Groep1.Entities
 
         public bool IsGearchiveerd { get; set; }
 
-        [Timestamp]
         public DateTime LaatstGeupdate { get; set; }
     }
 }
