@@ -24,7 +24,6 @@ namespace Fleetmanagement_app_Groep1
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddSingleton<ILoggerFactory, LoggerFactory>();
 
             services.AddDbContext<FleetmanagerContext>(options =>
             {

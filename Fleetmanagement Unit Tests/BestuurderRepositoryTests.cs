@@ -1,3 +1,4 @@
+using Fleetmanagement_app_BLL.Repository;
 using Fleetmanagement_app_DAL.Database;
 using Fleetmanagement_app_DAL.Entities;
 using Fleetmanagement_app_Groep1.Helpers;
@@ -9,7 +10,7 @@ namespace Fleetmanagement_Unit_Tests
 {
     public class BestuurderRepositoryTests
     {
-        private static FleetmanagerContext _context = new FleetmanagerContext(DbContextHelper.GetDbContextOptions());
+        private static FleetmanagerContext _context = new FleetmanagerContext(DbContextHelper.GetDbContextOptions("Testing"));
         private static readonly ILogger _logger;
         private BestuurderRepository _bestuurdersRepository = new BestuurderRepository(_context, _logger);
 

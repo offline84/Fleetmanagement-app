@@ -18,7 +18,7 @@ namespace Fleetmanagement_app_Groep1.Helpers
         ///     DbContextOptions<FleetmanagerContext>
         /// </returns>
 
-        public static DbContextOptions<FleetmanagerContext> GetDbContextOptions()
+        public static DbContextOptions<FleetmanagerContext> GetDbContextOptions(string databaseName)
         {
             IConfiguration configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -27,7 +27,7 @@ namespace Fleetmanagement_app_Groep1.Helpers
 
             return new DbContextOptionsBuilder<FleetmanagerContext>()
                       .EnableSensitiveDataLogging()
-                      .UseSqlServer(configuration.GetConnectionString("Default")).Options;
+                      .UseSqlServer(configuration.GetConnectionString(databaseName)).Options;
         }
     }
 }

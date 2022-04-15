@@ -1,4 +1,5 @@
 using Fleetmanagement_app_BLL.GenericRepository;
+using Fleetmanagement_app_DAL.Builders;
 using Fleetmanagement_app_DAL.Database;
 using Fleetmanagement_app_DAL.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -27,13 +28,14 @@ namespace Fleetmanagement_app_BLL.Repository
 
         /// <summary>
         ///     Add() voegt het voertuig toe aan de database.
+        ///     BulkAdds zijn niet geimplementeerd.
         /// </summary>
         /// <remarks>
         ///     Let wel: voertuig dient eerst gebouwd te worden via de buildersklasse vooraleer mee te geven aan de method.
         /// </remarks>
         /// <param name="voertuig"></param>
         /// <returns>boolean</returns>
-        ///
+
         public override async Task<bool> Add(Voertuig voertuig)
         {
             try
@@ -65,14 +67,27 @@ namespace Fleetmanagement_app_BLL.Repository
         }
 
         /// <summary>
-        ///     Overload van Delete method van de hoofdklassen "id = string"
+        ///     Archiveert het voertuig.
         /// </summary>
         /// <param string ="chassisnummer"></param>
         /// <returns> boolean </returns>
 
         public override async Task<bool> Delete(string chassisnummer)
         {
-            throw new NotImplementedException();
+            var voertuig = await GetById(chassisnummer);
+            voertuig.IsGearchiveerd = true;
+
+            try
+            {
+                _dbSet.Update(voertuig);
+            }
+            catch(Exception e)
+            {
+                _logger.LogError("Deleting voertuig {chassisnummer} gave error", e);
+                return false;
+            }
+
+            return true;
         }
 
         public override async Task<IEnumerable<Voertuig>> GetAll()
@@ -85,9 +100,52 @@ namespace Fleetmanagement_app_BLL.Repository
             return await _dbSet.FindAsync(chassisnummer);
         }
 
+        /// <summary>
+        ///     Deze method past de gegevens van een bestaand voertuig aan.
+        /// </summary>
+        /// <remarks>
+        ///     Eerst wordt er nagegaan of het voertuig de benodigde parameters bevat. 
+        ///     Vervolgens wordt
+        ///     <code>
+        ///         voertuig.LaatstGeupdate = DateTime.Now;
+        ///         voertuig.CategorieId = voertuig.Categorie.Id;
+        ///         voertuig.BrandstofId = voertuig.Brandstof.Id;
+        ///         if(voertuig.Status != null)
+        ///         voertuig.StatusId = voertuig.Status.Id;
+        ///     </code>
+        ///     uitgevoerd om de properties te corrigeren indien nodig.
+        ///     Tot slot wordt er nagegaan of het voertuig reeds bestaat in de database, indien niet zal de update niet uitgevoerd worden.
+        /// </remarks>
+        /// <param name="voertuig"></param>
+        /// <returns>bool</returns>
         public override Task<bool> Update(Voertuig voertuig)
         {
-            throw new NotImplementedException();
+            if (!RequiredPropertiesCheck(voertuig))
+            {
+                return Task.FromResult(false);
+            }
+
+            voertuig.LaatstGeupdate = DateTime.Now;
+            voertuig.CategorieId = voertuig.Categorie.Id;
+            voertuig.BrandstofId = voertuig.Brandstof.Id;
+            if(voertuig.Status != null)
+                voertuig.StatusId = voertuig.Status.Id;
+
+
+            try
+            {
+                var voertuigToUpdate = _context.Voertuigen.Where(v => v.Chassisnummer == voertuig.Chassisnummer).First();
+
+                _dbSet.Update(voertuigToUpdate).CurrentValues.SetValues(voertuig);
+
+                return Task.FromResult(true);
+            }
+            catch(Exception e)
+            {
+                _logger.LogError("Something went wrong while updating voertuig {voertuig.Chassisnummer}", e);
+                return Task.FromResult(false);
+            }
+
         }
 
         public override async Task<IEnumerable<Voertuig>> Find(Expression<Func<Voertuig, bool>> predicate)
@@ -95,21 +153,40 @@ namespace Fleetmanagement_app_BLL.Repository
             return await _dbSet.Where(predicate).ToListAsync();
         }
 
+
+        /// <summary>
+        ///     Deze Method controleert of de verplichte velden al dan niet zijn ingevuld.
+        /// </summary>
+        /// <param name="voertuig"></param>
+        /// <returns>boolean</returns>
         public bool RequiredPropertiesCheck(Voertuig voertuig)
         {
             voertuig.Chassisnummer = voertuig.Chassisnummer.Trim().ToUpper();
             voertuig.Merk = voertuig.Merk.Trim();
             voertuig.Model = voertuig.Model.Trim();
 
-            if (voertuig.Chassisnummer == "" | voertuig.Merk == "" | voertuig.Model == "")
+            if (voertuig.Chassisnummer == "" | voertuig.Merk == "" | voertuig.Model == "" | voertuig.Categorie == null | voertuig.Brandstof == null)
+            {
+                _logger.LogWarning("one or more required fields for update are empty: voertuig.Merk, voertuig.Model, voertuig.Nummerplaat, voertuig.Categorie, voertuig.Brandstof",
+                    voertuig.Merk, voertuig.Model, voertuig.Nummerplaat, voertuig.Categorie, voertuig.Brandstof);
+
                 return false;
+            }
+
+            if(voertuig.Status == null && voertuig.Nummerplaat.Trim() == "")
+            {
+                _logger.LogWarning("Licenseplate cannot be Empty for update");
+                return false;
+            }
+
+            if(voertuig.Status != null && voertuig.Status.Staat != "aankoop" && voertuig.Nummerplaat.Trim() == "")
+            {
+                _logger.LogWarning("Licenseplate cannot be Empty for update");
+                return false;
+            }
+
 
             return true;
-        }
-
-        public void New(Voertuig voertuig)
-        {
-            throw new NotImplementedException();
         }
     }
 }
