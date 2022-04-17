@@ -2,6 +2,7 @@
 using Fleetmanagement_app_DAL.Builders;
 using Fleetmanagement_app_DAL.Database;
 using Fleetmanagement_app_Groep1.Helpers;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -11,9 +12,18 @@ namespace Fleetmanagement_Unit_Tests
 {
     public class VoertuigBuilderTests
     {
-        private static FleetmanagerContext _context = new FleetmanagerContext(DbContextHelper.GetDbContextOptions());
+        private static FleetmanagerContext _context = new FleetmanagerContext(DbContextHelper.GetDbContextOptions("Testing"));
         private static readonly ILogger _logger;
         private VoertuigRepository _repo = new VoertuigRepository(_context, _logger);
+
+        public VoertuigBuilderTests()
+        {
+             if (!_context.Database.CanConnect())
+            {
+                _context.Database.EnsureCreated();
+                _context.Database.Migrate();
+            }
+        }
 
         internal Voertuigbuilder GetVoertuig1()
         {
@@ -91,7 +101,7 @@ namespace Fleetmanagement_Unit_Tests
 
             Assert.Throws<InvalidOperationException>(() => bouwvoertuig.Build());
 
-            bouwvoertuig.Status = _context.Status.Where(s => s.Staat == "in aankoop").FirstOrDefault();
+            bouwvoertuig.Status = _context.Status.Where(s => s.Staat == "aankoop").FirstOrDefault();
             var voertuig = bouwvoertuig.Build();
 
             Assert.NotNull(voertuig);

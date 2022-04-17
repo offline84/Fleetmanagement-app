@@ -34,7 +34,7 @@ namespace Fleetmanagement_app_DAL.Builders
         public Voertuig Build()
         {
             if (Nummerplaat.Trim() == "")
-                if (Status != null && Status.Staat != "in aankoop")
+                if (Status != null && Status.Staat != "aankoop")
                     throw new InvalidOperationException("Geen nummerplaat kan enkel als de status van het voertuig -in aankoop- is. \n" + Error());
                 else if (Status == null)
                     throw new InvalidOperationException("Geen nummerplaat kan enkel als de status van het voertuig -in aankoop- is. \n" + Error());

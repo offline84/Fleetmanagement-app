@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fleetmanagement Unit Tests"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fleetmanagement-app-BLL", "..\Fleetmanagement-app-BLL\Fleetmanagement-app-BLL.csproj", "{517082AA-A77F-4DEC-8E37-B880EC23D5B4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FleetManagement-app-PL", "..\FleetManagement-app-PL\FleetManagement-app-PL.csproj", "{9620DCE1-7A8E-424F-967C-ECC86699243B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{517082AA-A77F-4DEC-8E37-B880EC23D5B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{517082AA-A77F-4DEC-8E37-B880EC23D5B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{517082AA-A77F-4DEC-8E37-B880EC23D5B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9620DCE1-7A8E-424F-967C-ECC86699243B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9620DCE1-7A8E-424F-967C-ECC86699243B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9620DCE1-7A8E-424F-967C-ECC86699243B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9620DCE1-7A8E-424F-967C-ECC86699243B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
