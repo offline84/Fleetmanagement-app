@@ -16,13 +16,11 @@ namespace Fleetmanagement_app_BLL.Repository
     {
         private FleetmanagerContext _context;
         private readonly ILogger _logger;
-        private DbSet<Voertuig> _dbSet;
 
         public VoertuigRepository(FleetmanagerContext context, ILogger logger) : base(context, logger)
         {
             _logger = logger;
             _context = context;
-            _dbSet = _context.Voertuigen;
         }
 
         /// <summary>
@@ -88,10 +86,13 @@ namespace Fleetmanagement_app_BLL.Repository
 
             return true;
         }
-
-        public override async Task<IEnumerable<Voertuig>> GetAll()
+        public async override Task<IEnumerable<Voertuig>> GetAllArchived()
         {
-            return await _dbSet.ToListAsync();
+            return await _dbSet.Where(v => v.IsGearchiveerd == true).ToListAsync();
+        }
+        public async override Task<IEnumerable<Voertuig>> GetAllActive()
+        {
+            return await _dbSet.Where(v => v.IsGearchiveerd == false).ToListAsync();
         }
 
         public override async Task<Voertuig> GetById(string chassisnummer)

@@ -23,7 +23,7 @@ namespace Fleetmanagement_app_Groep1
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+           
 
             services.AddDbContext<FleetmanagerContext>(options =>
             {
@@ -31,7 +31,10 @@ namespace Fleetmanagement_app_Groep1
                 options.UseSqlServer(Configuration.GetConnectionString("Default"));
             });
 
-            services.AddControllers().AddApplicationPart(typeof(IServiceCollection).Assembly);
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddSingleton<ILoggerFactory, LoggerFactory>();
+
+            services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
