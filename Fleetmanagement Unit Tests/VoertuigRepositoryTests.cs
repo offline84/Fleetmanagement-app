@@ -129,7 +129,51 @@ namespace Fleetmanagement_Unit_Tests
 
         }
 
-        
+        [Fact]
+        public async void GetAllArchivedGeeftEnkelGearchiveerdeVoertuigenWeer()
+        {
+            Cleanup();
+
+            var builder = GetVoertuig1();
+            var voertuig1 = builder.Build(); 
+            await _repo.Add(voertuig1);
+            await _context.SaveChangesAsync();
+
+            var b2 = GetVoertuig2();
+            var voertuig2 = b2.Build();
+            await _repo.Add(voertuig2);
+            await _context.SaveChangesAsync();
+
+            await _repo.Delete(voertuig1.Chassisnummer);
+            await _context.SaveChangesAsync();
+
+            var archived = await _repo.GetAllArchived();
+            Assert.Single(archived);
+            Assert.Equal(archived.First().Nummerplaat, voertuig1.Nummerplaat);
+        }
+
+        [Fact]
+        public async void GetAllActiveGeeftEnkelActieveVoertuigenWeer()
+        {
+            Cleanup();
+
+            var builder = GetVoertuig1();
+            var voertuig1 = builder.Build(); 
+            await _repo.Add(voertuig1);
+            await _context.SaveChangesAsync();
+
+            var b2 = GetVoertuig2();
+            var voertuig2 = b2.Build();
+            await _repo.Add(voertuig2);
+            await _context.SaveChangesAsync();
+
+            await _repo.Delete(voertuig1.Chassisnummer);
+            await _context.SaveChangesAsync();
+
+            var active = await _repo.GetAllActive();
+            Assert.Single(active);
+            Assert.Equal(active.First().Nummerplaat, voertuig2.Nummerplaat);
+        }
 
         [Fact]
         public async void EenChassisnummerMagMaarAan1WagenToegekendZijnEnMaaktToevoegenVanEenTweedeZelfdeOnmogelijk()

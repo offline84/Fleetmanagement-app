@@ -72,5 +72,15 @@ namespace Fleetmanagement_app_BLL.GenericRepository
         {
             return await _dbSet.Where(predicate).ToListAsync();
         }
+
+        public virtual Task<IEnumerable<T>> GetAllActive()
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual Task<IEnumerable<T>> GetAllArchived()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

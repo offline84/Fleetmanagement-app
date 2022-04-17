@@ -25,7 +25,7 @@ namespace Fleetmanagement_app_BLL.Repository
             bestuurder.Achternaam = bestuurder.Achternaam.Trim();
             bestuurder.Rijksregisternummer = bestuurder.Rijksregisternummer.Trim();
 
-            if (bestuurder.Rijksregisternummer == "" |
+            if (string.IsNullOrEmpty(bestuurder.Rijksregisternummer) |
                 bestuurder.Naam == "" |
                 bestuurder.Achternaam == "" |
                 bestuurder.GeboorteDatum == null |

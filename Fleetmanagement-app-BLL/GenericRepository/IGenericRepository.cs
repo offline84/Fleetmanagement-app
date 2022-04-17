@@ -9,6 +9,10 @@ namespace Fleetmanagement_app_BLL.GenericRepository
     {
         Task<IEnumerable<T>> GetAll();
 
+        Task<IEnumerable<T>> GetAllActive();
+
+        Task<IEnumerable<T>> GetAllArchived();
+
         Task<T> GetById(Guid id);
 
         Task<T> GetById(string id);
