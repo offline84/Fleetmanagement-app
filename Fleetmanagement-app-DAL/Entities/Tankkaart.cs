@@ -16,7 +16,7 @@ namespace Fleetmanagement_app_DAL.Entities
         [Key]
         public string Kaartnummer { get; set; }
 
-        [Timestamp]
+        //[Timestamp]
         public DateTime GeldigheidsDatum { get; set; }
 
         [MaxLength(8), MinLength(4)]
@@ -34,7 +34,7 @@ namespace Fleetmanagement_app_DAL.Entities
 
         public bool IsGearchiveerd { get; set; }
 
-        [Timestamp]
+        //[Timestamp]
         public DateTime LaatstGeupdate { get; set; }
     }
 }
