@@ -28,7 +28,7 @@ namespace Fleetmanagement_app_DAL.Entities
 
         public virtual Adres Adres { get; set; }
 
-        [Timestamp]
+        //[Timestamp]
         public DateTime GeboorteDatum { get; set; }
 
         public virtual ICollection<ToewijzingRijbewijsBestuurder> ToewijzingenRijbewijs { get; set; }
@@ -41,7 +41,7 @@ namespace Fleetmanagement_app_DAL.Entities
 
         public bool IsGearchiveerd { get; set; }
 
-        [Timestamp]
+        //[Timestamp]
         public DateTime LaatstGeupdate { get; set; }
     }
 }

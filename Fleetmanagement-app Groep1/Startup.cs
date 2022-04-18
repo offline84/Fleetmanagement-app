@@ -24,7 +24,6 @@ namespace Fleetmanagement_app_Groep1
         public void ConfigureServices(IServiceCollection services)
         {
            
-
             services.AddDbContext<FleetmanagerContext>(options =>
             {
                 //Ophalen van connectionstring uit database
@@ -33,6 +32,7 @@ namespace Fleetmanagement_app_Groep1
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<ILoggerFactory, LoggerFactory>();
+            services.AddAutoMapper(typeof(Startup));
 
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
