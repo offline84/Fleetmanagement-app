@@ -43,7 +43,11 @@ namespace Fleetmanagement_app_BLL.Repository
                     _logger.LogWarning("Tankkaart_Add: Start Brandstof toewijzingen");
                     foreach (var brandstof in tankkaart.MogelijkeBrandstoffen)
                     {
-                        if(!_context.Brandstof.Where(b => b.TypeBrandstof == brandstof.Brandstof.TypeBrandstof).Any())
+                        if(_context.Brandstof.Where(b => b.TypeBrandstof == brandstof.Brandstof.TypeBrandstof).Any())
+                        {
+                            tankkaart.Brandstoffen.Add(brandstof.Brandstof);
+                        }
+                        else
                         {
                             _logger.LogWarning("Tankkaart_Add: Branstof met Type " + brandstof.Brandstof.TypeBrandstof + "bestaat niet");
                             return false;
@@ -51,15 +55,22 @@ namespace Fleetmanagement_app_BLL.Repository
                     }
                 }
 
-                tankkaart.LaatstGeupdate = DateTime.Now;
-                await _dbSet.AddAsync(tankkaart);
-                _logger.LogWarning("Tankkaart_Add: Tankkaart toegevoegd aan Database");
-
+                try
+                {
+                    tankkaart.LaatstGeupdate = DateTime.Now;
+                    await _dbSet.AddAsync(tankkaart);
+                    _logger.LogWarning("Tankkaart_Add: Tankkaart toegevoegd aan Database");
+                }
+                catch(Exception e)
+                {
+                    _logger.LogError("Tankkaart_Add: Er is iets foutgelopen bij het aanmaken van tankkaart in de DB", e);
+                    return false;
+                }
                 return true;
             }
             catch (Exception e)
             {
-                _logger.LogWarning(e, "Tankkaart_Add: " + e.Message);
+                _logger.LogWarning("Tankkaart_Add: Er is iets foutgelopen bij het aanmeken in de DB", e);
                 return false;
             }
         }
@@ -70,57 +81,78 @@ namespace Fleetmanagement_app_BLL.Repository
 
             var tankkaart = await GetById(kaartnummer);
             tankkaart.IsGearchiveerd = true;
-            _logger.LogWarning("Tankkaart_Delete: IsGearchiveerd is true");
 
-            // verwijder referentie naar koppeling.
+            try
+            {
+                tankkaart.LaatstGeupdate = DateTime.Now;
+                _dbSet.Update(tankkaart);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("Tankkaart_Delete: tankkaart {kaartnummer} niet gedelete", e);
+                return false;
+            }
+
+            // TODO verwijder referentie naar koppeling.
             _logger.LogWarning("Tankkaart_Delete: Tankkaart van koppeling gehaald");
 
             _logger.LogWarning("Tankkaart_Delete: Einde van Methode");
             return true;
         }
 
+
         public async Task<IEnumerable<Tankkaart>> GetAllActief()
         {
-            var alleTankkaarten = await GetAll();
-            var activeTankkaarten = new List<Tankkaart>();
-            foreach (var tankkaart in alleTankkaarten)
-            {
-                if (tankkaart.IsGearchiveerd == false)
-                {
-                    activeTankkaarten.Add(tankkaart);
-                }
-            }
-            return activeTankkaarten;
+            return await _dbSet.Where(t => t.IsGearchiveerd == false).ToListAsync();
         }
 
         public override async Task<bool> Update(Tankkaart tankkaart)
         {
             if (VerplichteVeldenLeeg(tankkaart))
             {
-                _logger.LogWarning("Tankkaart_Add: GeldigheidsDatum of Kaartnummer zijn leeg");
+                _logger.LogWarning("Tankkaart_Update: GeldigheidsDatum of Kaartnummer zijn leeg");
                 return false;
             }
 
             if (_dbSet.Where(t => t.Kaartnummer == tankkaart.Kaartnummer).Any())
             {
-                _logger.LogWarning("Tankkaart_Add: Er bestaat al een kaart met nummer " + tankkaart.Kaartnummer);
+                _logger.LogWarning("Tankkaart_Update: Er bestaat al een kaart met nummer " + tankkaart.Kaartnummer);
                 return false;
             }
-            tankkaart.LaatstGeupdate = DateTime.Now;
-            _dbSet.Update(tankkaart);
+
+            try
+            {
+                var tankkaartToUpdate = _context.Tankkaarten.Where(t => t.Kaartnummer == tankkaart.Kaartnummer).First();
+                _dbSet.Update(tankkaartToUpdate).CurrentValues.SetValues(tankkaart);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("Tankkaart_Update: Er is iets foutgelopen bij het updaten van tankkaart {kaartnummer} in de DB", e);
+                return false;
+            }
             return true;
         }
 
         public override async Task<IEnumerable<Tankkaart>> Find(Expression<Func<Tankkaart, bool>> predicate)
         {
-            throw new NotImplementedException();
+            return await _dbSet.Where(predicate).ToListAsync();
         }
 
         public async Task<bool> Blokkeren(string kaartnummer)
         {
             var tankkaart = await GetById(kaartnummer);
             tankkaart.IsGeblokkeerd = true;
-            _dbSet.Update(tankkaart);
+
+            try
+            {
+                tankkaart.LaatstGeupdate = DateTime.Now;
+                _dbSet.Update(tankkaart);
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning("Tankkaart_Blokeren: Er is iets foutgelopen bij updaten en blokeren van tankkaart {kaartnummer} in de DB", e);
+                return false;
+            }
             return true;
         }
 
