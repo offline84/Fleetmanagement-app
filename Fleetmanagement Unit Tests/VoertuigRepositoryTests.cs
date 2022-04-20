@@ -36,7 +36,7 @@ namespace Fleetmanagement_Unit_Tests
             var status = _context.Status.Where(s => s.Staat == "in bedrijf").FirstOrDefault();
             var categorie = _context.Categorie.FirstOrDefault();
 
-            var voertuig = new Voertuigbuilder(_repo)
+            var voertuig = new Voertuigbuilder()
             {
                 Chassisnummer = "VF37BRFVE12345678",
                 Merk = "Ford",
@@ -59,7 +59,7 @@ namespace Fleetmanagement_Unit_Tests
             var status = _context.Status.Where(s => s.Staat == "aankoop").FirstOrDefault();
             var categorie = _context.Categorie.FirstOrDefault();
 
-            var voertuig = new Voertuigbuilder(_repo)
+            var voertuig = new Voertuigbuilder()
             {
                 Chassisnummer = "WB66RFDE87654321",
                 Merk = "Opel",
