@@ -76,6 +76,7 @@ namespace Fleetmanagement_app_BLL.Repository
             if (voertuig != null)
             {
                 voertuig.IsGearchiveerd = true;
+                voertuig.LaatstGeupdate = DateTime.Now;
 
                 try
                 {
