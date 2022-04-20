@@ -8,6 +8,9 @@ namespace Fleetmanagement_app_BLL.UnitOfWork
         IBestuurderRepository Bestuurder { get; }
         IVoertuigRepository Voertuig { get; }
         ITankkaartRepository Tankkaart { get; }
+        IBrandstofRepository Brandstof { get; }
+        ICategorieRepository Categorie { get; }
+        IStatusRepository Status { get; }
         IKoppelingRepository Koppeling { get; }
 
         Task CompleteAsync();

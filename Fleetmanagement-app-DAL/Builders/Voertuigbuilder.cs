@@ -6,12 +6,6 @@ namespace Fleetmanagement_app_DAL.Builders
 {
     public class Voertuigbuilder
     {
-        private readonly IVoertuigBuilderRepository _repo;
-
-        public Voertuigbuilder(IVoertuigBuilderRepository repo)
-        {
-            this._repo = repo;
-        }
 
         public string Chassisnummer { get; set; }
 
