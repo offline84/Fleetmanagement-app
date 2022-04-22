@@ -14,7 +14,7 @@ namespace Fleetmanagement_Unit_Tests
 {
     public class TankkaartRepositoryTests
     {
-        private static FleetmanagerContext _context = new FleetmanagerContext(DbContextHelper.GetDbContextOptions("Default"));
+        private static FleetmanagerContext _context = new FleetmanagerContext(DbContextHelper.GetDbContextOptions("Testing"));
         private ILoggerFactory _loggerfactory = new LoggerFactory();
         private TankkaartRepository _repo;
 
