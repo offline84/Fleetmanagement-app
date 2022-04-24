@@ -1,8 +1,8 @@
-﻿using Fleetmanagement_app_BLL.Repository;
+﻿using AutoMapper;
 using Fleetmanagement_app_BLL.UnitOfWork;
 using Fleetmanagement_app_DAL.Builders;
-using Fleetmanagement_app_DAL.Database;
 using Fleetmanagement_app_DAL.Entities;
+using FleetManagement_app_PL.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -15,56 +15,242 @@ namespace FleetManagement_app_PL.Controllers
     [Route("[controller]")]
     public class VoertuigController : ControllerBase
     {
-        private IUnitOfWork _repo;
+        private readonly IUnitOfWork _repo;
+        private readonly IMapper _mapper;
         private ILoggerFactory _loggerFactory = new LoggerFactory();
-        
-        public VoertuigController(IUnitOfWork repository)
+
+        public VoertuigController(IUnitOfWork repository, IMapper mapper)
         {
-            _repo = repository??
-                throw new ArgumentNullException(nameof(VoertuigRepository));
+            _repo = repository ??
+                throw new ArgumentNullException(nameof(repository));
+            _mapper = mapper ??
+                throw new ArgumentNullException(nameof(mapper));
+
             _loggerFactory.CreateLogger("VoertuigController");
         }
 
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Voertuig>>> GetAllActiveVoertuigen()
+        [Route("{chassisnummer}")]
+        public async Task<ActionResult<VoertuigForViewingDto>> GetVoertuigById([FromRoute] string chassisnummer)
+        {
+            var voertuig = await _repo.Voertuig.GetById(chassisnummer);
+
+            return Ok(_mapper.Map<VoertuigForViewingDto>(voertuig));
+        }
+
+        [HttpGet]
+        [Route("Active")]
+        public async Task<ActionResult<IEnumerable<VoertuigForViewingDto>>> GetAllActiveVoertuigen()
         {
             var voertuigen = await _repo.Voertuig.GetAllActive();
 
-            return Ok(voertuigen);
+            var voertuigenForView = _mapper.Map<IEnumerable<VoertuigForViewingDto>>(voertuigen);
+
+            return Ok(voertuigenForView);
         }
 
+        [HttpGet]
+        [Route("Archived")]
+        public async Task<ActionResult<IEnumerable<VoertuigForViewingDto>>> GetAllArchivedVoertuigen()
+        {
+            var voertuigen = await _repo.Voertuig.GetAllArchived();
+
+            var voertuigenForView = _mapper.Map<IEnumerable<VoertuigForViewingDto>>(voertuigen);
+
+            return Ok(voertuigenForView);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<VoertuigForViewingDto>>> GetAllVoertuigen()
+        {
+            var voertuigen = await _repo.Voertuig.GetAll();
+
+            var voertuigenForView = _mapper.Map<IEnumerable<VoertuigForViewingDto>>(voertuigen);
+
+            return Ok(voertuigenForView);
+        }
+
+        [HttpGet]
+        [Route("Statusses")]
+        public async Task<ActionResult<IEnumerable<StatusForViewingDto>>> GetStatusses()
+        {
+            var seeds = await _repo.Status.GetAll();
+
+            var view = _mapper.Map<IEnumerable<StatusForViewingDto>>(seeds);
+
+            return Ok(view);
+        }
+
+        [HttpGet]
+        [Route("Categories")]
+        public async Task<ActionResult<IEnumerable<Categorie>>> GetCategories()
+        {
+            var seeds = await _repo.Categorie.GetAll();
+
+            return Ok(seeds);
+        }
+
+        [HttpGet]
+        [Route("brandstoffen")]
+        public async Task<ActionResult<IEnumerable<Status>>> GetFuels()
+        {
+            var seeds = await _repo.Brandstof.GetAll();
+
+            return Ok(seeds);
+        }
+
+        /// <summary>
+        ///     Bij creatie wordt nagegaan of er reeds een voertuig met zelfde chassisnummer in de database zit.
+        ///     Zo ja wordt de opdracht afgebroken.
+        ///     Daarna wordt gekeken of het voertuig correct opgebouwd is d.m.v. de builder en worden de geneste klassen ingeladen.
+        ///     Belangrijk hierbij is dat de correcte Id's van deze entiteiten gebruikt worden, anders zal men een foutmelding krijgen.
+        ///     Dan pas wordt het voertuig gebouwd en toegevoegd aan de database.
+        /// </summary>
+        /// <param name="voertuigBuilder"></param>
+        /// <returns>VoertuigForViewingDto voertuig + link naar voertuig</returns>
         [HttpPost]
         public async Task<IActionResult> CreateVoertuig([FromBody] Voertuigbuilder voertuigBuilder)
         {
             if (ModelState.IsValid)
             {
+                var voertuigInDb = await _repo.Voertuig.GetById(voertuigBuilder.Chassisnummer);
+                if (voertuigInDb != null)
+                    return Conflict("Voertuig already exists in Database, try updating it");
+
                 if (!voertuigBuilder.IsValid())
                 {
                     return BadRequest("Voertuig didn't meet parameters");
                 }
 
-                var categorie = await _repo.Categorie.GetById(voertuigBuilder.Categorie.Id);
-                voertuigBuilder.Categorie = categorie;
-
-                var brandstof = await _repo.Brandstof.GetById(voertuigBuilder.Brandstof.Id);
-                voertuigBuilder.Brandstof = brandstof;
-
-                if(voertuigBuilder.Status != null)
+                try
                 {
-                    var status = await _repo.Status.GetById(voertuigBuilder.Status.Id);
-                    voertuigBuilder.Status = status;
+
+                    var categorie = await _repo.Categorie.GetById(voertuigBuilder.Categorie.Id);
+                    voertuigBuilder.Categorie = categorie;
+
+                    var brandstof = await _repo.Brandstof.GetById(voertuigBuilder.Brandstof.Id);
+                    voertuigBuilder.Brandstof = brandstof;
+
+                    if (voertuigBuilder.Status != null)
+                    {
+                        var status = await _repo.Status.GetById(voertuigBuilder.Status.Id);
+                        voertuigBuilder.Status = status;
+                    }
+
+                    var voertuig = voertuigBuilder.Build();
+
+                    if (await _repo.Voertuig.Add(voertuig))
+                    {
+                        await _repo.CompleteAsync();
+                        return CreatedAtAction(voertuig.Chassisnummer, _mapper.Map<VoertuigForViewingDto>(voertuig));
+                    }
+                    else
+                    {
+                        _repo.Dispose();
+                        return BadRequest("Unable to Write to Database");
+                    }
+
                 }
-
-                var voertuig = voertuigBuilder.Build();
-                
-
-                await _repo.Voertuig.Add(voertuig);
-                await _repo.CompleteAsync();
-
-                return CreatedAtAction("GetVoertuig", new {voertuig.Chassisnummer}, voertuig);
+                catch (Exception e)
+                {
+                    return StatusCode(500, e);
+                }
             }
             return StatusCode(500);
         }
 
+        /// <summary>
+        ///     Bij het updaten wordt nagegaan of er reeds een voertuig met zelfde chassisnummer in de database zit.
+        ///     Zo neen wordt de opdracht afgebroken.
+        ///     Daarna wordt gekeken of het voertuig correct opgebouwd is d.m.v. de builder en worden de geneste klassen ingeladen.
+        ///     Belangrijk hierbij is dat de correcte Id's van deze entiteiten gebruikt worden, anders zal men een foutmelding krijgen.
+        ///     Dan pas wordt het voertuig gebouwd en toegevoegd aan de database.
+        /// </summary>
+        /// <remarks>
+        ///     Het is echter niet mogelijk via deze weg het veld isGearchiveerd aan te passen. zie hiervoor de AdminController. 
+        /// </remarks>
+        /// <param name="voertuigBuilder"></param>
+        /// <returns>VoertuigForViewingDto voertuig + link naar voertuig</returns>
+        [HttpPatch]
+        public async Task<IActionResult> UpdateVoertuig([FromBody] Voertuigbuilder voertuigBuilder)
+        {
+            if (ModelState.IsValid)
+            {
+                var voertuigInDb = await _repo.Voertuig.GetById(voertuigBuilder.Chassisnummer);
+                if (voertuigInDb == null)
+                    return Conflict("No match with chassisnummers in Database");
+
+                if (!voertuigBuilder.IsValid())
+                {
+                    return BadRequest("Voertuig didn't meet parameters");
+                }
+
+                try
+                {
+
+                    var categorie = await _repo.Categorie.GetById(voertuigBuilder.Categorie.Id);
+                    voertuigBuilder.Categorie = categorie;
+
+                    var brandstof = await _repo.Brandstof.GetById(voertuigBuilder.Brandstof.Id);
+                    voertuigBuilder.Brandstof = brandstof;
+
+                    if (voertuigBuilder.Status != null)
+                    {
+                        var status = await _repo.Status.GetById(voertuigBuilder.Status.Id);
+                        voertuigBuilder.Status = status;
+                    }
+
+                    var voertuig = voertuigBuilder.Build();
+
+                    if (await _repo.Voertuig.Update(voertuig))
+                    {
+                        await _repo.CompleteAsync();
+                        return CreatedAtAction(voertuig.Chassisnummer, _mapper.Map<VoertuigForViewingDto>(voertuig));
+                    }
+                    else
+                    {
+                        _repo.Dispose();
+                        return BadRequest("Unable to Write to Database");
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    return StatusCode(500, e);
+                }
+            }
+            return StatusCode(500);
+
+        }
+
+        [HttpDelete]
+        [Route("{chassisnummer}")]
+        public async Task<IActionResult> ArchiveVoertuig([FromRoute] string chassisnummer)
+        {
+            try
+            {
+                var voertuigInDb = await _repo.Voertuig.GetById(chassisnummer);
+
+                if (voertuigInDb.IsGearchiveerd)
+                    return Conflict("Voertuig already archived in Database");
+
+                if (await _repo.Voertuig.Delete(chassisnummer))
+                {
+                    await _repo.CompleteAsync();
+
+                    return NoContent();
+                }
+                else
+                {
+                    _repo.Dispose();
+                    return BadRequest("Unable to Write to Database");
+                }
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
+        }
     }
 }

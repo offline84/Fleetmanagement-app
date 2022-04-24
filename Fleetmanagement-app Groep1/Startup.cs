@@ -1,5 +1,6 @@
 using Fleetmanagement_app_BLL.UnitOfWork;
 using Fleetmanagement_app_DAL.Database;
+using FleetManagement_app_PL.Profiles;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace Fleetmanagement_app_Groep1
 {
@@ -31,8 +33,11 @@ namespace Fleetmanagement_app_Groep1
                 options.UseSqlServer(Configuration.GetConnectionString("Default"));
             });
 
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddSingleton<ILoggerFactory, LoggerFactory>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>()
+                .AddSingleton<ILoggerFactory, LoggerFactory>();
+
+            services.AddAutoMapper(typeof(VoertuigProfile));
+                
 
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory

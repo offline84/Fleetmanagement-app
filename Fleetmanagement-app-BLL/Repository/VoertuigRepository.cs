@@ -76,6 +76,7 @@ namespace Fleetmanagement_app_BLL.Repository
             if (voertuig != null)
             {
                 voertuig.IsGearchiveerd = true;
+                voertuig.LaatstGeupdate = DateTime.Now;
 
                 try
                 {
@@ -96,26 +97,26 @@ namespace Fleetmanagement_app_BLL.Repository
         public async override Task<IEnumerable<Voertuig>> GetAll()
         {
             return await _dbSet
-                //.Include(b => b.Brandstof)
-                //.Include(c => c.Categorie)
-                //.Include(s => s.Status)
+                .Include(b => b.Brandstof)
+                .Include(c => c.Categorie)
+                .Include(s => s.Status)
                 .ToListAsync();
         }
 
         public async override Task<IEnumerable<Voertuig>> GetAllArchived()
         {
             return await _dbSet.Where(v => v.IsGearchiveerd == true)
-                //.Include(b => b.Brandstof)
-                //.Include(c => c.Categorie)
-                //.Include(s => s.Status)
+                .Include(b => b.Brandstof)
+                .Include(c => c.Categorie)
+                .Include(s => s.Status)
                 .ToListAsync();
         }
         public async override Task<IEnumerable<Voertuig>> GetAllActive()
         {
             return await _dbSet.Where(v => v.IsGearchiveerd == false)
-                //.Include(b => b.Brandstof)
-                //.Include(c => c.Categorie)
-                //.Include(s => s.Status)
+                .Include(b => b.Brandstof)
+                .Include(c => c.Categorie)
+                .Include(s => s.Status)
                 .ToListAsync();
         }
 
