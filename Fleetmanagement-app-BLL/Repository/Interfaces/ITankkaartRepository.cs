@@ -7,7 +7,6 @@ namespace Fleetmanagement_app_BLL.Repository
 {
     public interface ITankkaartRepository : IGenericRepository<Tankkaart>
     {
-        Task<IEnumerable<Tankkaart>> GetAllActief();
         Task<bool> Blokkeren(string kaartnummer);
     }
 }

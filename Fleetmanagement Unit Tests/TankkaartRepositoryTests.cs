@@ -7,7 +7,6 @@ using System;
 using System.Threading.Tasks;
 using System.Linq;
 using Xunit;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
 namespace Fleetmanagement_Unit_Tests
@@ -170,7 +169,7 @@ namespace Fleetmanagement_Unit_Tests
             await _context.SaveChangesAsync();
             var tankkaarten = await _repo.GetAll();
             var aantalTankkaarten = tankkaarten.Count();
-            var tankkaartenActief = await _repo.GetAllActief();
+            var tankkaartenActief = await _repo.GetAllActive();
             var aantalTankkaartenActief = tankkaartenActief.Count();
 
             Assert.True(aantalTankkaarten == aantalTankkaartenActief + 1);
