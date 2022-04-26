@@ -21,10 +21,10 @@ namespace Fleetmanagement_app_DAL.Builders
         [RegularExpression(@"([1-9O-Zo-z])?[-|\s]?([a-zA-Z]{3})[-|\s]([0-9]{3})|([1-9O-Zo-z])?([a-zA-Z]{3})([0-9]{3})", ErrorMessage = "Invalid Format Nummerplaat")]
         public string Nummerplaat { get; set; }
 
-        [Required(ErrorMessage ="Brandstof is a required component, it cannot be null.")]
+        [Required(ErrorMessage = "Brandstof is a required component, it cannot be null.")]
         public Brandstof Brandstof { get; set; }
 
-        [Required(ErrorMessage ="Categorie is a required component, it cannot be null.")]
+        [Required(ErrorMessage = "Categorie is a required component, it cannot be null.")]
         public Categorie Categorie { get; set; }
 
         public int? AantalDeuren { get; set; }

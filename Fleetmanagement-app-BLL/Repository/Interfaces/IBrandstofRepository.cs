@@ -3,7 +3,7 @@ using Fleetmanagement_app_DAL.Entities;
 
 namespace Fleetmanagement_app_BLL
 {
-    public interface IBrandstofRepository: IGenericRepository<Brandstof>
+    public interface IBrandstofRepository : IGenericRepository<Brandstof>
     {
     }
 }
