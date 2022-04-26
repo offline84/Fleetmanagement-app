@@ -301,8 +301,8 @@ namespace Fleetmanagement_Unit_Tests
             await _repo.Add(voertuig);
             _context.SaveChanges();
 
-            var statussen = await _context.Set<Status>().ToListAsync() ;
-            voertuig.Status= statussen[2];
+            var status = _context.Status.Where(s => s.Staat == "aankoop").FirstOrDefault();
+            voertuig.Status= status;
 
             var isAdded = await _repo.Update(voertuig);
             _context.SaveChanges();
@@ -354,8 +354,12 @@ namespace Fleetmanagement_Unit_Tests
             var voertuig = builder.Build();
 
             await _repo.Add(voertuig);
-            var added = _repo.GetById(voertuig.Chassisnummer).Result.LaatstGeupdate;
             await _context.SaveChangesAsync();
+
+            var addedvoertuig = _repo.GetById(voertuig.Chassisnummer).Result;
+            var added = addedvoertuig.LaatstGeupdate;
+
+            
 
             voertuig.Kleur = "grijs";
             voertuig.Bouwjaar = 2022;

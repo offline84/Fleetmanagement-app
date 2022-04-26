@@ -111,6 +111,7 @@ namespace Fleetmanagement_app_BLL.Repository
                 .Include(s => s.Status)
                 .ToListAsync();
         }
+
         public async override Task<IEnumerable<Voertuig>> GetAllActive()
         {
             return await _dbSet.Where(v => v.IsGearchiveerd == false)
@@ -160,6 +161,14 @@ namespace Fleetmanagement_app_BLL.Repository
             if (voertuig.Status != null)
                 voertuig.StatusId = voertuig.Status.Id;
 
+            var taskCnp = Task.Run(()=> _context.Voertuigen.Where(v=> v.Nummerplaat == voertuig.Nummerplaat).FirstOrDefaultAsync());
+            var checkNummerplaat = taskCnp.Result;
+
+            if(checkNummerplaat != null && checkNummerplaat.Chassisnummer != voertuig.Chassisnummer && voertuig.Nummerplaat != "")
+            {
+                _logger.LogWarning("De database bevat reeds een voertuig met dezelfde nummerplaat!");
+                return Task.FromResult(false);
+            }
 
             try
             {

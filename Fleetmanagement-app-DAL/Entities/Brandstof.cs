@@ -11,7 +11,7 @@ namespace Fleetmanagement_app_DAL.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
-        [Required]
+        [Required(AllowEmptyStrings = true)]
         [MaxLength(50)]
         public string TypeBrandstof { get; set; }
 

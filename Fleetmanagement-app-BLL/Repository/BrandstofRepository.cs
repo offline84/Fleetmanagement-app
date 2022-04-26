@@ -20,6 +20,14 @@ namespace Fleetmanagement_app_BLL
         }
         public override async Task<bool> Delete(Guid id)
         {
+            var voertuig = _context.Voertuigen.Where(v => v.BrandstofId == id).ToList();
+            var check = voertuig.Any();
+            if( check)
+            {
+                _logger.LogWarning("Cannot delete a fuel linked to a vehicle");
+                return false;
+            }
+
             var entity = _dbSet.Where(c => c.Id == id).FirstOrDefault();
 
             if (entity != null)
