@@ -105,7 +105,8 @@ namespace FleetManagement_app_PL.Controllers
         ///     Zo ja wordt de opdracht afgebroken.
         ///     Daarna wordt gekeken of het voertuig correct opgebouwd is d.m.v. de builder en worden de geneste klassen ingeladen.
         ///     Belangrijk hierbij is dat de correcte Id's van deze entiteiten gebruikt worden, anders zal men een foutmelding krijgen.
-        ///     Dan pas wordt het voertuig gebouwd en toegevoegd aan de database.
+        ///     Dan wordt het voertuig gebouwd en en wordt er gecontroleerd of de nummerplaat niet aanwezig is in de database in een andere schrijfwijze.
+        ///     Dan pas wordt het voertuig toegevoegd aan de database.
         /// </summary>
         /// <param name="voertuigBuilder"></param>
         /// <returns>VoertuigForViewingDto voertuig + link naar voertuig</returns>
@@ -140,6 +141,30 @@ namespace FleetManagement_app_PL.Controllers
 
                     var voertuig = voertuigBuilder.Build();
 
+                    if (!voertuig.Nummerplaat.Contains("-"))
+                    {
+                        if (voertuig.Nummerplaat.Length <= 7 && !voertuig.Nummerplaat.StartsWith("1") && !voertuig.Nummerplaat.StartsWith("2"))
+                        {
+                            voertuig.Nummerplaat = voertuig.Nummerplaat.Insert(3, "-");
+                        }
+                        else
+                        {
+                            voertuig.Nummerplaat = voertuig.Nummerplaat.Insert(1, "-");
+                            voertuig.Nummerplaat = voertuig.Nummerplaat.Insert(5, "-");
+                        }
+                    }
+                    if (voertuig.Nummerplaat.Contains(" "))
+                    {
+                        voertuig.Nummerplaat = voertuig.Nummerplaat.Replace(" ", "-");
+                    }
+
+                    var nummerplaatcheck = _repo.Voertuig.Find(v => v.Nummerplaat == voertuig.Nummerplaat).Result.GetEnumerator();
+
+                    if (nummerplaatcheck.MoveNext() && voertuig.Nummerplaat != "")
+                    {
+                        return BadRequest("Nummerplaat already exists in database.");
+                    }
+
                     if (await _repo.Voertuig.Add(voertuig))
                     {
                         await _repo.CompleteAsync();
@@ -147,7 +172,6 @@ namespace FleetManagement_app_PL.Controllers
                     }
                     else
                     {
-                        _repo.Dispose();
                         return BadRequest("Unable to Write to Database");
                     }
 
@@ -202,6 +226,34 @@ namespace FleetManagement_app_PL.Controllers
                     }
 
                     var voertuig = voertuigBuilder.Build();
+
+                    if (!voertuig.Nummerplaat.Contains("-"))
+                    {
+                        if (voertuig.Nummerplaat.Length <= 7 && !voertuig.Nummerplaat.StartsWith("1") && !voertuig.Nummerplaat.StartsWith("2"))
+                        {
+                            voertuig.Nummerplaat = voertuig.Nummerplaat.Insert(3, "-");
+                        }
+                        else
+                        {
+                            voertuig.Nummerplaat = voertuig.Nummerplaat.Insert(1, "-");
+                            voertuig.Nummerplaat = voertuig.Nummerplaat.Insert(5, "-");
+                        }
+                    }
+                    if (voertuig.Nummerplaat.Contains(" "))
+                    {
+                        voertuig.Nummerplaat = voertuig.Nummerplaat.Replace(" ", "-");
+                    }
+
+                    var nummerplaatcheck = _repo.Voertuig.Find(v => v.Nummerplaat == voertuig.Nummerplaat).Result.GetEnumerator();
+
+                    while (nummerplaatcheck.MoveNext())
+                    {
+                            if (nummerplaatcheck.Current.Chassisnummer != voertuig.Chassisnummer && voertuig.Nummerplaat != "")
+                            {
+                                return BadRequest("Nummerplaat already exists in database.");
+                            }
+
+                    }
 
                     if (await _repo.Voertuig.Update(voertuig))
                     {
