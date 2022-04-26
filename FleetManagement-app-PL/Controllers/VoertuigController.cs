@@ -29,7 +29,6 @@ namespace FleetManagement_app_PL.Controllers
             _loggerFactory.CreateLogger("VoertuigController");
         }
 
-
         [HttpGet]
         [Route("{chassisnummer}")]
         public async Task<ActionResult<VoertuigForViewingDto>> GetVoertuigById([FromRoute] string chassisnummer)
@@ -126,7 +125,6 @@ namespace FleetManagement_app_PL.Controllers
 
                 try
                 {
-
                     var categorie = await _repo.Categorie.GetById(voertuigBuilder.Categorie.Id);
                     voertuigBuilder.Categorie = categorie;
 
@@ -174,7 +172,6 @@ namespace FleetManagement_app_PL.Controllers
                     {
                         return BadRequest("Unable to Write to Database");
                     }
-
                 }
                 catch (Exception e)
                 {
@@ -192,7 +189,7 @@ namespace FleetManagement_app_PL.Controllers
         ///     Dan pas wordt het voertuig gebouwd en toegevoegd aan de database.
         /// </summary>
         /// <remarks>
-        ///     Het is echter niet mogelijk via deze weg het veld isGearchiveerd aan te passen. zie hiervoor de AdminController. 
+        ///     Het is echter niet mogelijk via deze weg het veld isGearchiveerd aan te passen. zie hiervoor de AdminController.
         /// </remarks>
         /// <param name="voertuigBuilder"></param>
         /// <returns>VoertuigForViewingDto voertuig + link naar voertuig</returns>
@@ -212,7 +209,6 @@ namespace FleetManagement_app_PL.Controllers
 
                 try
                 {
-
                     var categorie = await _repo.Categorie.GetById(voertuigBuilder.Categorie.Id);
                     voertuigBuilder.Categorie = categorie;
 
@@ -248,11 +244,10 @@ namespace FleetManagement_app_PL.Controllers
 
                     while (nummerplaatcheck.MoveNext())
                     {
-                            if (nummerplaatcheck.Current.Chassisnummer != voertuig.Chassisnummer && voertuig.Nummerplaat != "")
-                            {
-                                return BadRequest("Nummerplaat already exists in database.");
-                            }
-
+                        if (nummerplaatcheck.Current.Chassisnummer != voertuig.Chassisnummer && voertuig.Nummerplaat != "")
+                        {
+                            return BadRequest("Nummerplaat already exists in database.");
+                        }
                     }
 
                     if (await _repo.Voertuig.Update(voertuig))
@@ -265,7 +260,6 @@ namespace FleetManagement_app_PL.Controllers
                         _repo.Dispose();
                         return BadRequest("Unable to Write to Database");
                     }
-
                 }
                 catch (Exception e)
                 {
@@ -273,7 +267,6 @@ namespace FleetManagement_app_PL.Controllers
                 }
             }
             return StatusCode(500);
-
         }
 
         [HttpDelete]

@@ -3,7 +3,7 @@ using Fleetmanagement_app_DAL.Entities;
 
 namespace Fleetmanagement_app_BLL
 {
-    public interface ICategorieRepository: IGenericRepository<Categorie>
+    public interface ICategorieRepository : IGenericRepository<Categorie>
     {
     }
 }

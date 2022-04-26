@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Fleetmanagement_app_BLL
 {
-    public class BrandstofRepository:GenericRepository<Brandstof>, IBrandstofRepository
+    public class BrandstofRepository : GenericRepository<Brandstof>, IBrandstofRepository
     {
         private FleetmanagerContext _context;
         private readonly ILogger _logger;
@@ -18,11 +18,10 @@ namespace Fleetmanagement_app_BLL
             _logger = logger;
             _context = context;
         }
+
         public override async Task<bool> Delete(Guid id)
         {
-            var voertuig = _context.Voertuigen.Where(v => v.BrandstofId == id).ToList();
-            var check = voertuig.Any();
-            if( check)
+            if (_context.Voertuigen.Where(v => v.BrandstofId == id).Any())
             {
                 _logger.LogWarning("Cannot delete a fuel linked to a vehicle");
                 return false;
@@ -45,7 +44,7 @@ namespace Fleetmanagement_app_BLL
                         return false;
                     }
                 }
-                catch(Exception e) 
+                catch (Exception e)
                 {
                     _logger.LogError("Delete encountered an exception", e);
                     return false;
