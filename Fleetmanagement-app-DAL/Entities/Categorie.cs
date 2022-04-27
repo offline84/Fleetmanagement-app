@@ -11,7 +11,7 @@ namespace Fleetmanagement_app_DAL.Entities
         [Key]
         public Guid Id { get; set; }
 
-        [Required]
+        [Required(AllowEmptyStrings = true)]
         public string TypeWagen { get; set; }
 
         public virtual ICollection<Voertuig> Voertuigen { get; set; }

@@ -16,6 +16,10 @@ namespace Fleetmanagement_app_BLL.UnitOfWork
         public ITankkaartRepository Tankkaart { get; private set; }
         public IKoppelingRepository Koppeling { get; private set; }
 
+        public IStatusRepository Status { get; private set;}
+        public IBrandstofRepository Brandstof { get; private set;}
+        public ICategorieRepository Categorie { get; private set;}
+
         public UnitOfWork(FleetmanagerContext context, ILoggerFactory loggerFactory)
         {
             _context = context;
@@ -25,6 +29,10 @@ namespace Fleetmanagement_app_BLL.UnitOfWork
             Voertuig = new VoertuigRepository(context, _logger);
             Tankkaart = new TankkaartRepository(context, _logger);
             Koppeling = new KoppelingRepository(context, _logger);
+
+            Status = new StatusRepository(context, _logger);
+            Brandstof = new BrandstofRepository(context, _logger);
+            Categorie = new CategorieRepository(context, _logger);
         }
 
         public async Task CompleteAsync()

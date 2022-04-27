@@ -72,32 +72,62 @@ namespace Fleetmanagement_app_BLL.Repository
         public override async Task<bool> Delete(string chassisnummer)
         {
             var voertuig = await GetById(chassisnummer);
-            voertuig.IsGearchiveerd = true;
 
-            try
+            if (voertuig != null)
             {
-                _dbSet.Update(voertuig);
-            }
-            catch(Exception e)
-            {
-                _logger.LogError("Deleting voertuig {chassisnummer} gave error", e);
-                return false;
-            }
+                voertuig.IsGearchiveerd = true;
+                voertuig.LaatstGeupdate = DateTime.Now;
 
-            return true;
+                try
+                {
+                    _dbSet.Update(voertuig);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("Deleting voertuig {chassisnummer} gave error", e);
+                    return false;
+                }
+
+                return true;
+            }
+            _logger.LogWarning("Voertuig for deletion did not exist in Database" );
+            return false;
         }
+
+        public async override Task<IEnumerable<Voertuig>> GetAll()
+        {
+            return await _dbSet
+                .Include(b => b.Brandstof)
+                .Include(c => c.Categorie)
+                .Include(s => s.Status)
+                .ToListAsync();
+        }
+
         public async override Task<IEnumerable<Voertuig>> GetAllArchived()
         {
-            return await _dbSet.Where(v => v.IsGearchiveerd == true).ToListAsync();
+            return await _dbSet.Where(v => v.IsGearchiveerd == true)
+                .Include(b => b.Brandstof)
+                .Include(c => c.Categorie)
+                .Include(s => s.Status)
+                .ToListAsync();
         }
+
         public async override Task<IEnumerable<Voertuig>> GetAllActive()
         {
-            return await _dbSet.Where(v => v.IsGearchiveerd == false).ToListAsync();
+            return await _dbSet.Where(v => v.IsGearchiveerd == false)
+                .Include(b => b.Brandstof)
+                .Include(c => c.Categorie)
+                .Include(s => s.Status)
+                .ToListAsync();
         }
 
         public override async Task<Voertuig> GetById(string chassisnummer)
         {
-            return await _dbSet.FindAsync(chassisnummer);
+            return await _dbSet.Where(v => v.Chassisnummer == chassisnummer)
+                .Include(b => b.Brandstof)
+                .Include(c => c.Categorie)
+                .Include(s => s.Status)
+                .FirstOrDefaultAsync();
         }
 
         /// <summary>
@@ -128,9 +158,17 @@ namespace Fleetmanagement_app_BLL.Repository
             voertuig.LaatstGeupdate = DateTime.Now;
             voertuig.CategorieId = voertuig.Categorie.Id;
             voertuig.BrandstofId = voertuig.Brandstof.Id;
-            if(voertuig.Status != null)
+            if (voertuig.Status != null)
                 voertuig.StatusId = voertuig.Status.Id;
 
+            var taskCnp = Task.Run(()=> _context.Voertuigen.Where(v=> v.Nummerplaat == voertuig.Nummerplaat).FirstOrDefaultAsync());
+            var checkNummerplaat = taskCnp.Result;
+
+            if(checkNummerplaat != null && checkNummerplaat.Chassisnummer != voertuig.Chassisnummer && voertuig.Nummerplaat != "")
+            {
+                _logger.LogWarning("De database bevat reeds een voertuig met dezelfde nummerplaat!");
+                return Task.FromResult(false);
+            }
 
             try
             {
@@ -140,7 +178,7 @@ namespace Fleetmanagement_app_BLL.Repository
 
                 return Task.FromResult(true);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError("Something went wrong while updating voertuig {voertuig.Chassisnummer}", e);
                 return Task.FromResult(false);
@@ -173,13 +211,13 @@ namespace Fleetmanagement_app_BLL.Repository
                 return false;
             }
 
-            if(voertuig.Status == null && voertuig.Nummerplaat.Trim() == "")
+            if (voertuig.Status == null && voertuig.Nummerplaat.Trim() == "")
             {
                 _logger.LogWarning("Licenseplate cannot be Empty for update");
                 return false;
             }
 
-            if(voertuig.Status != null && voertuig.Status.Staat != "aankoop" && voertuig.Nummerplaat.Trim() == "")
+            if (voertuig.Status != null && voertuig.Status.Staat != "aankoop" && voertuig.Nummerplaat.Trim() == "")
             {
                 _logger.LogWarning("Licenseplate cannot be Empty for update");
                 return false;
