@@ -12,6 +12,12 @@ using Xunit;
 
 namespace Fleetmanagement_Unit_Tests
 {
+    //     XUnit voert iedere testclass in parallel uit met elkaar om op die manier tijd uit te sparen.
+    //     Dit zorgt voor problemen doordat er van en naar de databank geschreven wordt op hetzelfde moment dat er een andere test loopt
+    //     die deze data nodig heeft om de test succesvol uit te voeren.
+    //     Als je een klasse decoreert met het collectionattribuut, dan zoekt de unit test collecties op met dezelfde naam en voert deze ze unilateraal uit.
+
+    [Collection("DatabaseTests")]
     public class VoertuigRepositoryTests
     {
         private static FleetmanagerContext _context = new FleetmanagerContext(DbContextHelper.GetDbContextOptions("Testing"));
@@ -31,7 +37,7 @@ namespace Fleetmanagement_Unit_Tests
 
         internal Voertuigbuilder GetVoertuig1()
         {
-            var brandstof = _context.Brandstof.FirstOrDefault();
+            var brandstof = _context.Brandstof.OrderBy(b => b.Id).Last();
             var status = _context.Status.Where(s => s.Staat == "in bedrijf").FirstOrDefault();
             var categorie = _context.Categorie.FirstOrDefault();
 
