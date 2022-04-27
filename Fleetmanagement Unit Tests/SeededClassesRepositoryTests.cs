@@ -13,6 +13,7 @@ using Xunit;
 
 namespace Fleetmanagement_Unit_Tests
 {
+    [Collection("DatabaseTests")]
     public class SeededClassesRepositoryTests
     {
         private static FleetmanagerContext _context = new FleetmanagerContext(DbContextHelper.GetDbContextOptions("Testing"));
@@ -57,6 +58,15 @@ namespace Fleetmanagement_Unit_Tests
             };
 
             return voertuig;
+        }
+
+        internal void CleanupVoertuigen()
+        {
+            var voertuigen = _context.Voertuigen.ToList();
+
+            _context.Voertuigen.RemoveRange(voertuigen);
+
+            _context.SaveChanges();
         }
 
         [Fact]
@@ -176,6 +186,8 @@ namespace Fleetmanagement_Unit_Tests
         [Fact]
         public async void CategoryCannotBeDeletedWhenLinkedToVehicle()
         {
+            CleanupVoertuigen();
+
             var builder = GetVoertuig1();
             var voertuig = builder.Build();
             var add = await _repo.Add(voertuig);
@@ -190,6 +202,8 @@ namespace Fleetmanagement_Unit_Tests
         [Fact]
         public async void BrandstofCannotBeDeletedWhenLinkedToVehicle()
         {
+            CleanupVoertuigen();
+
             var builder = GetVoertuig1();
             var voertuig = builder.Build();
             var add = await _repo.Add(voertuig);
