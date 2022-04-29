@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace Fleetmanagement_app_Groep1
 {
@@ -24,6 +25,8 @@ namespace Fleetmanagement_app_Groep1
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+           
+
             services.AddDbContext<FleetmanagerContext>(options =>
             {
                 //Ophalen van connectionstring uit database
@@ -34,6 +37,8 @@ namespace Fleetmanagement_app_Groep1
                 .AddSingleton<ILoggerFactory, LoggerFactory>();
 
             services.AddAutoMapper(typeof(VoertuigProfile));
+            services.AddAutoMapper(typeof(BestuurderProfile));
+
 
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
