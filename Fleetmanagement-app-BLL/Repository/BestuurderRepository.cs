@@ -114,30 +114,22 @@ namespace Fleetmanagement_app_BLL.Repository
 
         public override async Task<IEnumerable<Bestuurder>> GetAll()
         {
-            return await _dbSet
-                .Include(b => b.Rijbewijzen)
-                .ToListAsync();
+            return await _dbSet.ToListAsync();
         }
 
         public override async Task<IEnumerable<Bestuurder>> GetAllActive()
         {
-            return await _dbSet.Where(b => !b.IsGearchiveerd)
-                .Include(b => b.Rijbewijzen)
-                .ToListAsync();
+            return await _dbSet.Where(b => !b.IsGearchiveerd).ToListAsync();
         }
 
         public override async Task<IEnumerable<Bestuurder>> GetAllArchived()
         {
-            return await _dbSet.Where(b => b.IsGearchiveerd)
-                .Include(b => b.Rijbewijzen)
-                .ToListAsync();
+            return await _dbSet.Where(b => b.IsGearchiveerd).ToListAsync();
         }
 
         public override async Task<Bestuurder> GetById(string id)
         {
-            return await _dbSet.Where(b => b.Rijksregisternummer.Equals(id))
-                .Include(b => b.Rijbewijzen)
-                .FirstOrDefaultAsync();
+            return await _dbSet.Where(b => b.Rijksregisternummer.Equals(id)).FirstOrDefaultAsync();
         }
 
         public async Task<List<Rijbewijs>> GetDriverLicensesForDriver(string rijksregisternummer)

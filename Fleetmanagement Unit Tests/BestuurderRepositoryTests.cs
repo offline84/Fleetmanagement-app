@@ -12,12 +12,21 @@ using Xunit;
 
 namespace Fleetmanagement_Unit_Tests
 {
+    //     XUnit voert iedere testclass in parallel uit met elkaar om op die manier tijd uit te sparen.
+    //     Dit zorgt voor problemen doordat er van en naar de databank geschreven wordt op hetzelfde moment dat er een andere test loopt
+    //     die deze data nodig heeft om de test succesvol uit te voeren.
+    //     Als je een klasse decoreert met het collectionattribuut, dan zoekt de unit test collecties op met dezelfde naam en voert deze ze unilateraal uit.
+
+    [Collection("DatabaseTests")]
     public class BestuurderRepositoryTests
     {
         private static FleetmanagerContext _context = new FleetmanagerContext(DbContextHelper.GetDbContextOptions("Testing"));
         private BestuurderRepository _repo;
         private ILoggerFactory _loggerFactory = new LoggerFactory();
 
+        /// <summary>
+        /// Constructor: Repo opvullen en testen indien connectie werkt/TestDatabase aangemaakt is
+        /// </summary>
         public BestuurderRepositoryTests()
         {
             _repo = new BestuurderRepository(_context, _loggerFactory.CreateLogger("VoertuigRepositoryTests"));
@@ -29,6 +38,10 @@ namespace Fleetmanagement_Unit_Tests
             }
         }
 
+        /// <summary>
+        /// Test indien het ophalen van de opgemaakte bestuurders werkt.
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         public async Task GetBestuurderAsync_Success_Test()
         {
@@ -42,21 +55,29 @@ namespace Fleetmanagement_Unit_Tests
             Assert.Equal(3, (bestuurders as IList<Bestuurder>).Count);
         }
 
-        //[Fact]
-        //public async Task GetBestuurderByIdAsync_Success_Test()
-        //{
-        //    await Cleanup();
-        //    await PopulateDataAsync();
+        /// <summary>
+        /// Test indien het ophalen van een bestuurder volgens Id werkt.
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        public async Task GetBestuurderByIdAsync_Success_Test()
+        {
+            await Cleanup();
+            await PopulateDataAsync();
 
-        //    // Act
-        //    var bestuurder = await _repo.GetById(1.ToString());
+            // Act
+            var bestuurder = await _repo.GetById($"84060103993");
 
-        //    // Assert
-        //    Assert.NotNull(bestuurder);
-        //    Assert.Equal("Bestuurder1", bestuurder.Naam);
-        //    Assert.Equal("AchternaamBestuurder1", bestuurder.Achternaam);
-        //}
+            // Assert
+            Assert.NotNull(bestuurder);
+            Assert.Equal("bestuurder1", bestuurder.Naam);
+            Assert.Equal("AchternaamBestuurder1", bestuurder.Achternaam);
+        }
 
+        /// <summary>
+        /// Test indien het ophalen van een rijbewijs werkt met behulp van een rijksregisternummer.
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         public async Task GetDriverLicensesForDriver_Success_Test()
         {
@@ -71,6 +92,10 @@ namespace Fleetmanagement_Unit_Tests
             Assert.Single(rijbewijzen);
         }
 
+        /// <summary>
+        /// Test indien het opmaken van een Bestuurder lukt.
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         public async Task CreateAsync_Success_Test()
         {
@@ -98,6 +123,10 @@ namespace Fleetmanagement_Unit_Tests
             Assert.Equal(4, (bestuurders as IList<Bestuurder>).Count);
         }
 
+        /// <summary>
+        /// Test indien het opmaken van een bestuurder faalt.
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         public async Task CreateAsync_Failure_Test()
         {
@@ -119,9 +148,12 @@ namespace Fleetmanagement_Unit_Tests
             Assert.Equal(3, (bestuurders as IList<Bestuurder>).Count);
         }
 
-
+        /// <summary>
+        /// Vul de database op een Async manier. 
+        /// </summary>
+        /// <returns></returns>
         private async Task PopulateDataAsync()
-        {           
+        {
             int index = 1;
             while (index <= 3)
             {
@@ -144,6 +176,10 @@ namespace Fleetmanagement_Unit_Tests
             };
         }
 
+        /// <summary>
+        /// Zorg voor de opkuis van de database. 
+        /// </summary>
+        /// <returns></returns>
         private async Task Cleanup()
         {
             var bestuurders = _context.Bestuurders.ToList();
