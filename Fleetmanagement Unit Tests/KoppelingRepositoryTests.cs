@@ -90,6 +90,22 @@ namespace Fleetmanagement_Unit_Tests
             return voertuig;
         }
 
+        /*internal async void CleanAndReFillDB()
+        {
+            Cleanup();
+            var bestuurder = GetBestuurder1();
+            var tankkaart = GetTankkaart1();
+            var builder = GetVoertuig1();
+            var voertuig = builder.Build();
+            var _repoBest = new BestuurderRepository(_context, _loggerfactory.CreateLogger("Koppelingestlogs"));
+            var _repoTank = new TankkaartRepository(_context, _loggerfactory.CreateLogger("Koppelingestlogs"));
+            var _repoVoer = new VoertuigRepository(_context, _loggerfactory.CreateLogger("Koppelingestlogs"));
+            await _repoBest.Add(bestuurder);
+            await _repoTank.Add(tankkaart);
+            await _repoVoer.Add(voertuig);
+            await _context.SaveChangesAsync();
+        }*/
+
         internal void Cleanup()
         {
             var tankkaarten = _context.Tankkaarten.ToList();
@@ -113,10 +129,10 @@ namespace Fleetmanagement_Unit_Tests
             var bestuurder = GetBestuurder1();
             var bestuurderRRN = bestuurder.Rijksregisternummer;
             _context.Bestuurders.Add(bestuurder);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             await _repo.CreateKoppeling(bestuurderRRN);
-            _context.SaveChanges();
-
+            await _context.SaveChangesAsync();
+            
             var koppelingByBestuurder = _repo.GetByBestuurder(bestuurderRRN).Result;
 
             Assert.NotNull(koppelingByBestuurder);
@@ -130,9 +146,9 @@ namespace Fleetmanagement_Unit_Tests
             var bestuurder = GetBestuurder1();
             var bestuurderRRN = bestuurder.Rijksregisternummer;
             _context.Bestuurders.Add(bestuurder);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             await _repo.CreateKoppeling(bestuurderRRN);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             var koppelingByBestuurder = _repo.GetByBestuurder(bestuurderRRN).Result;
             var koppelingByBestuurderViaDB = await _context.Koppelingen.Where(k => k.Rijksregisternummer == bestuurderRRN).FirstOrDefaultAsync();
@@ -156,10 +172,10 @@ namespace Fleetmanagement_Unit_Tests
             _context.Tankkaarten.Add(tankkaart);
             _context.SaveChanges();
             await _repo.CreateKoppeling(bestuurderRRN);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             await _repo.KoppelAanTankkaart(bestuurderRRN, kaartnummer);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             var koppelingByTankkaart = _repo.GetByTankkaart(kaartnummer).Result;
             var koppelingByTankkaartViaDB = await _context.Koppelingen.Where(k => k.Kaartnummer == kaartnummer).FirstOrDefaultAsync();
@@ -184,12 +200,12 @@ namespace Fleetmanagement_Unit_Tests
             var chassisnummer = voertuig.Chassisnummer;
             _context.Bestuurders.Add(bestuurder);
             _context.Voertuigen.Add(voertuig);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             await _repo.CreateKoppeling(bestuurderRRN);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             await _repo.KoppelAanVoertuig(bestuurderRRN, chassisnummer);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             var koppelingByVoertuig = _repo.GetByvoertuig(chassisnummer).Result;
             var koppelingByVoertuigViaDB = await _context.Koppelingen.Where(k => k.Chassisnummer == chassisnummer).FirstOrDefaultAsync();
@@ -214,12 +230,12 @@ namespace Fleetmanagement_Unit_Tests
             var kaartnummer = tankkaart.Kaartnummer;
             _context.Bestuurders.Add(bestuurder);
             _context.Tankkaarten.Add(tankkaart);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             await _repo.CreateKoppeling(bestuurderRRN);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             await _repo.KoppelAanTankkaart(bestuurderRRN, kaartnummer);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             var koppelingByBestuurder = _repo.GetByBestuurder(bestuurderRRN).Result;
             var koppelingByTankkaart = _repo.GetByTankkaart(kaartnummer).Result;
@@ -244,12 +260,12 @@ namespace Fleetmanagement_Unit_Tests
             var chassisnummer = voertuig.Chassisnummer;
             _context.Bestuurders.Add(bestuurder);
             _context.Voertuigen.Add(voertuig);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             await _repo.CreateKoppeling(bestuurderRRN);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             await _repo.KoppelAanVoertuig(bestuurderRRN, chassisnummer);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             var koppelingByBestuurder = _repo.GetByBestuurder(bestuurderRRN).Result;
             var koppelingByVoertuig = _repo.GetByvoertuig(chassisnummer).Result;
@@ -277,13 +293,13 @@ namespace Fleetmanagement_Unit_Tests
             _context.Tankkaarten.Add(tankkaart);
             _context.Bestuurders.Add(bestuurder);
             _context.Voertuigen.Add(voertuig);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             await _repo.CreateKoppeling(bestuurderRRN);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             await _repo.KoppelAanTankkaart(bestuurderRRN, kaartnummer);
             await _repo.KoppelAanVoertuig(bestuurderRRN, chassisnummer);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             var koppelingByBestuurder = _repo.GetByBestuurder(bestuurderRRN).Result;
             var koppelingByTankkaart = _repo.GetByTankkaart(kaartnummer).Result;
@@ -315,14 +331,14 @@ namespace Fleetmanagement_Unit_Tests
             var kaartnummer = tankkaart.Kaartnummer;
             _context.Bestuurders.Add(bestuurder);
             _context.Tankkaarten.Add(tankkaart);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             await _repo.CreateKoppeling(bestuurderRRN);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             await _repo.KoppelAanTankkaart(bestuurderRRN, kaartnummer);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             await _repo.KoppelLosVanTankkaart(kaartnummer);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             var koppelingByBestuurder = _repo.GetByBestuurder(bestuurderRRN).Result;
             var koppelingByTankkaart = _repo.GetByTankkaart(kaartnummer).Result;
@@ -345,14 +361,14 @@ namespace Fleetmanagement_Unit_Tests
             var chassisnummer = voertuig.Chassisnummer;
             _context.Bestuurders.Add(bestuurder);
             _context.Voertuigen.Add(voertuig);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             await _repo.CreateKoppeling(bestuurderRRN);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             await _repo.KoppelAanVoertuig(bestuurderRRN, chassisnummer);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             await _repo.KoppelLosVanVoertuig(chassisnummer);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             var koppelingByBestuurder = _repo.GetByBestuurder(bestuurderRRN).Result;
             var koppelingByVoertuig = _repo.GetByvoertuig(chassisnummer).Result;
@@ -377,16 +393,16 @@ namespace Fleetmanagement_Unit_Tests
             _context.Voertuigen.Add(voertuig);
             _context.Bestuurders.Add(bestuurder);
             _context.Tankkaarten.Add(tankkaart);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             await _repo.CreateKoppeling(bestuurderRRN);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             await _repo.KoppelAanTankkaart(bestuurderRRN, kaartnummer);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             await _repo.KoppelAanVoertuig(bestuurderRRN, chassisnummer);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             await _repo.KoppelLosVanBestuurder(bestuurderRRN);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             var koppelingByBestuurder = _repo.GetByBestuurder(bestuurderRRN).Result;
             var koppelingByTankkaart = _repo.GetByTankkaart(kaartnummer).Result;

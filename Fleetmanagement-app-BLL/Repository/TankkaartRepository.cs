@@ -18,9 +18,12 @@ namespace Fleetmanagement_app_BLL.Repository
             _context = context;
         }
 
+        /// <summary>Voegt de tankkaart en mogelijke brandstoffen toe aan de database.</summary>
+        /// <remarks>Er wordt eerst nagegaan of de verplichte velden aanwezig zijn.</remarks>
+        /// <param name="tankkaart">Tankkaart object</param>
+        /// <returns>boolean</returns>
         public override async Task<bool> Add(Tankkaart tankkaart)
         {
-            _logger.LogWarning("Tankkaart_Add: Start van Methode");
             List<ToewijzingBrandstofTankkaart> toewijzingenbrandstof = new List<ToewijzingBrandstofTankkaart>();
             tankkaart.Kaartnummer = tankkaart.Kaartnummer.Trim();
 
@@ -67,10 +70,11 @@ namespace Fleetmanagement_app_BLL.Repository
             return true;
         }
 
+        /// <summary>Archiveert de tankaart (IsGearchiveerd = true).</summary>
+        /// <param name="kaartnummer">kaartnummer (string) van de tankkaart</param>
+        /// <returns>boolean</returns>
         public override async Task<bool> Delete(string kaartnummer)
         {
-            _logger.LogWarning("Tankkaart_Delete: Start van Methode");
-
             var tankkaart = await GetById(kaartnummer);
             tankkaart.IsGearchiveerd = true;
 
@@ -78,32 +82,16 @@ namespace Fleetmanagement_app_BLL.Repository
             {
                 tankkaart.LaatstGeupdate = DateTime.Now;
                 _dbSet.Update(tankkaart);
+                _logger.LogWarning("Tankkaart_Delete: Einde van Methode");
+                return true;
             }
             catch (Exception e)
             {
                 _logger.LogError("Tankkaart_Delete: tankkaart niet gedelete", e);
                 return false;
             }
-
-            var koppeling = _context.Koppelingen.Where(k => k.Kaartnummer == kaartnummer).FirstOrDefault();
-            if (koppeling != null)
-            {
-                try
-                {
-                    koppeling.Kaartnummer = null;
-                    _context.Koppelingen.Update(koppeling);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError("Tankkaart_Delete: koppeling niet leeggemaakt", e);
-                    return false;
-                }
-            }
-            _logger.LogWarning("Tankkaart_Delete: Tankkaart van koppeling gehaald");
-
-            _logger.LogWarning("Tankkaart_Delete: Einde van Methode");
-            return true;
         }
+
 
         public override async Task<IEnumerable<Tankkaart>> GetAllActive()
         {
@@ -115,33 +103,41 @@ namespace Fleetmanagement_app_BLL.Repository
             return await _dbSet.Where(t => t.IsGearchiveerd == true).ToListAsync();
         }
 
-        public override async Task<bool> Update(Tankkaart tankkaart)
+        /// <summary>Past de bestaande tankkaart aan met de nieuwe gegevens.</summary>
+        /// <remarks>Er wordt eerst nagegaan of de verplichte velden aanwezig zijn en of er al een tankkaart met kaartnummer bestaat</remarks>
+        /// <param name="tankkaart">Tankkaart object</param>
+        /// <returns>boolean</returns>
+        public override Task<bool> Update(Tankkaart tankkaart)
         {
             if (VerplichteVeldenLeeg(tankkaart))
             {
                 _logger.LogWarning("Tankkaart_Update: GeldigheidsDatum of Kaartnummer zijn leeg");
-                return false;
+                return Task.FromResult(false);
             }
 
             if (_dbSet.Where(t => t.Kaartnummer == tankkaart.Kaartnummer).Any())
             {
                 _logger.LogWarning("Tankkaart_Update: Er bestaat al een kaart met nummer " + tankkaart.Kaartnummer);
-                return false;
+                return Task.FromResult(false);
             }
 
             try
             {
                 var tankkaartToUpdate = _context.Tankkaarten.Where(t => t.Kaartnummer == tankkaart.Kaartnummer).First();
                 _dbSet.Update(tankkaartToUpdate).CurrentValues.SetValues(tankkaart);
+                return Task.FromResult(true);
             }
             catch (Exception e)
             {
                 _logger.LogError("Tankkaart_Update: Er is iets foutgelopen bij het updaten van tankkaart {kaartnummer} in de DB", e);
-                return false;
+                return Task.FromResult(false);
             }
-            return true;
+
         }
 
+        /// <summary>Blokeert de tankkaart</summary>
+        /// <param name="tankkaart">Tankkaart object</param>
+        /// <returns>boolean</returns>
         public async Task<bool> Blokkeren(string kaartnummer)
         {
             var tankkaart = await GetById(kaartnummer);
@@ -151,13 +147,13 @@ namespace Fleetmanagement_app_BLL.Repository
             {
                 tankkaart.LaatstGeupdate = DateTime.Now;
                 _dbSet.Update(tankkaart);
+                return true;
             }
             catch (Exception e)
             {
                 _logger.LogWarning("Tankkaart_Blokeren: Er is iets foutgelopen bij updaten en blokeren van tankkaart {kaartnummer} in de DB", e);
                 return false;
             }
-            return true;
         }
 
         private bool VerplichteVeldenLeeg(Tankkaart tankkaart)
