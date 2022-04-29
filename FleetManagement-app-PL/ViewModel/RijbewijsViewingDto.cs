@@ -2,7 +2,7 @@
 
 namespace FleetManagement_app_PL.ViewModel
 {
-    public class RijbewijsViewModel
+    public class RijbewijsViewingDto
     {
         public Guid Id { get; set; }
 

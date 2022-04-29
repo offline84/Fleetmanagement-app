@@ -2,9 +2,9 @@
 
 namespace FleetManagement_app_PL.ViewModel
 {
-    public class BestuurderViewModel
+    public class BestuurderViewingDto
     {
-        public BestuurderViewModel(string naam, string achternaam, DateTime geboorteDatum, string rijksregisternummer)
+        public BestuurderViewingDto(string naam, string achternaam, DateTime geboorteDatum, string rijksregisternummer)
         {
             Naam = naam;
             Achternaam = achternaam;
@@ -12,7 +12,7 @@ namespace FleetManagement_app_PL.ViewModel
             Rijksregisternummer = rijksregisternummer;
         }
 
-        public BestuurderViewModel()
+        public BestuurderViewingDto()
         {
 
         }

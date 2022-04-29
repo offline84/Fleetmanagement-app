@@ -77,7 +77,7 @@ namespace Fleetmanagement_app_BLL.Repository
 
             try
             {
-                var entity = _context.Bestuurders.Where(b => b.Rijksregisternummer.Equals(bestuurder.Rijksregisternummer)).SingleOrDefault();
+                var entity = _dbSet.Where(b => b.Rijksregisternummer.Equals(bestuurder.Rijksregisternummer)).SingleOrDefault();
 
                 if (entity == null)
                 {
@@ -114,25 +114,30 @@ namespace Fleetmanagement_app_BLL.Repository
 
         public override async Task<IEnumerable<Bestuurder>> GetAll()
         {
-            return await _context.Bestuurders.ToListAsync();
+            return await _dbSet
+                .Include(b => b.Rijbewijzen)
+                .ToListAsync();
         }
 
         public override async Task<IEnumerable<Bestuurder>> GetAllActive()
         {
-            var bestuurders = await _context.Bestuurders.ToListAsync();
-            return bestuurders.Where(b => !b.IsGearchiveerd).ToList();
-
+            return await _dbSet.Where(b => !b.IsGearchiveerd)
+                .Include(b => b.Rijbewijzen)
+                .ToListAsync();
         }
 
         public override async Task<IEnumerable<Bestuurder>> GetAllArchived()
         {
-            var bestuurders = await _context.Bestuurders.ToListAsync();
-            return bestuurders.Where(b => b.IsGearchiveerd).ToList();
+            return await _dbSet.Where(b => b.IsGearchiveerd)
+                .Include(b => b.Rijbewijzen)
+                .ToListAsync();
         }
 
         public override async Task<Bestuurder> GetById(string id)
         {
-            return await _context.Bestuurders.FindAsync(id);
+            return await _dbSet.Where(b => b.Rijksregisternummer.Equals(id))
+                .Include(b => b.Rijbewijzen)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<List<Rijbewijs>> GetDriverLicensesForDriver(string rijksregisternummer)

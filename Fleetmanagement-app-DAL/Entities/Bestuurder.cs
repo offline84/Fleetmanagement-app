@@ -28,7 +28,6 @@ namespace Fleetmanagement_app_DAL.Entities
 
         public virtual Adres Adres { get; set; }
 
-        //[Timestamp]
         public DateTime GeboorteDatum { get; set; }
 
         public virtual ICollection<ToewijzingRijbewijsBestuurder> ToewijzingenRijbewijs { get; set; }

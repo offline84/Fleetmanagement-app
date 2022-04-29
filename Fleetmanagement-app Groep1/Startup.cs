@@ -37,7 +37,8 @@ namespace Fleetmanagement_app_Groep1
                 .AddSingleton<ILoggerFactory, LoggerFactory>();
 
             services.AddAutoMapper(typeof(VoertuigProfile));
-                
+            services.AddAutoMapper(typeof(BestuurderProfile));
+
 
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory

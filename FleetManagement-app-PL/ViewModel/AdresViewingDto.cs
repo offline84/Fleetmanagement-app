@@ -1,6 +1,6 @@
 ﻿namespace FleetManagement_app_PL.ViewModel
 {
-    public class AdresViewModel
+    public class AdresViewingDto
     {
         public string Straat { get; set; }
 
@@ -10,6 +10,6 @@
 
         public int Postcode { get; set; }
 
-        public BestuurderViewModel Bestuurder { get; set; }
+        public BestuurderViewingDto Bestuurder { get; set; }
     }
 }
