@@ -40,7 +40,6 @@ namespace Fleetmanagement_app_DAL.Entities
 
         public bool IsGearchiveerd { get; set; }
 
-        //[Timestamp]
         public DateTime LaatstGeupdate { get; set; }
     }
 }
