@@ -152,30 +152,6 @@ namespace Fleetmanagement_Unit_Tests
         }
 
         [Fact]
-        public async Task Delete_LinkNaarKoppelingVerwijderd()
-        {
-            throw new NotImplementedException();
-        }
-
-        [Fact]
-        public async Task GetAllActief_NaDeleteEenMinderDanGetAll()
-        {
-            Cleanup();
-
-            var tankkaart = GetTankkaart1();
-            await _repo.Add(tankkaart);
-            await _context.SaveChangesAsync();
-            await _repo.Delete(tankkaart.Kaartnummer);
-            await _context.SaveChangesAsync();
-            var tankkaarten = await _repo.GetAll();
-            var aantalTankkaarten = tankkaarten.Count();
-            var tankkaartenActief = await _repo.GetAllActive();
-            var aantalTankkaartenActief = tankkaartenActief.Count();
-
-            Assert.True(aantalTankkaarten == aantalTankkaartenActief + 1);
-        }
-
-        [Fact]
         public async Task Update_UpdateWerkt()
         {
             Cleanup();
