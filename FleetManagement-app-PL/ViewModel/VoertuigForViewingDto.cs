@@ -1,7 +1,5 @@
 ﻿using Fleetmanagement_app_DAL.Entities;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FleetManagement_app_PL.ViewModel
 {

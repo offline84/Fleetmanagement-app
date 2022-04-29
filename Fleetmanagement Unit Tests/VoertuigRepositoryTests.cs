@@ -6,13 +6,18 @@ using Fleetmanagement_app_Groep1.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Xunit;
 
 namespace Fleetmanagement_Unit_Tests
 {
+    //     XUnit voert iedere testclass in parallel uit met elkaar om op die manier tijd uit te sparen.
+    //     Dit zorgt voor problemen doordat er van en naar de databank geschreven wordt op hetzelfde moment dat er een andere test loopt
+    //     die deze data nodig heeft om de test succesvol uit te voeren.
+    //     Als je een klasse decoreert met het collectionattribuut, dan zoekt de unit test collecties op met dezelfde naam en voert deze ze unilateraal uit.
+
+    [Collection("DatabaseTests")]
     public class VoertuigRepositoryTests
     {
         private static FleetmanagerContext _context = new FleetmanagerContext(DbContextHelper.GetDbContextOptions("Testing"));
@@ -22,7 +27,7 @@ namespace Fleetmanagement_Unit_Tests
         public VoertuigRepositoryTests()
         {
             _repo = new VoertuigRepository(_context, _loggerFactory.CreateLogger("VoertuigRepositoryTests"));
-            
+
             if (!_context.Database.CanConnect())
             {
                 _context.Database.EnsureCreated();
@@ -32,7 +37,7 @@ namespace Fleetmanagement_Unit_Tests
 
         internal Voertuigbuilder GetVoertuig1()
         {
-            var brandstof = _context.Brandstof.FirstOrDefault();
+            var brandstof = _context.Brandstof.OrderBy(b => b.Id).Last();
             var status = _context.Status.Where(s => s.Staat == "in bedrijf").FirstOrDefault();
             var categorie = _context.Categorie.FirstOrDefault();
 
@@ -81,7 +86,7 @@ namespace Fleetmanagement_Unit_Tests
             var voertuigen = _context.Voertuigen.ToList();
 
             _context.Voertuigen.RemoveRange(voertuigen);
-            
+
             _context.SaveChanges();
         }
 
@@ -126,7 +131,6 @@ namespace Fleetmanagement_Unit_Tests
             var requestedvehicle = await _repo.GetById(voertuig.Chassisnummer);
 
             Assert.InRange(requestedvehicle.LaatstGeupdate, first, DateTime.Now);
-
         }
 
         [Fact]
@@ -135,7 +139,7 @@ namespace Fleetmanagement_Unit_Tests
             Cleanup();
 
             var builder = GetVoertuig1();
-            var voertuig1 = builder.Build(); 
+            var voertuig1 = builder.Build();
             await _repo.Add(voertuig1);
             await _context.SaveChangesAsync();
 
@@ -158,7 +162,7 @@ namespace Fleetmanagement_Unit_Tests
             Cleanup();
 
             var builder = GetVoertuig1();
-            var voertuig1 = builder.Build(); 
+            var voertuig1 = builder.Build();
             await _repo.Add(voertuig1);
             await _context.SaveChangesAsync();
 
@@ -224,7 +228,6 @@ namespace Fleetmanagement_Unit_Tests
             var voertuig = builder.Build();
 
             await _repo.Add(voertuig);
-            
 
             builder.AantalDeuren = 5;
             builder.Kleur = "groen";
@@ -236,7 +239,7 @@ namespace Fleetmanagement_Unit_Tests
 
             var voertuigen = await _repo.GetAll();
             var updatedVoertuig = voertuigen.Where(v => v.Chassisnummer == voertuig.Chassisnummer).FirstOrDefault();
-           
+
             Assert.True(update);
             Assert.Equal("groen", updatedVoertuig.Kleur);
             Assert.Equal(5, updatedVoertuig.AantalDeuren);
@@ -256,7 +259,6 @@ namespace Fleetmanagement_Unit_Tests
 
             Assert.False(isAdded);
             Assert.Empty(voertuigen);
-
         }
 
         [Fact]
@@ -272,7 +274,7 @@ namespace Fleetmanagement_Unit_Tests
             await _repo.Add(voertuig);
             _context.SaveChanges();
 
-            var categorien = await _context.Set<Categorie>().ToListAsync() ;
+            var categorien = await _context.Set<Categorie>().ToListAsync();
             voertuig.Categorie = categorien[2];
 
             var isAdded = await _repo.Update(voertuig);
@@ -285,7 +287,6 @@ namespace Fleetmanagement_Unit_Tests
 
             Assert.Equal(voertuig.CategorieId, updatedVoertuig.CategorieId);
             Assert.NotEqual(voertuig.CategorieId, EersteVoertuig.CategorieId);
-            
         }
 
         [Fact]
@@ -302,7 +303,7 @@ namespace Fleetmanagement_Unit_Tests
             _context.SaveChanges();
 
             var status = _context.Status.Where(s => s.Staat == "aankoop").FirstOrDefault();
-            voertuig.Status= status;
+            voertuig.Status = status;
 
             var isAdded = await _repo.Update(voertuig);
             _context.SaveChanges();
@@ -314,10 +315,9 @@ namespace Fleetmanagement_Unit_Tests
 
             Assert.Equal(voertuig.StatusId, updatedVoertuig.StatusId);
             Assert.NotEqual(voertuig.StatusId, EersteVoertuig.StatusId);
-            
         }
 
-         [Fact]
+        [Fact]
         public async void UpdateBehandeltBrandstofInVoertuigCorrect()
         {
             Cleanup();
@@ -330,8 +330,8 @@ namespace Fleetmanagement_Unit_Tests
             await _repo.Add(voertuig);
             _context.SaveChanges();
 
-            var brandstoffen = await _context.Set<Brandstof>().ToListAsync() ;
-            voertuig.Brandstof= brandstoffen[2];
+            var brandstoffen = await _context.Set<Brandstof>().ToListAsync();
+            voertuig.Brandstof = brandstoffen[2];
 
             var isAdded = await _repo.Update(voertuig);
             _context.SaveChanges();
@@ -342,7 +342,7 @@ namespace Fleetmanagement_Unit_Tests
             Assert.True(isAdded);
 
             Assert.Equal(voertuig.BrandstofId, updatedVoertuig.BrandstofId);
-            Assert.NotEqual(voertuig.BrandstofId, EersteVoertuig.BrandstofId);          
+            Assert.NotEqual(voertuig.BrandstofId, EersteVoertuig.BrandstofId);
         }
 
         [Fact]
@@ -358,8 +358,6 @@ namespace Fleetmanagement_Unit_Tests
 
             var addedvoertuig = _repo.GetById(voertuig.Chassisnummer).Result;
             var added = addedvoertuig.LaatstGeupdate;
-
-            
 
             voertuig.Kleur = "grijs";
             voertuig.Bouwjaar = 2022;
@@ -389,24 +387,23 @@ namespace Fleetmanagement_Unit_Tests
 
             voertuig.Merk = veld;
 
-            Assert.False( await _repo.Update(voertuig));
+            Assert.False(await _repo.Update(voertuig));
 
             voertuig = builder.Build();
             voertuig.Model = veld;
 
-            Assert.False( await _repo.Update(voertuig));
+            Assert.False(await _repo.Update(voertuig));
 
             voertuig = builder.Build();
             voertuig.Nummerplaat = veld;
 
-            Assert.False( await _repo.Update(voertuig));
-
+            Assert.False(await _repo.Update(voertuig));
         }
 
         [Fact]
         public async void DeletenArchiveertVoertuig()
         {
-             Cleanup();
+            Cleanup();
 
             var builder = GetVoertuig1();
             var voertuig = builder.Build();
@@ -419,7 +416,6 @@ namespace Fleetmanagement_Unit_Tests
             var inArchief = _repo.GetById(voertuig.Chassisnummer).Result;
 
             Assert.True(inArchief.IsGearchiveerd);
-        
         }
 
         [Fact]
@@ -442,7 +438,6 @@ namespace Fleetmanagement_Unit_Tests
 
             Assert.True(search.Any());
             Assert.Equal(voertuig, search.First());
-
         }
 
         [Fact]
@@ -464,7 +459,6 @@ namespace Fleetmanagement_Unit_Tests
             var search = await _repo.Find(v => v.Kleur == "oranje");
 
             Assert.Empty(search);
-
         }
     }
 }
