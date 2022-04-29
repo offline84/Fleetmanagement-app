@@ -21,6 +21,12 @@ namespace Fleetmanagement_app_BLL
 
         public override async Task<bool> Delete(Guid id)
         {
+            if (_context.Voertuigen.Where(v => v.CategorieId == id).Any())
+            {
+                _logger.LogWarning("Cannot delete a category linked to a vehicle");
+                return false;
+            }
+
             var entity = _dbSet.Where(c => c.Id == id).FirstOrDefault();
 
             if (entity != null)
@@ -38,7 +44,7 @@ namespace Fleetmanagement_app_BLL
                         return false;
                     }
                 }
-                catch(Exception e) 
+                catch (Exception e)
                 {
                     _logger.LogError("Delete encountered an exception", e);
                     return false;

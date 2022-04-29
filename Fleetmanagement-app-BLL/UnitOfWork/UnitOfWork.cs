@@ -16,9 +16,9 @@ namespace Fleetmanagement_app_BLL.UnitOfWork
         public ITankkaartRepository Tankkaart { get; private set; }
         public IKoppelingRepository Koppeling { get; private set; }
 
-        public IStatusRepository Status { get; private set;}
-        public IBrandstofRepository Brandstof { get; private set;}
-        public ICategorieRepository Categorie { get; private set;}
+        public IStatusRepository Status { get; private set; }
+        public IBrandstofRepository Brandstof { get; private set; }
+        public ICategorieRepository Categorie { get; private set; }
 
         public UnitOfWork(FleetmanagerContext context, ILoggerFactory loggerFactory)
         {

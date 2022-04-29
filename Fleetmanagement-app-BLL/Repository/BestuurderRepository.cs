@@ -5,64 +5,144 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Fleetmanagement_app_BLL.Repository
 {
     public class BestuurderRepository : GenericRepository<Bestuurder>, IBestuurderRepository
     {
-        private FleetmanagerContext _context;
+        private readonly FleetmanagerContext _context;
 
         public BestuurderRepository(FleetmanagerContext context, ILogger logger) : base(context, logger)
         {
             _context = context;
         }
 
-        public async Task<bool> Add(Bestuurder bestuurder)
+        public override async Task<bool> Add(Bestuurder bestuurder)
         {
-            List<ToewijzingRijbewijsBestuurder> toewijzingen = new List<ToewijzingRijbewijsBestuurder>();
-            bestuurder.Naam = bestuurder.Naam.Trim();
-            bestuurder.Achternaam = bestuurder.Achternaam.Trim();
-            bestuurder.Rijksregisternummer = bestuurder.Rijksregisternummer.Trim();
-
-            if (string.IsNullOrEmpty(bestuurder.Rijksregisternummer) |
-                bestuurder.Naam == "" |
-                bestuurder.Achternaam == "" |
-                bestuurder.GeboorteDatum == null |
-                bestuurder.Rijbewijzen.Count == 0)
-
-                return false;
-
-            foreach (var rijbewijs in bestuurder.Rijbewijzen)
+            try
             {
-                ToewijzingRijbewijsBestuurder trb = new ToewijzingRijbewijsBestuurder();
-                trb.Rijbewijs = rijbewijs;
-                trb.Bestuurder = bestuurder;
+                _logger.LogWarning("Start BestuurderRepository - AddFunction:", bestuurder);
+                List<ToewijzingRijbewijsBestuurder> toewijzingen = new List<ToewijzingRijbewijsBestuurder>();
+                bestuurder.Naam = bestuurder.Naam.Trim();
+                bestuurder.Achternaam = bestuurder.Achternaam.Trim();
+                bestuurder.Rijksregisternummer = bestuurder.Rijksregisternummer.Trim();
 
-                toewijzingen.Add(trb);
+                if (string.IsNullOrEmpty(bestuurder.Rijksregisternummer) |
+                    string.IsNullOrEmpty(bestuurder.Naam) |
+                    string.IsNullOrEmpty(bestuurder.Achternaam) |
+                    (bestuurder.GeboorteDatum == null && bestuurder.GeboorteDatum <= DateTime.MinValue) |
+                    bestuurder.Rijbewijzen.Count == 0)
+                {
+                    _logger.LogWarning("Something went wrong, Required values cannot be null", bestuurder);
+                    return false;
+                }
+
+                foreach (var rijbewijs in bestuurder.Rijbewijzen)
+                {
+                    toewijzingen.Add(new ToewijzingRijbewijsBestuurder()
+                    {
+                        Rijbewijs = rijbewijs,
+                        Bestuurder = bestuurder
+                    });
+                }
+
+                await _context.ToewijzingRijbewijsBestuurders.AddRangeAsync(toewijzingen);
+
+                bestuurder.LaatstGeupdate = DateTime.Now;
+                await _dbSet.AddAsync(bestuurder);
+                _logger.LogWarning("End BestuurderRepository - AddFunction!");
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Something went wrong while adding bestuurder: {bestuurder.Naam} - {bestuurder.Achternaam}", e.Message);
+                return false;
+            }
+        }
+
+        public override Task<bool> Update(Bestuurder bestuurder)
+        {
+            _logger.LogWarning("Start BestuurderRepository - UpdateFunction:", bestuurder);
+            if (string.IsNullOrEmpty(bestuurder.Rijksregisternummer) |
+              string.IsNullOrEmpty(bestuurder.Naam) |
+              string.IsNullOrEmpty(bestuurder.Achternaam) |
+              (bestuurder.GeboorteDatum == null && bestuurder.GeboorteDatum <= DateTime.MinValue) |
+              bestuurder.Rijbewijzen.Count == 0)
+            {
+                _logger.LogWarning("Something went wrong, Required values cannot be null", bestuurder);
+                return Task.FromResult(false);
             }
 
-            await _context.ToewijzingRijbewijsBestuurders.AddRangeAsync(toewijzingen);
-            await _dbSet.AddAsync(bestuurder);
+            try
+            {
+                var entity = _dbSet.Where(b => b.Rijksregisternummer.Equals(bestuurder.Rijksregisternummer)).SingleOrDefault();
 
+                if (entity == null)
+                {
+                    _logger.LogWarning("Something went wrong, Bestuurder not found!", bestuurder);
+                    return Task.FromResult(false);
+                }
+                bestuurder.LaatstGeupdate = DateTime.Now;
+                _dbSet.Update(entity).CurrentValues.SetValues(bestuurder);
+                _logger.LogWarning("End BestuurderRepository - UpdateFunction!");
+                return Task.FromResult(true);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Something went wrong while updating bestuurder: {bestuurder.Naam} - {bestuurder.Achternaam}", e.Message);
+                return Task.FromResult(false);
+            }
+        }
+
+        public override async Task<bool> Delete(string rijksregisternummer)
+        {
+            var bestuurder = await GetById(rijksregisternummer);
+            bestuurder.IsGearchiveerd = true;
+            try
+            {
+                _dbSet.Update(bestuurder);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Something went wrong while softDeleting bestuurder: {bestuurder.Naam} - {bestuurder.Achternaam}", e.Message);
+                return false;
+            }
             return true;
         }
 
         public override async Task<IEnumerable<Bestuurder>> GetAll()
         {
-            var entiteiten = await _context.Bestuurders.ToListAsync<Bestuurder>();
-            return entiteiten;
+            return await _dbSet.ToListAsync();
+        }
+
+        public override async Task<IEnumerable<Bestuurder>> GetAllActive()
+        {
+            return await _dbSet.Where(b => !b.IsGearchiveerd).ToListAsync();
+        }
+
+        public override async Task<IEnumerable<Bestuurder>> GetAllArchived()
+        {
+            return await _dbSet.Where(b => b.IsGearchiveerd).ToListAsync();
         }
 
         public override async Task<Bestuurder> GetById(string id)
         {
-            var bestuurder = await _context.Bestuurders.FindAsync(id);
-            return bestuurder;
+            return await _dbSet.Where(b => b.Rijksregisternummer.Equals(id)).FirstOrDefaultAsync();
         }
 
-        public List<Rijbewijs> GetDriverLicensesForDriver(string rijksregisternummer)
+        public async Task<List<Rijbewijs>> GetDriverLicensesForDriver(string rijksregisternummer)
         {
-            throw new NotImplementedException();
+            var entity = await GetById(rijksregisternummer);
+
+            if (entity == null)
+            {
+                _logger.LogWarning("Something went wrong, GetDriverLicensesForDriver not found!", rijksregisternummer);
+                return new List<Rijbewijs>();
+            }
+
+            return entity.Rijbewijzen.ToList();
         }
     }
 }

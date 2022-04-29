@@ -18,7 +18,7 @@ namespace Fleetmanagement_Unit_Tests
 
         public VoertuigBuilderTests()
         {
-             if (!_context.Database.CanConnect())
+            if (!_context.Database.CanConnect())
             {
                 _context.Database.EnsureCreated();
                 _context.Database.Migrate();

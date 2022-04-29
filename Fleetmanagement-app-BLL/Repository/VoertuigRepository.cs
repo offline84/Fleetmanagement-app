@@ -76,6 +76,7 @@ namespace Fleetmanagement_app_BLL.Repository
             if (voertuig != null)
             {
                 voertuig.IsGearchiveerd = true;
+                voertuig.LaatstGeupdate = DateTime.Now;
 
                 try
                 {
@@ -89,33 +90,34 @@ namespace Fleetmanagement_app_BLL.Repository
 
                 return true;
             }
-            _logger.LogWarning("Voertuig for deletion did not exist in Database" );
+            _logger.LogWarning("Voertuig for deletion did not exist in Database");
             return false;
         }
 
-        public async override Task<IEnumerable<Voertuig>> GetAll()
+        public override async Task<IEnumerable<Voertuig>> GetAll()
         {
             return await _dbSet
-                //.Include(b => b.Brandstof)
-                //.Include(c => c.Categorie)
-                //.Include(s => s.Status)
+                .Include(b => b.Brandstof)
+                .Include(c => c.Categorie)
+                .Include(s => s.Status)
                 .ToListAsync();
         }
 
-        public async override Task<IEnumerable<Voertuig>> GetAllArchived()
+        public override async Task<IEnumerable<Voertuig>> GetAllArchived()
         {
             return await _dbSet.Where(v => v.IsGearchiveerd == true)
-                //.Include(b => b.Brandstof)
-                //.Include(c => c.Categorie)
-                //.Include(s => s.Status)
+                .Include(b => b.Brandstof)
+                .Include(c => c.Categorie)
+                .Include(s => s.Status)
                 .ToListAsync();
         }
-        public async override Task<IEnumerable<Voertuig>> GetAllActive()
+
+        public override async Task<IEnumerable<Voertuig>> GetAllActive()
         {
             return await _dbSet.Where(v => v.IsGearchiveerd == false)
-                //.Include(b => b.Brandstof)
-                //.Include(c => c.Categorie)
-                //.Include(s => s.Status)
+                .Include(b => b.Brandstof)
+                .Include(c => c.Categorie)
+                .Include(s => s.Status)
                 .ToListAsync();
         }
 
@@ -132,7 +134,7 @@ namespace Fleetmanagement_app_BLL.Repository
         ///     Deze method past de gegevens van een bestaand voertuig aan.
         /// </summary>
         /// <remarks>
-        ///     Eerst wordt er nagegaan of het voertuig de benodigde parameters bevat. 
+        ///     Eerst wordt er nagegaan of het voertuig de benodigde parameters bevat.
         ///     Vervolgens wordt
         ///     <code>
         ///         voertuig.LaatstGeupdate = DateTime.Now;
@@ -159,6 +161,14 @@ namespace Fleetmanagement_app_BLL.Repository
             if (voertuig.Status != null)
                 voertuig.StatusId = voertuig.Status.Id;
 
+            var taskCnp = Task.Run(() => _context.Voertuigen.Where(v => v.Nummerplaat == voertuig.Nummerplaat).FirstOrDefaultAsync());
+            var checkNummerplaat = taskCnp.Result;
+
+            if (checkNummerplaat != null && checkNummerplaat.Chassisnummer != voertuig.Chassisnummer && voertuig.Nummerplaat != "")
+            {
+                _logger.LogWarning("De database bevat reeds een voertuig met dezelfde nummerplaat!");
+                return Task.FromResult(false);
+            }
 
             try
             {
@@ -173,14 +183,12 @@ namespace Fleetmanagement_app_BLL.Repository
                 _logger.LogError("Something went wrong while updating voertuig {voertuig.Chassisnummer}", e);
                 return Task.FromResult(false);
             }
-
         }
 
         public override async Task<IEnumerable<Voertuig>> Find(Expression<Func<Voertuig, bool>> predicate)
         {
             return await _dbSet.Where(predicate).ToListAsync();
         }
-
 
         /// <summary>
         ///     Deze Method controleert of de verplichte velden al dan niet zijn ingevuld.
@@ -212,7 +220,6 @@ namespace Fleetmanagement_app_BLL.Repository
                 _logger.LogWarning("Licenseplate cannot be Empty for update");
                 return false;
             }
-
 
             return true;
         }
