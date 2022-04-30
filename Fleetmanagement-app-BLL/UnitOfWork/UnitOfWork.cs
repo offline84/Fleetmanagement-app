@@ -19,6 +19,7 @@ namespace Fleetmanagement_app_BLL.UnitOfWork
         public IStatusRepository Status { get; private set; }
         public IBrandstofRepository Brandstof { get; private set; }
         public ICategorieRepository Categorie { get; private set; }
+        public IRijbewijsRepository Rijbewijs { get; private set; }
 
         public UnitOfWork(FleetmanagerContext context, ILoggerFactory loggerFactory)
         {
@@ -33,6 +34,7 @@ namespace Fleetmanagement_app_BLL.UnitOfWork
             Status = new StatusRepository(context, _logger);
             Brandstof = new BrandstofRepository(context, _logger);
             Categorie = new CategorieRepository(context, _logger);
+            Rijbewijs = new RijbewijsRepository(context, _logger);
         }
 
         public async Task CompleteAsync()
@@ -44,5 +46,6 @@ namespace Fleetmanagement_app_BLL.UnitOfWork
         {
             _context.Dispose();
         }
+
     }
 }
