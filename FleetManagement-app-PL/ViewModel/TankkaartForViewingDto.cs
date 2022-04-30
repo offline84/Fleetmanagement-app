@@ -18,8 +18,6 @@ namespace FleetManagement_app_PL.ViewModel
 
         public int Pincode { get; set; }
 
-        public virtual Koppeling Koppeling { get; set; }
-
         public bool IsGeblokkeerd { get; set; }
 
         public bool IsGearchiveerd { get; set; }
