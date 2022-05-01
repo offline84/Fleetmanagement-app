@@ -7,7 +7,6 @@ using System;
 using System.Threading.Tasks;
 using System.Linq;
 using Xunit;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
 namespace Fleetmanagement_Unit_Tests
@@ -150,30 +149,6 @@ namespace Fleetmanagement_Unit_Tests
             Assert.NotNull(addedTankkaart);
             Assert.NotNull(deletedTankkaart);
             Assert.True(deletedTankkaart.IsGearchiveerd = true);
-        }
-
-        [Fact]
-        public async Task Delete_LinkNaarKoppelingVerwijderd()
-        {
-            throw new NotImplementedException();
-        }
-
-        [Fact]
-        public async Task GetAllActief_NaDeleteEenMinderDanGetAll()
-        {
-            Cleanup();
-
-            var tankkaart = GetTankkaart1();
-            await _repo.Add(tankkaart);
-            await _context.SaveChangesAsync();
-            await _repo.Delete(tankkaart.Kaartnummer);
-            await _context.SaveChangesAsync();
-            var tankkaarten = await _repo.GetAll();
-            var aantalTankkaarten = tankkaarten.Count();
-            var tankkaartenActief = await _repo.GetAllActief();
-            var aantalTankkaartenActief = tankkaartenActief.Count();
-
-            Assert.True(aantalTankkaarten == aantalTankkaartenActief + 1);
         }
 
         [Fact]
