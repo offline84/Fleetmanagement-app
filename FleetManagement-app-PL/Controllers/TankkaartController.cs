@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace FleetManagement_app_PL.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/"+"[controller]")]
     public class TankkaartController : ControllerBase
     {
         private readonly IUnitOfWork _repo;

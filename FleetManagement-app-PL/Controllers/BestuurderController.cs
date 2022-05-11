@@ -11,7 +11,7 @@ using System.Collections.Generic;
 namespace FleetManagement_app_PL.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+     [Route("api/"+"[controller]")]
     public class BestuurderController : ControllerBase
     {
         private IUnitOfWork _unitOfWork;
