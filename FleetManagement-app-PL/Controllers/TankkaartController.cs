@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Fleetmanagement_app_BLL.UnitOfWork;
-using Fleetmanagement_app_DAL.Builders;
 using Fleetmanagement_app_DAL.Entities;
 using FleetManagement_app_PL.ViewModel;
 using Microsoft.AspNetCore.Mvc;
@@ -30,20 +29,6 @@ namespace FleetManagement_app_PL.Controllers
         }
 
         /// <summary>
-        /// Geeft de gevraagde tankkaart terug
-        /// </summary>
-        /// <param name="kaartnummer">Kaartnummer van de tankkaart</param>
-        /// <returns>Tankkaart</returns>
-        [HttpGet(Name = "GetTankkaartById")]
-        [Route("{kaartnummer}")]
-        public async Task<ActionResult<TankkaartForViewingDto>> GetTankkaartById([FromRoute] string kaartnummer)
-        {
-            var tankkaart = await _repo.Tankkaart.GetById(kaartnummer);
-
-            return Ok(_mapper.Map<TankkaartForViewingDto>(tankkaart));
-        }
-
-        /// <summary>
         /// Geeft alle tankkaarten terug
         /// </summary>
         /// <returns>Tankkaarten</returns>
@@ -52,6 +37,13 @@ namespace FleetManagement_app_PL.Controllers
         public async Task<ActionResult<IEnumerable<TankkaartForViewingDto>>> GetAllTankkaarten([FromRoute] string kaartnummer)
         {
             var tankkaarten = await _repo.Tankkaart.GetAll();
+            /*var brandstoffen = await _repo.Brandstof.GetAll();
+
+            foreach (var tankkaart in tankkaarten)
+            {
+                tankkaart.Brandstoffen = (ICollection<Brandstof>)brandstoffen;
+            }*/
+
             var tankkaartenForView = _mapper.Map<IEnumerable<TankkaartForViewingDto>>(tankkaarten);
             return Ok(tankkaartenForView);
         }
@@ -93,42 +85,52 @@ namespace FleetManagement_app_PL.Controllers
             var brandstoffen = await _repo.Brandstof.GetAll();
             return Ok(brandstoffen);
         }
-        /*
+
         /// <summary>
-        ///     Bij creatie wordt nagegaan of er reeds een voertuig met zelfde chassisnummer in de database zit.
-        ///     Zo ja wordt de opdracht afgebroken.
-        ///     Daarna wordt gekeken of het voertuig correct opgebouwd is d.m.v. de builder en worden de geneste klassen ingeladen.
-        ///     Belangrijk hierbij is dat de correcte Id's van deze entiteiten gebruikt worden, anders zal men een foutmelding krijgen.
-        ///     Dan wordt het voertuig gebouwd en en wordt er gecontroleerd of de nummerplaat niet aanwezig is in de database in een andere schrijfwijze.
-        ///     Dan pas wordt het voertuig toegevoegd aan de database.
+        /// Geeft de gevraagde tankkaart terug
         /// </summary>
-        /// <param name="voertuigBuilder"></param>
-        /// <returns>VoertuigForViewingDto voertuig + link naar voertuig</returns>
-        [HttpPost] //[HttpPut] ?
-        public async Task<IActionResult> CreateTankkaart([FromBody] Tankkaart tankkaart)
+        /// <param name="kaartnummer">Kaartnummer van de tankkaart</param>
+        /// <returns>Tankkaart</returns>
+        [HttpGet(Name = "GetTankkaartById")]
+        [Route("{kaartnummer}")]
+        public async Task<ActionResult<TankkaartForViewingDto>> GetTankkaartById([FromRoute] string kaartnummer)
+        {
+            var tankkaart = await _repo.Tankkaart.GetById(kaartnummer);
+
+            return Ok(_mapper.Map<TankkaartForViewingDto>(tankkaart));
+        }
+
+        /// <summary>
+        ///     Bij aanmaak wordt nagegaan of er al een tankkaart met hetzelfde kaartnummer in de DB zit.
+        ///     Vervolgens wordt nagegaan of de verplichte velden kaartnummer en Geldigheidsdatum aanwezig zijn.
+        /// </summary>
+        /// <param name="tankkaartDto"></param>
+        /// <returns>Kaartnummer + TankkaartForViewingDto</returns>
+        [HttpPost]
+        public async Task<IActionResult> CreateTankkaart([FromBody] TankkaartForViewingDto tankkaartDto)
         {
             if (ModelState.IsValid)
             {
-                //Al in repo. Hier ook?
-                if (tankkaart.GeldigheidsDatum == null | tankkaart.Kaartnummer == "")
-                {
-                    return BadRequest("Tankaart kaartnummer en Geldigheidsdatum zijn verplicht");
-                }
-
-                var tankkakaartinBD = await _repo.Tankkaart.GetById(tankkaart.Kaartnummer);
+                var tankkakaartinBD = await _repo.Tankkaart.GetById(tankkaartDto.Kaartnummer);
                 if (tankkakaartinBD != null)
                 {
                     return Conflict("Tankkaart already exists in Database, try updating it");
                 }
 
+                if (VerplichteVeldenLeeg(tankkaartDto.Kaartnummer, tankkaartDto.GeldigheidsDatum))
+                {
+                    return BadRequest("Tankaart kaartnummer en Geldigheidsdatum zijn verplicht");
+                }
+
                 try
                 {
-                    //DateTime geldigheidsDatum = DateTime.Parse(geldigheidsDatumString);
+                    var tankkaart = _mapper.Map<Tankkaart>(tankkaartDto);
+                    //await _repo.Tankkaart.Add(tankkaart);
 
                     if (await _repo.Tankkaart.Add(tankkaart))
                     {
                         await _repo.CompleteAsync();
-                        return CreatedAtAction(tankkaart.Kaartnummer, _mapper.Map<TankkaartForViewingDto>(tankkaart));
+                        return CreatedAtAction(tankkaart.Kaartnummer, tankkaartDto);
                     }
                     else
                     {
@@ -143,19 +145,57 @@ namespace FleetManagement_app_PL.Controllers
             return StatusCode(500);
         }
 
-        [HttpPost] //[HttpPut] ?
-        public async Task<IActionResult> UpdateTankkaart([FromBody] Voertuigbuilder voertuigBuilder)
+        [HttpPatch] //[HttpPut] ?
+        [Route("update")]
+        public async Task<IActionResult> UpdateTankkaart([FromBody] TankkaartForViewingDto tankkaartDto)
         {
-            throw new NotImplementedException();
+            if (ModelState.IsValid)
+            {
+                var tankkakaartinBD = await _repo.Tankkaart.GetById(tankkaartDto.Kaartnummer);
+                if (tankkakaartinBD == null)
+                {
+                    return Conflict("Tankkaart does not exists in Database, try updating it");
+                }
+
+                if (VerplichteVeldenLeeg(tankkaartDto.Kaartnummer, tankkaartDto.GeldigheidsDatum))
+                {
+                    return BadRequest("Tankaart kaartnummer en Geldigheidsdatum zijn verplicht");
+                }
+
+                try
+                {
+                    var tankkaart = _mapper.Map<Tankkaart>(tankkaartDto);
+                    if (await _repo.Tankkaart.Update(tankkaart))
+                    {
+                        await _repo.CompleteAsync();
+                        return CreatedAtAction(tankkaart.Kaartnummer, tankkaartDto);
+                    }
+                    else
+                    {
+                        return BadRequest("Unable to Write to Database");
+                    }
+                }
+                catch (Exception e)
+                {
+                    return StatusCode(500, e);
+                }
+            }
+            return StatusCode(500);
         }
-        */
+
+        
         [HttpDelete(Name = "DeleteTankkaart")]
-        [Route("{kaartnummer}")]
+        [Route("delete/{kaartnummer}")]
         public async Task<IActionResult> DeleteTankkaart([FromRoute] string kaartnummer)
         {
             try
             {
                 var tankkaartinDB = await _repo.Tankkaart.GetById(kaartnummer);
+
+                if (tankkaartinDB == null)
+                {
+                    return Conflict("Tankkaart does not exists in Database");
+                }
 
                 if (tankkaartinDB.IsGearchiveerd)
                 {
@@ -164,7 +204,7 @@ namespace FleetManagement_app_PL.Controllers
 
                 if (await _repo.Tankkaart.Delete(kaartnummer))
                 {
-                    await _repo.Koppeling.KoppelLosVanTankkaart(kaartnummer);
+                    await _repo.Koppeling.KoppelLosTankkaart(kaartnummer);
                     await _repo.CompleteAsync();
                     return NoContent();
                 }
@@ -187,6 +227,11 @@ namespace FleetManagement_app_PL.Controllers
             try
             {
                 var tankkaartinDB = await _repo.Tankkaart.GetById(kaartnummer);
+
+                if (tankkaartinDB == null)
+                {
+                    return Conflict("Tankkaart does not exists in Database");
+                }
 
                 if (tankkaartinDB.IsGeblokkeerd)
                 {
@@ -217,16 +262,17 @@ namespace FleetManagement_app_PL.Controllers
         {
             try
             {
-                var koppelingInDB = await _repo.Koppeling.GetByTankkaart(kaartnummer);
-
-                if (koppelingInDB != null)
+                if (_repo.Koppeling.TankkaartAlGekoppeldAanAndereBestuurder(bestuurderRRN, kaartnummer))
                 {
-                    return Conflict("Tankkaart already linked in Database");
+                    return Conflict("Tankkaart already linked in Database, decouple it first");
                 }
 
-                //TODO: check if bestuurder excists? Already done in Repo
+                if (_repo.Koppeling.BestuurderAlGekoppeldAanEenTankkaart(bestuurderRRN))
+                {
+                    return Conflict("Bestuurder already linked in Database, decouple it first");
+                }
 
-                if (await _repo.Koppeling.KoppelAanTankkaart(bestuurderRRN, kaartnummer))
+                if (await _repo.Koppeling.KoppelBestuurderEnTankkaart(bestuurderRRN, kaartnummer))
                 {
                     await _repo.CompleteAsync();
                     return NoContent();
@@ -241,6 +287,11 @@ namespace FleetManagement_app_PL.Controllers
             {
                 return StatusCode(500, e);
             }
+        }
+
+        private bool VerplichteVeldenLeeg(string kaartnummer, DateTime geldigheidsDatum)
+        {
+            return (geldigheidsDatum == default | kaartnummer == "");
         }
     }
 }

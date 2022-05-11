@@ -39,25 +39,31 @@ namespace Fleetmanagement_app_BLL.Repository
                 return false;
             }
 
-            if (tankkaart.MogelijkeBrandstoffen != null)
+            /*foreach (var brandstof in tankkaart.MogelijkeBrandstoffen)
             {
-                _logger.LogWarning("Tankkaart_Add: Start Brandstof toewijzingen");
-                foreach (var brandstof in tankkaart.MogelijkeBrandstoffen)
+                if (_context.Brandstof.Where(b => b.TypeBrandstof == brandstof.Brandstof.TypeBrandstof).Any())
                 {
-                    if (_context.Brandstof.Where(b => b.TypeBrandstof == brandstof.Brandstof.TypeBrandstof).Any())
-                    {
-                        tankkaart.Brandstoffen.Add(brandstof.Brandstof);
-                    }
-                    else
-                    {
-                        _logger.LogWarning("Tankkaart_Add: Branstof met Type " + brandstof.Brandstof.TypeBrandstof + "bestaat niet");
-                        return false;
-                    }
+                    tankkaart.Brandstoffen.Add(brandstof.Brandstof);
                 }
+                else
+                {
+                    _logger.LogWarning("Tankkaart_Add: Branstof met Type " + brandstof.Brandstof.TypeBrandstof + "bestaat niet");
+                    return false;
+                }
+            }*/
+
+            foreach (var branstof in tankkaart.Brandstoffen)
+            {
+                tankkaart.MogelijkeBrandstoffen.Add(new ToewijzingBrandstofTankkaart()
+                {
+                    Tankkaartnummer = tankkaart.Kaartnummer,
+                    BrandstofId = branstof.Id
+                });
             }
 
             try
             {
+                //await _context.ToewijzingBrandstofTankkaarten.AddRangeAsync(toewijzingenbrandstof);
                 tankkaart.LaatstGeupdate = DateTime.Now;
                 await _dbSet.AddAsync(tankkaart);
                 _logger.LogWarning("Tankkaart_Add: Tankkaart toegevoegd aan Database");
@@ -92,10 +98,15 @@ namespace Fleetmanagement_app_BLL.Repository
             }
         }
 
+        public override async Task<IEnumerable<Tankkaart>> GetAll()
+        {
+            return await _dbSet.ToListAsync();
+        }
 
         public override async Task<IEnumerable<Tankkaart>> GetAllActive()
         {
-            return await _dbSet.Where(t => t.IsGearchiveerd == false).ToListAsync();
+            return await _dbSet.Where(t => t.IsGearchiveerd == false)
+                .ToListAsync();
         }
 
         public override async Task<IEnumerable<Tankkaart>> GetAllArchived()
@@ -115,9 +126,9 @@ namespace Fleetmanagement_app_BLL.Repository
                 return Task.FromResult(false);
             }
 
-            if (_dbSet.Where(t => t.Kaartnummer == tankkaart.Kaartnummer).Any())
+            if (!_dbSet.Where(t => t.Kaartnummer == tankkaart.Kaartnummer).Any())
             {
-                _logger.LogWarning("Tankkaart_Update: Er bestaat al een kaart met nummer " + tankkaart.Kaartnummer);
+                _logger.LogWarning("Tankkaart_Update: Deze tankkaart bestaat niet in de DB");
                 return Task.FromResult(false);
             }
 

@@ -8,8 +8,10 @@ namespace FleetManagement_app_PL.Profiles
     {
         public TankkaartProfile()
         {
+            CreateMap<Tankkaart, TankkaartForViewingDto>();
+            CreateMap<TankkaartForViewingDto, Tankkaart>();
             CreateMap<Brandstof, BrandstofForViewingDto>();
-            CreateMap<Voertuig, VoertuigForViewingDto>();
+            CreateMap<BrandstofForViewingDto, Brandstof>();
         }
     }
 }
