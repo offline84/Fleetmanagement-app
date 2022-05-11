@@ -11,7 +11,6 @@ using System.Collections.Generic;
 
 namespace Fleetmanagement_Unit_Tests
 {
-    [Collection("DatabaseTests")]
     public class TankkaartRepositoryTests
     {
         private static FleetmanagerContext _context = new FleetmanagerContext(DbContextHelper.GetDbContextOptions("Testing"));
