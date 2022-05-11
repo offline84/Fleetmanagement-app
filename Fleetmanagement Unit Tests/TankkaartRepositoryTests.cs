@@ -11,7 +11,6 @@ using System.Collections.Generic;
 
 namespace Fleetmanagement_Unit_Tests
 {
-    [Collection("DatabaseTests")]
     public class TankkaartRepositoryTests
     {
         private static FleetmanagerContext _context = new FleetmanagerContext(DbContextHelper.GetDbContextOptions("Testing"));
@@ -152,14 +151,17 @@ namespace Fleetmanagement_Unit_Tests
             Assert.True(deletedTankkaart.IsGearchiveerd = true);
         }
 
-        [Fact]
-        public async Task Update_UpdateWerkt()
+        [Theory]
+        [InlineData(123456)]
+        [InlineData(9876)]
+        [InlineData(65135)]
+        public async Task UpdatePincode_UpdateWerkt(int pincode)
         {
             Cleanup();
             var tankkaart = GetTankkaart1();
             await _repo.Add(tankkaart);
 
-            tankkaart.Pincode = 9876;
+            tankkaart.Pincode = pincode;
             await _repo.Update(tankkaart);
             await _context.SaveChangesAsync();
 
@@ -169,9 +171,55 @@ namespace Fleetmanagement_Unit_Tests
         }
 
         [Fact]
-        public async Task Update_()
+        public async Task UpdateToewijzingen_BrandstofToegevoegd()
         {
-            throw new NotImplementedException();
+            Cleanup();
+            var tankkaart = GetTankkaart1();
+            await _repo.Add(tankkaart);
+
+            ToewijzingBrandstofTankkaart extraToewijzing = new ToewijzingBrandstofTankkaart()
+            {
+                Tankkaart = tankkaart,
+                Brandstof = _context.Brandstof.Where(b => b.TypeBrandstof == "euro 98").Single()
+            };
+
+            tankkaart.MogelijkeBrandstoffen.Add(extraToewijzing);
+
+            await _repo.Update(tankkaart);
+            await _context.SaveChangesAsync();
+
+            var geupdateTankaart = await _repo.GetById(tankkaart.Kaartnummer);
+
+            Assert.NotNull(geupdateTankaart);
+            Assert.True(geupdateTankaart.MogelijkeBrandstoffen.Count() == 3);
+        }
+
+        [Fact]
+        public async Task UpdateToewijzingen_OudeVerwijderd()
+        {
+            Cleanup();
+            var tankkaart = GetTankkaart1();
+
+            ToewijzingBrandstofTankkaart nieuweToewijzing = new ToewijzingBrandstofTankkaart()
+            {
+                Tankkaart = tankkaart,
+                Brandstof = _context.Brandstof.Where(b => b.TypeBrandstof == "euro 98").Single()
+            };
+            foreach (ToewijzingBrandstofTankkaart brandstof in tankkaart.MogelijkeBrandstoffen.ToList())
+            {
+                tankkaart.MogelijkeBrandstoffen.Remove(brandstof);
+            }
+           
+            tankkaart.MogelijkeBrandstoffen.Add(nieuweToewijzing);
+
+            await _repo.Add(tankkaart);
+            await _repo.Update(tankkaart);
+            await _context.SaveChangesAsync();
+
+            var geupdateTankaart = await _repo.GetById(tankkaart.Kaartnummer);
+
+            Assert.NotNull(geupdateTankaart);
+            Assert.True(geupdateTankaart.MogelijkeBrandstoffen.Count() == 1);
         }
 
 

@@ -23,9 +23,9 @@ namespace Fleetmanagement_app_DAL.Entities
 
         public virtual ICollection<ToewijzingBrandstofTankkaart> MogelijkeBrandstoffen { get; set; }
 
-        [NotMapped()]
+        /*[NotMapped()]
         public virtual ICollection<Brandstof> Brandstoffen { get; set; }
-            = new List<Brandstof>();
+            = new List<Brandstof>();*/
 
         public virtual Koppeling Koppeling { get; set; }
 
