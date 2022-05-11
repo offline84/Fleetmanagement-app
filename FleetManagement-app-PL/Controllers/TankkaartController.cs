@@ -29,6 +29,20 @@ namespace FleetManagement_app_PL.Controllers
         }
 
         /// <summary>
+        /// Geeft de gevraagde tankkaart terug
+        /// </summary>
+        /// <param name="kaartnummer">Kaartnummer van de tankkaart</param>
+        /// <returns>Tankkaart</returns>
+        [HttpGet(Name = "GetTankkaartById")]
+        [Route("{kaartnummer}")]
+        public async Task<ActionResult<TankkaartForViewingDto>> GetTankkaartById([FromRoute] string kaartnummer)
+        {
+            var tankkaart = await _repo.Tankkaart.GetById(kaartnummer);
+
+            return Ok(_mapper.Map<TankkaartForViewingDto>(tankkaart));
+        }
+
+        /// <summary>
         /// Geeft alle tankkaarten terug
         /// </summary>
         /// <returns>Tankkaarten</returns>
@@ -84,20 +98,6 @@ namespace FleetManagement_app_PL.Controllers
         {
             var brandstoffen = await _repo.Brandstof.GetAll();
             return Ok(brandstoffen);
-        }
-
-        /// <summary>
-        /// Geeft de gevraagde tankkaart terug
-        /// </summary>
-        /// <param name="kaartnummer">Kaartnummer van de tankkaart</param>
-        /// <returns>Tankkaart</returns>
-        [HttpGet(Name = "GetTankkaartById")]
-        [Route("{kaartnummer}")]
-        public async Task<ActionResult<TankkaartForViewingDto>> GetTankkaartById([FromRoute] string kaartnummer)
-        {
-            var tankkaart = await _repo.Tankkaart.GetById(kaartnummer);
-
-            return Ok(_mapper.Map<TankkaartForViewingDto>(tankkaart));
         }
 
         /// <summary>
@@ -255,7 +255,6 @@ namespace FleetManagement_app_PL.Controllers
             }
         }
 
-        //Hier of in eigen Controller?
         [HttpPatch(Name = "KoppelAanBestuurder")]
         [Route("koppel/{bestuurderRRN}/{kaartnummer}")]
         public async Task<IActionResult> KoppelAanBestuurder([FromRoute] string bestuurderRRN, string kaartnummer)

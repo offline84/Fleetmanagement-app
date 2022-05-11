@@ -24,7 +24,6 @@ namespace Fleetmanagement_app_BLL.Repository
         /// <returns>boolean</returns>
         public override async Task<bool> Add(Tankkaart tankkaart)
         {
-            List<ToewijzingBrandstofTankkaart> toewijzingenbrandstof = new List<ToewijzingBrandstofTankkaart>();
             tankkaart.Kaartnummer = tankkaart.Kaartnummer.Trim();
 
             if (VerplichteVeldenLeeg(tankkaart))
@@ -39,19 +38,6 @@ namespace Fleetmanagement_app_BLL.Repository
                 return false;
             }
 
-            /*foreach (var brandstof in tankkaart.MogelijkeBrandstoffen)
-            {
-                if (_context.Brandstof.Where(b => b.TypeBrandstof == brandstof.Brandstof.TypeBrandstof).Any())
-                {
-                    tankkaart.Brandstoffen.Add(brandstof.Brandstof);
-                }
-                else
-                {
-                    _logger.LogWarning("Tankkaart_Add: Branstof met Type " + brandstof.Brandstof.TypeBrandstof + "bestaat niet");
-                    return false;
-                }
-            }*/
-
             foreach (var branstof in tankkaart.Brandstoffen)
             {
                 tankkaart.MogelijkeBrandstoffen.Add(new ToewijzingBrandstofTankkaart()
@@ -63,7 +49,6 @@ namespace Fleetmanagement_app_BLL.Repository
 
             try
             {
-                //await _context.ToewijzingBrandstofTankkaarten.AddRangeAsync(toewijzingenbrandstof);
                 tankkaart.LaatstGeupdate = DateTime.Now;
                 await _dbSet.AddAsync(tankkaart);
                 _logger.LogWarning("Tankkaart_Add: Tankkaart toegevoegd aan Database");
@@ -105,8 +90,7 @@ namespace Fleetmanagement_app_BLL.Repository
 
         public override async Task<IEnumerable<Tankkaart>> GetAllActive()
         {
-            return await _dbSet.Where(t => t.IsGearchiveerd == false)
-                .ToListAsync();
+            return await _dbSet.Where(t => t.IsGearchiveerd == false).ToListAsync();
         }
 
         public override async Task<IEnumerable<Tankkaart>> GetAllArchived()
@@ -120,6 +104,8 @@ namespace Fleetmanagement_app_BLL.Repository
         /// <returns>boolean</returns>
         public override Task<bool> Update(Tankkaart tankkaart)
         {
+            var bestaandeToewijzingenBrandstof = _context.ToewijzingBrandstofTankkaarten.Where(tbt => tbt.Tankkaartnummer == tankkaart.Kaartnummer).ToList();
+
             if (VerplichteVeldenLeeg(tankkaart))
             {
                 _logger.LogWarning("Tankkaart_Update: GeldigheidsDatum of Kaartnummer zijn leeg");
@@ -131,9 +117,23 @@ namespace Fleetmanagement_app_BLL.Repository
                 _logger.LogWarning("Tankkaart_Update: Deze tankkaart bestaat niet in de DB");
                 return Task.FromResult(false);
             }
+                        
+            foreach (var branstof in tankkaart.Brandstoffen)
+            {
+                tankkaart.MogelijkeBrandstoffen.Add(new ToewijzingBrandstofTankkaart()
+                {
+                    Tankkaartnummer = tankkaart.Kaartnummer,
+                    BrandstofId = branstof.Id
+                });
+            }
 
             try
             {
+                foreach (ToewijzingBrandstofTankkaart toewijzing in bestaandeToewijzingenBrandstof)
+                {
+                    _context.ToewijzingBrandstofTankkaarten.Remove(toewijzing);
+                }
+                _context.ToewijzingBrandstofTankkaarten.AddRangeAsync(tankkaart.MogelijkeBrandstoffen);
                 var tankkaartToUpdate = _context.Tankkaarten.Where(t => t.Kaartnummer == tankkaart.Kaartnummer).First();
                 _dbSet.Update(tankkaartToUpdate).CurrentValues.SetValues(tankkaart);
                 return Task.FromResult(true);
