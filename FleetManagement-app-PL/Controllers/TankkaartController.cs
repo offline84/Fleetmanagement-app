@@ -51,12 +51,6 @@ namespace FleetManagement_app_PL.Controllers
         public async Task<ActionResult<IEnumerable<TankkaartForViewingDto>>> GetAllTankkaarten([FromRoute] string kaartnummer)
         {
             var tankkaarten = await _repo.Tankkaart.GetAll();
-            /*var brandstoffen = await _repo.Brandstof.GetAll();
-
-            foreach (var tankkaart in tankkaarten)
-            {
-                tankkaart.Brandstoffen = (ICollection<Brandstof>)brandstoffen;
-            }*/
 
             var tankkaartenForView = _mapper.Map<IEnumerable<TankkaartForViewingDto>>(tankkaarten);
             return Ok(tankkaartenForView);
@@ -125,7 +119,6 @@ namespace FleetManagement_app_PL.Controllers
                 try
                 {
                     var tankkaart = _mapper.Map<Tankkaart>(tankkaartDto);
-                    //await _repo.Tankkaart.Add(tankkaart);
 
                     if (await _repo.Tankkaart.Add(tankkaart))
                     {

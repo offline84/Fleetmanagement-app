@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fleetmanagement_Unit_Tests
 {
+    [Collection("DatabaseTests")]
     public class KoppelingRepositoryTests
     {
         private static FleetmanagerContext _context = new FleetmanagerContext(DbContextHelper.GetDbContextOptions("Testing"));
