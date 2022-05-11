@@ -56,7 +56,7 @@ namespace Fleetmanagement_app_Groep1
 
             services.AddAutoMapper(typeof(VoertuigProfile));
             services.AddAutoMapper(typeof(BestuurderProfile));
-
+            services.AddAutoMapper(typeof(TankkaartProfile));
 
             services.AddControllersWithViews(o => o.EnableEndpointRouting = true);
             // In production, the Angular files will be served from this directory
