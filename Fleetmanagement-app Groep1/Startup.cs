@@ -33,14 +33,32 @@ namespace Fleetmanagement_app_Groep1
                 options.UseSqlServer(Configuration.GetConnectionString("Default"));
             });
 
+            services.AddCors(options =>
+            {
+                string url = Configuration.GetSection("UrlToApi").Value;
+
+                if (url == "")
+                {
+                    options.AddDefaultPolicy(builder =>
+                        builder.SetIsOriginAllowed(o => new Uri(o).Host == "localhost")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod());
+                }
+                else
+                    options.AddDefaultPolicy(builder => builder.WithOrigins(url)
+                            .AllowAnyHeader()
+                            .AllowAnyMethod());
+            });
+
+
             services.AddScoped<IUnitOfWork, UnitOfWork>()
                 .AddSingleton<ILoggerFactory, LoggerFactory>();
 
             services.AddAutoMapper(typeof(VoertuigProfile));
             services.AddAutoMapper(typeof(BestuurderProfile));
+            services.AddAutoMapper(typeof(TankkaartProfile));
 
-
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(o => o.EnableEndpointRouting = true);
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -70,6 +88,7 @@ namespace Fleetmanagement_app_Groep1
             }
 
             app.UseRouting();
+            app.UseCors();
 
             app.UseEndpoints(endpoints =>
             {
