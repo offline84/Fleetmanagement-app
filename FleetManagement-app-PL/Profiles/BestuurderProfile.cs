@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Fleetmanagement_app_DAL.Entities;
 using FleetManagement_app_PL.ViewModel;
-using System.Collections.Generic;
 
 namespace FleetManagement_app_PL.Profiles
 {
@@ -9,6 +8,7 @@ namespace FleetManagement_app_PL.Profiles
     {
         public BestuurderProfile()
         {
+            CreateMap<ToewijzingRijbewijsBestuurder, ToewijzingRijbewijsBestuurderViewingDto>().ReverseMap();
             CreateMap<Rijbewijs, RijbewijsViewingDto>().ReverseMap();
             CreateMap<Adres, AdresViewingDto>().ReverseMap();
 

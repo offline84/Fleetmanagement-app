@@ -38,9 +38,9 @@ namespace Fleetmanagement_Unit_Tests
             };
 
             bestuurder.Adres = adres;
-            Rijbewijs r = new Rijbewijs() { TypeRijbewijs = "X++" };
+            //Rijbewijs r = new Rijbewijs() { TypeRijbewijs = "X++" };
 
-            bestuurder.Rijbewijzen.Add(r);
+            //bestuurder.Rijbewijzen.Add(r);
 
             return bestuurder;
         }

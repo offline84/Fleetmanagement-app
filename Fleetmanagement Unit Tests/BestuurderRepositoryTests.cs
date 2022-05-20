@@ -75,24 +75,6 @@ namespace Fleetmanagement_Unit_Tests
         }
 
         /// <summary>
-        /// Test indien het ophalen van een rijbewijs werkt met behulp van een rijksregisternummer.
-        /// </summary>
-        /// <returns></returns>
-        [Fact]
-        public async Task GetDriverLicensesForDriver_Success_Test()
-        {
-            await Cleanup();
-            await PopulateDataAsync();
-
-            // Act
-            var rijbewijzen = await _repo.GetDriverLicensesForDriver("84060103993");
-
-            // Assert
-            Assert.NotNull(rijbewijzen);
-            Assert.Single(rijbewijzen);
-        }
-
-        /// <summary>
         /// Test indien het opmaken van een Bestuurder lukt.
         /// </summary>
         /// <returns></returns>
@@ -114,7 +96,7 @@ namespace Fleetmanagement_Unit_Tests
 
             bestuurder.Adres = adres;
             Rijbewijs r = new Rijbewijs() { TypeRijbewijs = "X++" };
-            bestuurder.Rijbewijzen.Add(r);
+            //bestuurder.Rijbewijzen.Add(r);
             await _repo.Add(bestuurder);
             await _context.SaveChangesAsync();
 
@@ -138,7 +120,7 @@ namespace Fleetmanagement_Unit_Tests
             Adres adres = new Adres();
             bestuurder.Adres = adres;
             Rijbewijs r = new Rijbewijs();
-            bestuurder.Rijbewijzen.Add(r);
+            //bestuurder.Rijbewijzen.Add(r);
 
 
 
@@ -168,7 +150,7 @@ namespace Fleetmanagement_Unit_Tests
 
                 bestuurder.Adres = adres;
                 Rijbewijs r = new Rijbewijs() { TypeRijbewijs = "X++" };
-                bestuurder.Rijbewijzen.Add(r);
+                //bestuurder.Rijbewijzen.Add(r);
 
                 index++;
                 await _repo.Add(bestuurder);
