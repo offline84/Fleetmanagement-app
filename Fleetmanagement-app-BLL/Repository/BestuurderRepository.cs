@@ -12,8 +12,6 @@ namespace Fleetmanagement_app_BLL.Repository
 {
     public class BestuurderRepository : GenericRepository<Bestuurder>, IBestuurderRepository
     {
-        private readonly FleetmanagerContext _context;
-
         public BestuurderRepository(FleetmanagerContext context, ILogger logger) : base(context, logger)
         {
             _context = context;
@@ -29,7 +27,7 @@ namespace Fleetmanagement_app_BLL.Repository
             try
             {
                 _logger.LogWarning("Start BestuurderRepository - AddFunction:", bestuurder);
-                List<ToewijzingRijbewijsBestuurder> toewijzingen = new List<ToewijzingRijbewijsBestuurder>();
+                var toewijzingen = new List<ToewijzingRijbewijsBestuurder>();
                 bestuurder.Naam = bestuurder.Naam.Trim();
                 bestuurder.Achternaam = bestuurder.Achternaam.Trim();
                 bestuurder.Rijksregisternummer = bestuurder.Rijksregisternummer.Trim();
@@ -37,23 +35,28 @@ namespace Fleetmanagement_app_BLL.Repository
                 if (string.IsNullOrEmpty(bestuurder.Rijksregisternummer) |
                     string.IsNullOrEmpty(bestuurder.Naam) |
                     string.IsNullOrEmpty(bestuurder.Achternaam) |
-                    (bestuurder.GeboorteDatum == null && bestuurder.GeboorteDatum <= DateTime.MinValue) |
-                    bestuurder.Rijbewijzen.Count == 0)
+                    (bestuurder.GeboorteDatum == null && bestuurder.GeboorteDatum <= DateTime.MinValue)
+                    )
                 {
                     _logger.LogWarning("Something went wrong, Required values cannot be null", bestuurder);
                     return false;
                 }
 
-                foreach (var rijbewijs in bestuurder.Rijbewijzen)
+                if (bestuurder.ToewijzingenRijbewijs.Count > 0)
                 {
-                    toewijzingen.Add(new ToewijzingRijbewijsBestuurder()
+                    foreach (var toewijzing in bestuurder.ToewijzingenRijbewijs)
                     {
-                        Rijbewijs = rijbewijs,
-                        Bestuurder = bestuurder
-                    });
+                        toewijzing.RijbewijsId = toewijzing.Rijbewijs.Id;
+                        toewijzing.Rijksregisternummer = string.IsNullOrEmpty(toewijzing.Rijksregisternummer) ? bestuurder.Rijksregisternummer : toewijzing.Rijksregisternummer;
+
+                        if (toewijzing.RijbewijsId != Guid.Empty)
+                        {
+                            toewijzing.Rijbewijs = null;
+                        }
+                    }
                 }
 
-                await _context.ToewijzingRijbewijsBestuurders.AddRangeAsync(toewijzingen);
+                //await _context.ToewijzingRijbewijsBestuurders.AddRangeAsync(toewijzingen);
 
                 bestuurder.LaatstGeupdate = DateTime.Now;
                 await _dbSet.AddAsync(bestuurder);
@@ -79,7 +82,7 @@ namespace Fleetmanagement_app_BLL.Repository
               string.IsNullOrEmpty(bestuurder.Naam) |
               string.IsNullOrEmpty(bestuurder.Achternaam) |
               (bestuurder.GeboorteDatum == null && bestuurder.GeboorteDatum <= DateTime.MinValue) |
-              bestuurder.Rijbewijzen.Count == 0)
+              bestuurder.ToewijzingenRijbewijs.Count == 0)
             {
                 _logger.LogWarning("Something went wrong, Required values cannot be null", bestuurder);
                 return Task.FromResult(false);
@@ -94,6 +97,23 @@ namespace Fleetmanagement_app_BLL.Repository
                     _logger.LogWarning("Something went wrong, Bestuurder not found!", bestuurder);
                     return Task.FromResult(false);
                 }
+
+
+                if (bestuurder.ToewijzingenRijbewijs.Count > 0)
+                {
+                    foreach (var toewijzing in bestuurder.ToewijzingenRijbewijs)
+                    {
+                        toewijzing.RijbewijsId = toewijzing.Rijbewijs.Id;
+                        toewijzing.Rijksregisternummer = string.IsNullOrEmpty(toewijzing.Rijksregisternummer) ? bestuurder.Rijksregisternummer : toewijzing.Rijksregisternummer;
+
+                        if (toewijzing.RijbewijsId != Guid.Empty)
+                        {
+                            toewijzing.Rijbewijs = null;
+                        }
+                    }
+                }
+
+
                 bestuurder.LaatstGeupdate = DateTime.Now;
                 _dbSet.Update(entity).CurrentValues.SetValues(bestuurder);
                 _logger.LogWarning("End BestuurderRepository - UpdateFunction!");
@@ -127,13 +147,19 @@ namespace Fleetmanagement_app_BLL.Repository
             return true;
         }
 
+        #region Getters
+
         /// <summary>
         /// Geeft alle bestuurders terug.
         /// </summary>
         /// <returns></returns>
         public override async Task<IEnumerable<Bestuurder>> GetAll()
         {
-            return await _dbSet.ToListAsync();
+            return await _dbSet
+                .Include(k => k.Koppeling)
+                .Include(t => t.ToewijzingenRijbewijs)
+                .ThenInclude(tr => tr.Rijbewijs)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -142,7 +168,12 @@ namespace Fleetmanagement_app_BLL.Repository
         /// <returns></returns>
         public override async Task<IEnumerable<Bestuurder>> GetAllActive()
         {
-            return await _dbSet.Where(b => !b.IsGearchiveerd).ToListAsync();
+            return await _dbSet
+                .Where(b => !b.IsGearchiveerd)
+                .Include(k => k.Koppeling)
+                .Include(t => t.ToewijzingenRijbewijs)
+                .ThenInclude(tr => tr.Rijbewijs)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -151,7 +182,12 @@ namespace Fleetmanagement_app_BLL.Repository
         /// <returns></returns>
         public override async Task<IEnumerable<Bestuurder>> GetAllArchived()
         {
-            return await _dbSet.Where(b => b.IsGearchiveerd).ToListAsync();
+            return await _dbSet
+                .Where(b => b.IsGearchiveerd)
+                .Include(k => k.Koppeling)
+                .Include(t => t.ToewijzingenRijbewijs)
+                .ThenInclude(tr => tr.Rijbewijs)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -161,25 +197,14 @@ namespace Fleetmanagement_app_BLL.Repository
         /// <returns></returns>
         public override async Task<Bestuurder> GetById(string id)
         {
-            return await _dbSet.Where(b => b.Rijksregisternummer.Equals(id)).FirstOrDefaultAsync();
+            return await _dbSet
+                .Where(b => b.Rijksregisternummer.Equals(id))
+                .Include(k => k.Koppeling)
+                .Include(t => t.ToewijzingenRijbewijs)
+                .ThenInclude(tr => tr.Rijbewijs)
+                .FirstOrDefaultAsync();
         }
 
-        /// <summary>
-        /// Geeft een rijbewijs terug afhankelijk van de bestuurder rijksregisternummer. 
-        /// </summary>
-        /// <param name="rijksregisternummer"></param>
-        /// <returns></returns>
-        public async Task<List<Rijbewijs>> GetDriverLicensesForDriver(string rijksregisternummer)
-        {
-            var entity = await GetById(rijksregisternummer);
-
-            if (entity == null)
-            {
-                _logger.LogWarning("Something went wrong, GetDriverLicensesForDriver not found!", rijksregisternummer);
-                return new List<Rijbewijs>();
-            }
-
-            return entity.Rijbewijzen.ToList();
-        }
+        #endregion
     }
 }
