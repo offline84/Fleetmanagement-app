@@ -10,6 +10,5 @@
 
         public int Postcode { get; set; }
 
-        public BestuurderViewingDto Bestuurder { get; set; }
     }
 }

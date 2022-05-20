@@ -19,6 +19,11 @@ namespace Fleetmanagement_app_BLL.Repository
             _context = context;
         }
 
+        /// <summary>
+        /// Voegt een bestuurder toe aan de bestuurder database.
+        /// </summary>
+        /// <param name="bestuurder"></param>
+        /// <returns></returns>
         public override async Task<bool> Add(Bestuurder bestuurder)
         {
             try
@@ -62,6 +67,11 @@ namespace Fleetmanagement_app_BLL.Repository
             }
         }
 
+        /// <summary>
+        /// Laat toe om een bestuurder te wijzigen.
+        /// </summary>
+        /// <param name="bestuurder"></param>
+        /// <returns></returns>
         public override Task<bool> Update(Bestuurder bestuurder)
         {
             _logger.LogWarning("Start BestuurderRepository - UpdateFunction:", bestuurder);
@@ -96,6 +106,11 @@ namespace Fleetmanagement_app_BLL.Repository
             }
         }
 
+        /// <summary>
+        /// Laat toe om een bestuurder met behulp van zijn rijksregisternummer te verwijderen op een soft manier door die dan te archiveren.
+        /// </summary>
+        /// <param name="rijksregisternummer"></param>
+        /// <returns></returns>
         public override async Task<bool> Delete(string rijksregisternummer)
         {
             var bestuurder = await GetById(rijksregisternummer);
@@ -112,26 +127,48 @@ namespace Fleetmanagement_app_BLL.Repository
             return true;
         }
 
+        /// <summary>
+        /// Geeft alle bestuurders terug.
+        /// </summary>
+        /// <returns></returns>
         public override async Task<IEnumerable<Bestuurder>> GetAll()
         {
             return await _dbSet.ToListAsync();
         }
 
+        /// <summary>
+        /// Geeft alle active bestuurders terug.
+        /// </summary>
+        /// <returns></returns>
         public override async Task<IEnumerable<Bestuurder>> GetAllActive()
         {
             return await _dbSet.Where(b => !b.IsGearchiveerd).ToListAsync();
         }
 
+        /// <summary>
+        /// Geeft alle gearchiveerde bestuurderds terug.
+        /// </summary>
+        /// <returns></returns>
         public override async Task<IEnumerable<Bestuurder>> GetAllArchived()
         {
             return await _dbSet.Where(b => b.IsGearchiveerd).ToListAsync();
         }
 
+        /// <summary>
+        /// Geeft een bestuurder terug afhankelijk van zijn id (rijksregisternummer).
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public override async Task<Bestuurder> GetById(string id)
         {
             return await _dbSet.Where(b => b.Rijksregisternummer.Equals(id)).FirstOrDefaultAsync();
         }
 
+        /// <summary>
+        /// Geeft een rijbewijs terug afhankelijk van de bestuurder rijksregisternummer. 
+        /// </summary>
+        /// <param name="rijksregisternummer"></param>
+        /// <returns></returns>
         public async Task<List<Rijbewijs>> GetDriverLicensesForDriver(string rijksregisternummer)
         {
             var entity = await GetById(rijksregisternummer);
