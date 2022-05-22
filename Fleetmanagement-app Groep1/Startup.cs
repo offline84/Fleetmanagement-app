@@ -33,6 +33,8 @@ namespace Fleetmanagement_app_Groep1
                 options.UseSqlServer(Configuration.GetConnectionString("Default"));
             });
 
+            // Deze service zorgt ervoor dat cors errors vermeden worden als front- en back-end locale url's hebben, als de server
+            // een andere url dan de lokale heeft dient deze toegevoegd te worden in appsettings.json als value bij de key "UrlToApi".
             services.AddCors(options =>
             {
                 string url = Configuration.GetSection("UrlToApi").Value;

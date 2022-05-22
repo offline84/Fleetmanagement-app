@@ -83,20 +83,22 @@ namespace FleetManagement_app_PL.Controllers
 
         [HttpGet]
         [Route("Categories")]
-        public async Task<ActionResult<IEnumerable<Categorie>>> GetCategories()
+        public async Task<ActionResult<IEnumerable<CategorieForViewingDto>>> GetCategories()
         {
             var seeds = await _repo.Categorie.GetAll();
+            var view = _mapper.Map<IEnumerable<CategorieForViewingDto>>(seeds);
 
-            return Ok(seeds);
+            return Ok(view);
         }
 
         [HttpGet]
         [Route("brandstoffen")]
-        public async Task<ActionResult<IEnumerable<Status>>> GetFuels()
+        public async Task<ActionResult<IEnumerable<BrandstofForViewingDto>>> GetFuels()
         {
             var seeds = await _repo.Brandstof.GetAll();
+             var view = _mapper.Map<IEnumerable<BrandstofForViewingDto>>(seeds);
 
-            return Ok(seeds);
+            return Ok(view);
         }
 
         /// <summary>
