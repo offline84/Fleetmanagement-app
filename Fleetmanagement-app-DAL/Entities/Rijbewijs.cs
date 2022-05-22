@@ -14,6 +14,6 @@ namespace Fleetmanagement_app_DAL.Entities
         [Required]
         public string TypeRijbewijs { get; set; }
 
-        public ICollection<ToewijzingRijbewijsBestuurder> ToewijzingenBestuurder { get; set; }
+        public ICollection<ToewijzingRijbewijsBestuurder> ToewijzingenBestuurder { get; set; } = new List<ToewijzingRijbewijsBestuurder>();
     }
 }

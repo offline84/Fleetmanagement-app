@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace FleetManagement_app_PL.ViewModel
 {
@@ -14,7 +15,6 @@ namespace FleetManagement_app_PL.ViewModel
 
         public BestuurderViewingDto()
         {
-
         }
 
         public string Rijksregisternummer { get; set; }
@@ -28,5 +28,13 @@ namespace FleetManagement_app_PL.ViewModel
         public bool IsGearchiveerd { get; set; }
 
         public DateTime LaatstGeupdate { get; set; }
+
+        public AdresViewingDto Adres { get; set; }
+
+        //public virtual Koppeling Koppeling { get; set; }
+
+        public ICollection<RijbewijsViewingDto> Rijbewijzen { get; set; }
+
+        public ICollection<ToewijzingRijbewijsBestuurderViewingDto> ToewijzingenRijbewijs { get; set; }
     }
 }

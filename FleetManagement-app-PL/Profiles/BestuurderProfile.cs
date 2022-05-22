@@ -8,10 +8,11 @@ namespace FleetManagement_app_PL.Profiles
     {
         public BestuurderProfile()
         {
-            CreateMap<Bestuurder, BestuurderViewingDto>();
-            CreateMap<Adres, AdresViewingDto>();
-            CreateMap<Rijbewijs, RijbewijsViewingDto>();
+            CreateMap<ToewijzingRijbewijsBestuurder, ToewijzingRijbewijsBestuurderViewingDto>().ReverseMap();
+            CreateMap<Rijbewijs, RijbewijsViewingDto>().ReverseMap();
+            CreateMap<Adres, AdresViewingDto>().ReverseMap();
 
+            CreateMap<Bestuurder, BestuurderViewingDto>().ReverseMap();
         }
     }
 }
