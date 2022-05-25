@@ -7,6 +7,5 @@ namespace Fleetmanagement_app_BLL.Repository
 {
     public interface IBestuurderRepository : IGenericRepository<Bestuurder>
     {
-        Task<List<Rijbewijs>> GetDriverLicensesForDriver(string rijksregisternummer);
     }
 }

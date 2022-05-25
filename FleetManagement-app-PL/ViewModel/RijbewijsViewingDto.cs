@@ -1,6 +1,4 @@
-﻿using Fleetmanagement_app_DAL.Entities;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace FleetManagement_app_PL.ViewModel
 {
@@ -9,7 +7,5 @@ namespace FleetManagement_app_PL.ViewModel
         public Guid Id { get; set; }
 
         public string TypeRijbewijs { get; set; }
-
-        public virtual ICollection<ToewijzingRijbewijsBestuurder> ToewijzingenBestuurder { get; set; } 
     }
 }

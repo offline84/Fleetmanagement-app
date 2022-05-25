@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace FleetManagement_app_PL.Controllers
 {
     [ApiController]
-     [Route("api/"+"[controller]")]
+    [Route("api/" + "[controller]")]
     public class BestuurderController : ControllerBase
     {
         private IUnitOfWork _unitOfWork;
@@ -23,14 +23,15 @@ namespace FleetManagement_app_PL.Controllers
         {
             _unitOfWork = unitOfWork ??
                 throw new ArgumentNullException(nameof(BestuurderRepository));
+            _mapper = mapper ??
+              throw new ArgumentNullException(nameof(mapper));
             _loggerFactory.CreateLogger("BestuurderController");
-            _mapper = mapper;
         }
 
         #region Getters
 
         /// <summary>
-        /// Haalt alle bestuurders en rijbewijzen op vooralle bestuurders.
+        /// Haalt alle bestuurders op vooralle bestuurders.
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -39,13 +40,6 @@ namespace FleetManagement_app_PL.Controllers
             try
             {
                 var bestuurders = await _unitOfWork.Bestuurder.GetAll();
-                var rijbewijzen = await _unitOfWork.Rijbewijs.GetAll();
-
-                foreach (var bestuurder in bestuurders)
-                {
-                    bestuurder.Rijbewijzen = (ICollection<Rijbewijs>)rijbewijzen;
-                }
-
                 var listResult = _mapper.Map<List<BestuurderViewingDto>>(bestuurders);
                 return Ok(listResult);
             }
@@ -57,7 +51,7 @@ namespace FleetManagement_app_PL.Controllers
         }
 
         /// <summary>
-        /// Haalt alle actieve bestuurders en rijbewijzen op vooralle bestuurders.
+        /// Haalt alle actieve bestuurders op vooralle bestuurders.
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -67,13 +61,6 @@ namespace FleetManagement_app_PL.Controllers
             try
             {
                 var bestuurders = await _unitOfWork.Bestuurder.GetAllActive();
-                var rijbewijzen = await _unitOfWork.Rijbewijs.GetAll();
-
-                foreach (var bestuurder in bestuurders)
-                {
-                    bestuurder.Rijbewijzen = (ICollection<Rijbewijs>)rijbewijzen;
-                }
-
                 var listResult = _mapper.Map<List<BestuurderViewingDto>>(bestuurders);
                 return Ok(listResult);
             }
@@ -95,13 +82,6 @@ namespace FleetManagement_app_PL.Controllers
             try
             {
                 var bestuurders = await _unitOfWork.Bestuurder.GetAllArchived();
-                var rijbewijzen = await _unitOfWork.Rijbewijs.GetAll();
-
-                foreach (var bestuurder in bestuurders)
-                {
-                    bestuurder.Rijbewijzen = (ICollection<Rijbewijs>)rijbewijzen;
-                }
-
                 var listResult = _mapper.Map<List<BestuurderViewingDto>>(bestuurders);
                 return Ok(listResult);
             }
@@ -119,12 +99,12 @@ namespace FleetManagement_app_PL.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("{rijksregisternummer}")]
-        public async Task<ActionResult<BestuurderViewingDto>> GetDriverById([FromRoute] string rijksregisternummer)
+        public async Task<ActionResult<BestuurderViewingDto>> GetBestuurderById([FromRoute] string rijksregisternummer)
         {
             try
             {
-                var driver = await _unitOfWork.Bestuurder.GetById(rijksregisternummer);
-                var result = _mapper.Map<BestuurderViewingDto>(driver);
+                var bestuurder = await _unitOfWork.Bestuurder.GetById(rijksregisternummer);
+                var result = _mapper.Map<BestuurderViewingDto>(bestuurder);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -133,22 +113,6 @@ namespace FleetManagement_app_PL.Controllers
                 return StatusCode(500, ex);
             }
         }
-
-        //[HttpGet]
-        //[Route("{rijksregisternummer}")]
-        //public ActionResult<List<RijbewijsViewingDto>> GetDriverLicensesForDriver(string rijksregisternummer)
-        //{
-        //    try
-        //    {
-        //        var driverLicenses = _unitOfWork.Bestuurder.GetDriverLicensesForDriver(rijksregisternummer);
-        //        return _mapper.Map<List<RijbewijsViewingDto>>(driverLicenses);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ModelState.AddModelError("Error", ex.Message);
-        //        return new List<RijbewijsViewingDto>();
-        //    }
-        //}
 
         #endregion
 
@@ -179,8 +143,6 @@ namespace FleetManagement_app_PL.Controllers
                 try
                 {
                     var bestuurder = _mapper.Map<Bestuurder>(bestuurderDto);
-                    await _unitOfWork.Bestuurder.Add(bestuurder);
-
                     if (await _unitOfWork.Bestuurder.Add(bestuurder))
                     {
                         await _unitOfWork.CompleteAsync();
@@ -209,12 +171,13 @@ namespace FleetManagement_app_PL.Controllers
         /// <param name="bestuurderDto"></param>
         /// <returns>BestuurderViewingDto bestuurderDto + link naar bestuurder</returns>
         [HttpPatch]
-        public async Task<IActionResult> UpdateVoertuig([FromBody] BestuurderViewingDto bestuurderDto)
+        [Route("Update")]
+        public async Task<IActionResult> UpdateBestuurder([FromBody] BestuurderViewingDto bestuurderDto)
         {
             if (ModelState.IsValid)
             {
                 var bestuurderData = await _unitOfWork.Bestuurder.GetById(bestuurderDto.Rijksregisternummer);
-                if (bestuurderData != null)
+                if (bestuurderData == null)
                 {
                     return Conflict("Bestuurder not found in Database, try creating one");
                 }
@@ -227,9 +190,8 @@ namespace FleetManagement_app_PL.Controllers
                 try
                 {
                     var bestuurder = _mapper.Map<Bestuurder>(bestuurderDto);
-                    await _unitOfWork.Bestuurder.Add(bestuurder);
 
-                    if (await _unitOfWork.Bestuurder.Add(bestuurder))
+                    if (await _unitOfWork.Bestuurder.Update(bestuurder))
                     {
                         await _unitOfWork.CompleteAsync();
                         return CreatedAtAction(bestuurder.Rijksregisternummer, bestuurderDto);
@@ -246,6 +208,47 @@ namespace FleetManagement_app_PL.Controllers
                 }
             }
             return StatusCode(500);
+        }
+
+        /// <summary>
+        ///   Bij delete wordt er gechekt of er een item wordt gevonden met behulp van zijn rijksregisternummer, indien hij gevonden wordt kan de flow van delete verder.
+        ///   Anders wordt er een foutmelding gegooid.
+        /// </summary>
+        /// <param name="rijksRegisternummer"></param>
+        /// <returns></returns>
+        [HttpDelete(Name = "DeleteBestuurder")]
+        [Route("Delete/{rijksRegisternummer}")]
+        public async Task<IActionResult> DeleteBestuurder([FromRoute] string rijksRegisternummer)
+        {
+            try
+            {
+                var bestuurderData = await _unitOfWork.Bestuurder.GetById(rijksRegisternummer);
+                if (bestuurderData == null)
+                {
+                    return Conflict("Bestuurder not found in Database, try creating one");
+                }
+
+                if (bestuurderData.IsGearchiveerd)
+                {
+                    return Conflict("Bestuurder already archived in Database");
+                }
+
+                if (await _unitOfWork.Bestuurder.Delete(rijksRegisternummer))
+                {
+                    await _unitOfWork.Koppeling.KoppelLosBestuurder(rijksRegisternummer);
+                    await _unitOfWork.CompleteAsync();
+                    return NoContent();
+                }
+                else
+                {
+                    _unitOfWork.Dispose();
+                    return BadRequest("Unable to Write to Database");
+                }
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
         }
 
         #endregion

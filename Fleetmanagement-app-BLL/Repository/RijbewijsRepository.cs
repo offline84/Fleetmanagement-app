@@ -11,12 +11,8 @@ namespace Fleetmanagement_app_BLL
 {
     public class RijbewijsRepository : GenericRepository<Rijbewijs>, IRijbewijsRepository
     {
-        private readonly FleetmanagerContext _context;
-        private readonly ILogger _logger;
-
         public RijbewijsRepository(FleetmanagerContext context, ILogger logger) : base(context, logger)
         {
-            _logger = logger;
             _context = context;
         }
 
@@ -36,7 +32,9 @@ namespace Fleetmanagement_app_BLL
         /// <returns></returns>
         public override async Task<IEnumerable<Rijbewijs>> GetAll()
         {
-            return await _dbSet.ToListAsync();
+            return await _dbSet
+                .Include(t=> t.ToewijzingenBestuurder)
+                .ToListAsync();
         }
     }
 }
