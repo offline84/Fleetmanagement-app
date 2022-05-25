@@ -19,5 +19,7 @@ namespace Fleetmanagement_app_BLL.Repository
         bool BestuurderAlGekoppeldAanEenVoertuig(string bestuurderRRN);
         bool TankkaartAlGekoppeldAanAndereBestuurder(string bestuurderRRN, string tankkaartnummer);
         bool VoertuigAlGekoppeldAanAndereBestuurder(string bestuurderRRN, string chassisnummer);
+        bool KoppelingMetTankkaartBestaatNiet(string kaartnummer);
+        bool KoppelingMetVoertuigBestaatNiet(string chassisnummer);
     }
 }
