@@ -271,6 +271,11 @@ namespace FleetManagement_app_PL.Controllers
             return StatusCode(500);
         }
 
+        /// <summary>
+        ///     De HttpDelete Archiveert het voertuig, past de laatst geupdated tijd aan en koppelt het voertuig los van de bestuurder.
+        /// </summary>
+        /// <param name="chassisnummer"></param>
+        /// <returns>HttpStatus</returns>
         [HttpDelete]
         [Route("{chassisnummer}")]
         public async Task<IActionResult> ArchiveVoertuig([FromRoute] string chassisnummer)
@@ -285,6 +290,13 @@ namespace FleetManagement_app_PL.Controllers
                 if (await _repo.Voertuig.Delete(chassisnummer))
                 {
                     await _repo.CompleteAsync();
+
+                    var k = await _repo.Koppeling.GetByvoertuig(chassisnummer);
+                    if(await _repo.Koppeling.GetByvoertuig(chassisnummer) != null)
+                    {
+                        await _repo.Koppeling.KoppelLosVoertuig(chassisnummer);
+                        await _repo.CompleteAsync();
+                    }
 
                     return NoContent();
                 }
