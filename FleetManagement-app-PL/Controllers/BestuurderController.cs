@@ -146,6 +146,8 @@ namespace FleetManagement_app_PL.Controllers
                     if (await _unitOfWork.Bestuurder.Add(bestuurder))
                     {
                         await _unitOfWork.CompleteAsync();
+                        await _unitOfWork.Koppeling.CreateKoppeling(bestuurderDto.Rijksregisternummer);
+                        await _unitOfWork.CompleteAsync();
                         return CreatedAtAction(bestuurder.Rijksregisternummer, bestuurderDto);
                     }
                     else

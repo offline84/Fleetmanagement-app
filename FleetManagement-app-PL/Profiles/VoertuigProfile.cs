@@ -11,6 +11,7 @@ namespace FleetManagement_app_PL.Profiles
             CreateMap<Categorie, CategorieForViewingDto>();
             CreateMap<Brandstof, BrandstofForViewingDto>();
             CreateMap<Status, StatusForViewingDto>();
+            CreateMap<Koppeling, KoppelingForViewingDto>();
 
             CreateMap<Voertuig, VoertuigForViewingDto>();
         }

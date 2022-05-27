@@ -11,6 +11,7 @@ namespace FleetManagement_app_PL.Profiles
             CreateMap<ToewijzingRijbewijsBestuurder, ToewijzingRijbewijsBestuurderViewingDto>().ReverseMap();
             CreateMap<Rijbewijs, RijbewijsViewingDto>().ReverseMap();
             CreateMap<Adres, AdresViewingDto>().ReverseMap();
+            CreateMap<Koppeling, KoppelingForViewingDto>();
 
             CreateMap<Bestuurder, BestuurderViewingDto>().ReverseMap();
         }
