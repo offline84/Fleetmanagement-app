@@ -248,6 +248,13 @@ namespace FleetManagement_app_PL.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Koppel de Bestuurder met de tankaart
+        /// </summary>
+        /// <param name="bestuurderRRN"></param>
+        /// <param name="kaartnummer"></param>
+        /// <returns></returns>
         [HttpPatch(Name = "KoppelAanBestuurder")]
         [Route("koppel/{bestuurderRRN}/{kaartnummer}")]
         public async Task<IActionResult> KoppelAanBestuurder([FromRoute] string bestuurderRRN, string kaartnummer)
@@ -265,6 +272,38 @@ namespace FleetManagement_app_PL.Controllers
                 }
 
                 if (await _repo.Koppeling.KoppelBestuurderEnTankkaart(bestuurderRRN, kaartnummer))
+                {
+                    await _repo.CompleteAsync();
+                    return NoContent();
+                }
+                else
+                {
+                    _repo.Dispose();
+                    return BadRequest("Unable to Write to Database");
+                }
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
+        }
+
+        /// <summary>
+        /// Koppel de tankaart los van de bestuurder. Geen effect als de tankaart niet gekoppeld is
+        /// </summary>
+        /// <param name="kaartnummer"></param>
+        /// <returns></returns>
+        [HttpPatch(Name = "KoppelTankkaartLosVanBestuurder")]
+        [Route("koppelLos/{kaartnummer}")]
+        public async Task<IActionResult> KoppelTankkaartLosVanBestuurder([FromRoute] string kaartnummer)
+        {
+            try
+            {
+                if (_repo.Koppeling.KoppelingMetTankkaartBestaatNiet(kaartnummer))
+                {
+                    return Conflict("Tankkaart is niet gelinkt met een bestuurder");
+                }
+                if (await _repo.Koppeling.KoppelLosTankkaart(kaartnummer))
                 {
                     await _repo.CompleteAsync();
                     return NoContent();

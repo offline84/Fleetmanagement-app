@@ -30,8 +30,8 @@ namespace FleetManagement_app_PL.ViewModel
         public DateTime LaatstGeupdate { get; set; }
 
         public AdresViewingDto Adres { get; set; }
-
-        public ICollection<RijbewijsViewingDto> Rijbewijzen { get; set; }
+  
+        //public ICollection<RijbewijsViewingDto> Rijbewijzen { get; set; }
 
         public ICollection<ToewijzingRijbewijsBestuurderViewingDto> ToewijzingenRijbewijs { get; set; }
 

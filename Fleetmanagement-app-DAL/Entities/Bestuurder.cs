@@ -32,8 +32,8 @@ namespace Fleetmanagement_app_DAL.Entities
 
         public virtual ICollection<ToewijzingRijbewijsBestuurder> ToewijzingenRijbewijs { get; set; }
 
-        [NotMapped()]
-        public virtual ICollection<Rijbewijs> Rijbewijzen { get; set; } 
+        /*[NotMapped()]
+        public virtual ICollection<Rijbewijs> Rijbewijzen { get; set; } */
 
         public virtual Koppeling Koppeling { get; set; }
 

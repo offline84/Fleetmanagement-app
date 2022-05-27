@@ -297,6 +297,78 @@ namespace FleetManagement_app_PL.Controllers
                         await _repo.Koppeling.KoppelLosVoertuig(chassisnummer);
                         await _repo.CompleteAsync();
                     }
+                    
+                    return NoContent();
+                }
+                else
+                {
+                    _repo.Dispose();
+                    return BadRequest("Unable to Write to Database");
+                }
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
+        }
+
+        /// <summary>
+        /// Koppel de Bestuurder met het Voertuig
+        /// </summary>
+        /// <param name="bestuurderRRN"></param>
+        /// <param name="chassisnummer"></param>
+        /// <returns></returns>
+        [HttpPatch(Name = "KoppelAanVoertuig")]
+        [Route("koppel/{bestuurderRRN}/{chassisnummer}")]
+        public async Task<IActionResult> KoppelAanVoertuig([FromRoute] string bestuurderRRN, string chassisnummer)
+        {
+            try
+            {
+                if (_repo.Koppeling.VoertuigAlGekoppeldAanAndereBestuurder(bestuurderRRN, chassisnummer))
+                {
+                    return Conflict("Tankkaart already linked in Database, decouple it first");
+                }
+
+                if (_repo.Koppeling.BestuurderAlGekoppeldAanEenVoertuig(bestuurderRRN))
+                {
+                    return Conflict("Bestuurder already linked in Database, decouple it first");
+                }
+
+                if (await _repo.Koppeling.KoppelBestuurderEnVoertuig(bestuurderRRN, chassisnummer))
+                {
+                    await _repo.CompleteAsync();
+                    return NoContent();
+                }
+                else
+                {
+                    _repo.Dispose();
+                    return BadRequest("Unable to Write to Database");
+                }
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
+        }
+
+        /// <summary>
+        /// Koppel het Voertuig los van de bestuurder. Geen effect als het Voertuig niet gekoppeld is
+        /// </summary>
+        /// <param name="chassisnummer"></param>
+        /// <returns></returns>
+        [HttpPatch(Name = "KoppelVoertuigLosVanBestuurder")]
+        [Route("koppelLos/{chassisnummer}")]
+        public async Task<IActionResult> KoppelVoertuigLosVanBestuurder([FromRoute] string chassisnummer)
+        {
+            try
+            {
+                if (_repo.Koppeling.KoppelingMetVoertuigBestaatNiet(chassisnummer))
+                {
+                    return Conflict("Voertuig is niet gelinkt met een bestuurder");
+                }
+                if (await _repo.Koppeling.KoppelLosVoertuig(chassisnummer))
+                {
+                    await _repo.CompleteAsync();
 
                     return NoContent();
                 }

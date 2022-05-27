@@ -171,7 +171,7 @@ namespace Fleetmanagement_app_BLL.Repository
         /// <returns>boolean</returns>
         public Task<bool> KoppelLosTankkaart(string kaartnummer)
         {
-            if (KoppelingTankkaartBestaatNiet(kaartnummer))
+            if (KoppelingMetTankkaartBestaatNiet(kaartnummer))
             {
                 _logger.LogWarning("Los Koppelen: Koppeling met Tankkaart bestaan niet");
                 return Task.FromResult(false);
@@ -205,7 +205,7 @@ namespace Fleetmanagement_app_BLL.Repository
         /// <returns>boolean</returns>
         public Task<bool> KoppelLosVoertuig(string chassisnummer)
         {
-            if (KoppelingVoertuigBestaatNiet(chassisnummer))
+            if (KoppelingMetVoertuigBestaatNiet(chassisnummer))
             {
                 _logger.LogWarning("Los Koppelen: Koppeling met Voertuig bestaan niet");
                 return Task.FromResult(false);
@@ -323,19 +323,21 @@ namespace Fleetmanagement_app_BLL.Repository
                 k.Rijksregisternummer != null
                 ).Any();
         }
-        private bool KoppelingBestuurderBestaatNiet(string bestuurderRRN)
-        {
-            return !_dbSet.Where(k => k.Rijksregisternummer == bestuurderRRN).Any();
-        }
 
-        private bool KoppelingTankkaartBestaatNiet(string kaartnummer)
+        public bool KoppelingMetTankkaartBestaatNiet(string kaartnummer)
         {
             return !_dbSet.Where(k => k.Kaartnummer == kaartnummer).Any();
         }
 
-        private bool KoppelingVoertuigBestaatNiet(string chassisnummer)
+        public bool KoppelingMetVoertuigBestaatNiet(string chassisnummer)
         {
             return !_dbSet.Where(k => k.Chassisnummer == chassisnummer).Any();
+        }
+
+
+        private bool KoppelingBestuurderBestaatNiet(string bestuurderRRN)
+        {
+            return !_dbSet.Where(k => k.Rijksregisternummer == bestuurderRRN).Any();
         }
 
         private bool BestuurderBestaatNiet(string bestuurderRRN)

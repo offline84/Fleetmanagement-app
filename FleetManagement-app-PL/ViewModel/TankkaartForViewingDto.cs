@@ -1,5 +1,4 @@
-﻿using Fleetmanagement_app_DAL.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace FleetManagement_app_PL.ViewModel
