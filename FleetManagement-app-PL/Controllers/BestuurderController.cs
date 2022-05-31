@@ -173,7 +173,6 @@ namespace FleetManagement_app_PL.Controllers
         /// <param name="bestuurderDto"></param>
         /// <returns>BestuurderViewingDto bestuurderDto + link naar bestuurder</returns>
         [HttpPatch]
-        [Route("Update")]
         public async Task<IActionResult> UpdateBestuurder([FromBody] BestuurderViewingDto bestuurderDto)
         {
             if (ModelState.IsValid)
@@ -218,23 +217,23 @@ namespace FleetManagement_app_PL.Controllers
         /// </summary>
         /// <param name="rijksRegisternummer"></param>
         /// <returns></returns>
-        [HttpDelete(Name = "DeleteBestuurder")]
-        [Route("Delete/{rijksRegisternummer}")]
-        public async Task<IActionResult> DeleteBestuurder([FromRoute] string rijksRegisternummer)
+        [HttpDelete]
+        [Route("{rijksRegisternummer}")]
+        public async Task<IActionResult> ArchiveBestuurder([FromRoute] string rijksRegisternummer)
         {
+            var bestuurderData = await _unitOfWork.Bestuurder.GetById(rijksRegisternummer);
+            if (bestuurderData == null)
+            {
+                return Conflict("Bestuurder not found in Database, try creating one");
+            }
+
+            if (bestuurderData.IsGearchiveerd)
+            {
+                return Conflict("Bestuurder already archived in Database");
+            }
+
             try
             {
-                var bestuurderData = await _unitOfWork.Bestuurder.GetById(rijksRegisternummer);
-                if (bestuurderData == null)
-                {
-                    return Conflict("Bestuurder not found in Database, try creating one");
-                }
-
-                if (bestuurderData.IsGearchiveerd)
-                {
-                    return Conflict("Bestuurder already archived in Database");
-                }
-
                 if (await _unitOfWork.Bestuurder.Delete(rijksRegisternummer))
                 {
                     await _unitOfWork.Koppeling.KoppelLosBestuurder(rijksRegisternummer);

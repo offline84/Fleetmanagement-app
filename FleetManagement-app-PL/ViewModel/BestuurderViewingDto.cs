@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fleetmanagement_app_DAL.Entities;
+using System;
 using System.Collections.Generic;
 
 namespace FleetManagement_app_PL.ViewModel
@@ -31,7 +32,7 @@ namespace FleetManagement_app_PL.ViewModel
 
         public AdresViewingDto Adres { get; set; }
 
-        //public virtual Koppeling Koppeling { get; set; }
+        //public Koppeling Koppeling { get; set; }
 
         //public ICollection<RijbewijsViewingDto> Rijbewijzen { get; set; }
 
