@@ -141,7 +141,7 @@ namespace FleetManagement_app_PL.Controllers
 
                     var voertuig = voertuigBuilder.Build();
 
-                    if (!voertuig.Nummerplaat.Contains("-"))
+                    if (!voertuig.Nummerplaat.Contains("-") && voertuig.Nummerplaat.Trim() != "")
                     {
                         if (voertuig.Nummerplaat.Length <= 7 && !voertuig.Nummerplaat.StartsWith("1") && !voertuig.Nummerplaat.StartsWith("2"))
                         {
@@ -196,6 +196,7 @@ namespace FleetManagement_app_PL.Controllers
         /// <param name="voertuigBuilder"></param>
         /// <returns>VoertuigForViewingDto voertuig + link naar voertuig</returns>
         [HttpPatch]
+        [Route("update")]
         public async Task<IActionResult> UpdateVoertuig([FromBody] Voertuigbuilder voertuigBuilder)
         {
             if (ModelState.IsValid)
@@ -225,7 +226,7 @@ namespace FleetManagement_app_PL.Controllers
 
                     var voertuig = voertuigBuilder.Build();
 
-                    if (!voertuig.Nummerplaat.Contains("-"))
+                    if (!voertuig.Nummerplaat.Contains("-") && voertuig.Nummerplaat != "")
                     {
                         if (voertuig.Nummerplaat.Length <= 7 && !voertuig.Nummerplaat.StartsWith("1") && !voertuig.Nummerplaat.StartsWith("2"))
                         {
@@ -318,8 +319,8 @@ namespace FleetManagement_app_PL.Controllers
         /// <param name="bestuurderRRN"></param>
         /// <param name="chassisnummer"></param>
         /// <returns></returns>
-        [HttpPatch(Name = "KoppelAanVoertuig")]
         [Route("koppel/{bestuurderRRN}/{chassisnummer}")]
+        [HttpPatch(Name = "KoppelAanVoertuig")]
         public async Task<IActionResult> KoppelAanVoertuig([FromRoute] string bestuurderRRN, string chassisnummer)
         {
             try
@@ -356,8 +357,8 @@ namespace FleetManagement_app_PL.Controllers
         /// </summary>
         /// <param name="chassisnummer"></param>
         /// <returns></returns>
+        [Route("koppellos/{chassisnummer}")]
         [HttpPatch(Name = "KoppelVoertuigLosVanBestuurder")]
-        [Route("koppelLos/{chassisnummer}")]
         public async Task<IActionResult> KoppelVoertuigLosVanBestuurder([FromRoute] string chassisnummer)
         {
             try
