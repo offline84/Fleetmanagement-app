@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fleetmanagement_app_DAL.Entities;
+using System;
 using System.Collections.Generic;
 
 namespace FleetManagement_app_PL.ViewModel
@@ -30,8 +31,6 @@ namespace FleetManagement_app_PL.ViewModel
         public DateTime LaatstGeupdate { get; set; }
 
         public AdresViewingDto Adres { get; set; }
-  
-        //public ICollection<RijbewijsViewingDto> Rijbewijzen { get; set; }
 
         public ICollection<ToewijzingRijbewijsBestuurderViewingDto> ToewijzingenRijbewijs { get; set; }
 
