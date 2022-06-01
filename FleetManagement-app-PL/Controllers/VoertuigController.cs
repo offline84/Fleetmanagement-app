@@ -195,6 +195,7 @@ namespace FleetManagement_app_PL.Controllers
         /// </remarks>
         /// <param name="voertuigBuilder"></param>
         /// <returns>VoertuigForViewingDto voertuig + link naar voertuig</returns>
+        [Route("update")]
         [HttpPatch]
         public async Task<IActionResult> UpdateVoertuig([FromBody] Voertuigbuilder voertuigBuilder)
         {
