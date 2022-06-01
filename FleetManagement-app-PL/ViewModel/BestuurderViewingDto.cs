@@ -31,7 +31,9 @@ namespace FleetManagement_app_PL.ViewModel
 
         public AdresViewingDto Adres { get; set; }
 
-        public ICollection<RijbewijsViewingDto> Rijbewijzen { get; set; }
+        //public virtual Koppeling Koppeling { get; set; }
+
+        //public ICollection<RijbewijsViewingDto> Rijbewijzen { get; set; }
 
         public ICollection<ToewijzingRijbewijsBestuurderViewingDto> ToewijzingenRijbewijs { get; set; }
 

@@ -146,7 +146,7 @@ namespace FleetManagement_app_PL.Controllers
                     if (await _unitOfWork.Bestuurder.Add(bestuurder))
                     {
                         await _unitOfWork.CompleteAsync();
-                        await _unitOfWork.Koppeling.CreateKoppeling(bestuurderDto.Rijksregisternummer);
+                        await _unitOfWork.Koppeling.CreateKoppeling(bestuurder.Rijksregisternummer);
                         await _unitOfWork.CompleteAsync();
                         return CreatedAtAction(bestuurder.Rijksregisternummer, bestuurderDto);
                     }
@@ -238,6 +238,34 @@ namespace FleetManagement_app_PL.Controllers
                 if (await _unitOfWork.Bestuurder.Delete(rijksRegisternummer))
                 {
                     await _unitOfWork.Koppeling.KoppelLosBestuurder(rijksRegisternummer);
+                    await _unitOfWork.CompleteAsync();
+                    return NoContent();
+                }
+                else
+                {
+                    _unitOfWork.Dispose();
+                    return BadRequest("Unable to Write to Database");
+                }
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
+        }
+
+        /// <summary>
+        /// Koppel de bestuurder los van het Voertuig en de tankkaart. Geen effect als de bestuurder niet gekoppeld is
+        /// </summary>
+        /// <param name="rijksRegisternummer"></param>
+        /// <returns></returns>
+        [HttpPatch(Name = "KoppelLosBestuurder")]
+        [Route("koppelLos/{rijksRegisternummer}")]
+        public async Task<IActionResult> KoppelLosBestuurder([FromRoute] string rijksRegisternummer)
+        {
+            try
+            {
+                if (await _unitOfWork.Koppeling.KoppelLosBestuurder(rijksRegisternummer))
+                {
                     await _unitOfWork.CompleteAsync();
                     return NoContent();
                 }
