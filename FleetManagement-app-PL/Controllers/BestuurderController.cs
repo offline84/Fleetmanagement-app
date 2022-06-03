@@ -92,6 +92,16 @@ namespace FleetManagement_app_PL.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("Rijbewijzen")]
+        public async Task<ActionResult<IEnumerable<RijbewijsViewingDto>>> GetStatusses()
+        {
+            var seeds = await _unitOfWork.Rijbewijs.GetAll();
+            var view = _mapper.Map<IEnumerable<RijbewijsViewingDto>>(seeds);
+
+            return Ok(view);
+        }
+
         /// <summary>
         /// Haal een bestuurder op met behulp van zijn rijksregisternummer.
         /// </summary>
