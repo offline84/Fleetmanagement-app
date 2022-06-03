@@ -37,5 +37,7 @@ namespace FleetManagement_app_PL.ViewModel
         //public ICollection<RijbewijsViewingDto> Rijbewijzen { get; set; }
 
         public ICollection<ToewijzingRijbewijsBestuurderViewingDto> ToewijzingenRijbewijs { get; set; }
+
+        public KoppelingForViewingDto Koppeling { get; set; }
     }
 }

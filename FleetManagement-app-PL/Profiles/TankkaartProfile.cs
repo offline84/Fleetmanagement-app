@@ -14,6 +14,7 @@ namespace FleetManagement_app_PL.Profiles
             CreateMap<BrandstofForViewingDto, Brandstof>();
             CreateMap<ToewijzingBrandstofTankkaartForViewingDto, ToewijzingBrandstofTankkaart>();
             CreateMap<ToewijzingBrandstofTankkaart, ToewijzingBrandstofTankkaartForViewingDto>();
+            CreateMap<Koppeling, KoppelingForViewingDto>();
         }
     }
 }

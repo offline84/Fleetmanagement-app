@@ -100,6 +100,7 @@ namespace Fleetmanagement_app_BLL.Repository
                 .Include(b => b.Brandstof)
                 .Include(c => c.Categorie)
                 .Include(s => s.Status)
+                .Include(k => k.Koppeling)
                 .ToListAsync();
         }
 
@@ -109,6 +110,7 @@ namespace Fleetmanagement_app_BLL.Repository
                 .Include(b => b.Brandstof)
                 .Include(c => c.Categorie)
                 .Include(s => s.Status)
+                .Include(k => k.Koppeling)
                 .ToListAsync();
         }
 
@@ -118,6 +120,7 @@ namespace Fleetmanagement_app_BLL.Repository
                 .Include(b => b.Brandstof)
                 .Include(c => c.Categorie)
                 .Include(s => s.Status)
+                .Include(k => k.Koppeling)
                 .ToListAsync();
         }
 
@@ -127,6 +130,7 @@ namespace Fleetmanagement_app_BLL.Repository
                 .Include(b => b.Brandstof)
                 .Include(c => c.Categorie)
                 .Include(s => s.Status)
+                .Include(k => k.Koppeling)
                 .FirstOrDefaultAsync();
         }
 

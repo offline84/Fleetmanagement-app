@@ -23,9 +23,9 @@ namespace FleetManagement_app_PL.ViewModel
 
         public int AantalDeuren { get; set; }
 
-        public virtual Koppeling Koppeling { get; set; }
-
         public StatusForViewingDto Status { get; set; }
+
+        public KoppelingForViewingDto Koppeling { get; set; }
 
         public bool IsGearchiveerd { get; set; }
 

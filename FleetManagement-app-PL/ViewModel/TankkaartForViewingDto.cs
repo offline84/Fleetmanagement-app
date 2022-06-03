@@ -12,9 +12,14 @@ namespace FleetManagement_app_PL.ViewModel
         public DateTime GeldigheidsDatum { get; set; }
 
         public int Pincode { get; set; }
+
         public bool IsGeblokkeerd { get; set; }
+
         public bool IsGearchiveerd { get; set; }
+
         public  ICollection<ToewijzingBrandstofTankkaartForViewingDto> MogelijkeBrandstoffen { get; set; }
+
+        public KoppelingForViewingDto Koppeling { get; set; }
         
     }
 }

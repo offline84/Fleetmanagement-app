@@ -86,6 +86,7 @@ namespace Fleetmanagement_app_BLL.Repository
         public override async Task<Tankkaart> GetById(string kaartnummer)
         {
             return await _dbSet.Where(t => t.Kaartnummer == kaartnummer)
+                .Include(k => k.Koppeling)
                 .Include(t => t.MogelijkeBrandstoffen)
                 .ThenInclude(tbt => tbt.Brandstof)
                 .FirstOrDefaultAsync();
@@ -94,6 +95,7 @@ namespace Fleetmanagement_app_BLL.Repository
         public override async Task<IEnumerable<Tankkaart>> GetAll()
         {
             return await _dbSet
+                .Include(k => k.Koppeling)
                 .Include(t => t.MogelijkeBrandstoffen)
                 .ThenInclude(tbt => tbt.Brandstof)
                 .ToListAsync();
@@ -102,6 +104,7 @@ namespace Fleetmanagement_app_BLL.Repository
         public override async Task<IEnumerable<Tankkaart>> GetAllActive()
         {
             return await _dbSet.Where(t => t.IsGearchiveerd == false)
+                .Include(k => k.Koppeling)
                 .Include(t => t.MogelijkeBrandstoffen)
                 .ThenInclude(tbt => tbt.Brandstof)
                 .ToListAsync();
@@ -110,6 +113,7 @@ namespace Fleetmanagement_app_BLL.Repository
         public override async Task<IEnumerable<Tankkaart>> GetAllArchived()
         {
             return await _dbSet.Where(t => t.IsGearchiveerd == true)
+                .Include(k => k.Koppeling)
                 .Include(t => t.MogelijkeBrandstoffen)
                 .ThenInclude(tbt => tbt.Brandstof)
                 .ToListAsync();
