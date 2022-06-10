@@ -91,10 +91,9 @@ namespace Fleetmanagement_Unit_Tests
         /// <param name="bestuurder"></param>
         internal void ToevoegenToewijzingenRijbewijs(Bestuurder bestuurder)
         {
-            Rijbewijs r = new Rijbewijs() { TypeRijbewijs = "D", Id = Guid.Parse("1247f201-ca7f-4d5f-83dd-ef8aa351ea8d") };
             var toewijzingen = new List<ToewijzingRijbewijsBestuurder>
                 {
-                    new ToewijzingRijbewijsBestuurder { Rijbewijs = r }
+                    new ToewijzingRijbewijsBestuurder { RijbewijsId = Guid.Parse("1247f201-ca7f-4d5f-83dd-ef8aa351ea8d")  }
                 };
             bestuurder.ToewijzingenRijbewijs = toewijzingen;
         }

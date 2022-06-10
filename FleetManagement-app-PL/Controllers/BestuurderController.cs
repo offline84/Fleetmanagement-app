@@ -15,9 +15,9 @@ namespace FleetManagement_app_PL.Controllers
     [Route("api/" + "[controller]")]
     public class BestuurderController : ControllerBase
     {
-        private IUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private ILoggerFactory _loggerFactory = new LoggerFactory();
+        private readonly ILoggerFactory _loggerFactory = new LoggerFactory();
 
         public BestuurderController(IUnitOfWork unitOfWork, IMapper mapper)
         {
