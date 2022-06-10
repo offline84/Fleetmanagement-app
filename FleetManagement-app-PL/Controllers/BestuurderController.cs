@@ -55,7 +55,7 @@ namespace FleetManagement_app_PL.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("ActiveBestuurders")]
+        [Route("Active")]
         public async Task<ActionResult<IEnumerable<BestuurderViewingDto>>> GetAllActiveBestuurders()
         {
             try
@@ -94,7 +94,7 @@ namespace FleetManagement_app_PL.Controllers
 
         [HttpGet]
         [Route("Rijbewijzen")]
-        public async Task<ActionResult<IEnumerable<RijbewijsViewingDto>>> GetStatusses()
+        public async Task<ActionResult<IEnumerable<RijbewijsViewingDto>>> GetRijbewijzen()
         {
             var seeds = await _unitOfWork.Rijbewijs.GetAll();
             var view = _mapper.Map<IEnumerable<RijbewijsViewingDto>>(seeds);
@@ -145,7 +145,7 @@ namespace FleetManagement_app_PL.Controllers
                     return Conflict("Bestuurder already exists in Database, try updating it");
                 }
 
-                if (IsRijksregisternummer(bestuurderDto.Rijksregisternummer))
+                if (!IsRijksregisternummer(bestuurderDto.Rijksregisternummer))
                 {
                     return Conflict("Rijksregisternummer is not valid!");
                 }
@@ -183,6 +183,7 @@ namespace FleetManagement_app_PL.Controllers
         /// <param name="bestuurderDto"></param>
         /// <returns>BestuurderViewingDto bestuurderDto + link naar bestuurder</returns>
         [HttpPatch]
+        [Route("update")]
         public async Task<IActionResult> UpdateBestuurder([FromBody] BestuurderViewingDto bestuurderDto)
         {
             if (ModelState.IsValid)
@@ -193,7 +194,7 @@ namespace FleetManagement_app_PL.Controllers
                     return Conflict("Bestuurder not found in Database, try creating one");
                 }
 
-                if (IsRijksregisternummer(bestuurderDto.Rijksregisternummer))
+                if (!IsRijksregisternummer(bestuurderDto.Rijksregisternummer))
                 {
                     return Conflict("Rijksregisternummer is not valid!");
                 }
