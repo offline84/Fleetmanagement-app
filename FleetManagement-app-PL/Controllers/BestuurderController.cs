@@ -15,9 +15,9 @@ namespace FleetManagement_app_PL.Controllers
     [Route("api/" + "[controller]")]
     public class BestuurderController : ControllerBase
     {
-        private IUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private ILoggerFactory _loggerFactory = new LoggerFactory();
+        private readonly ILoggerFactory _loggerFactory = new LoggerFactory();
 
         public BestuurderController(IUnitOfWork unitOfWork, IMapper mapper)
         {
@@ -55,7 +55,7 @@ namespace FleetManagement_app_PL.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("ActiveBestuurders")]
+        [Route("Active")]
         public async Task<ActionResult<IEnumerable<BestuurderViewingDto>>> GetAllActiveBestuurders()
         {
             try
@@ -90,6 +90,16 @@ namespace FleetManagement_app_PL.Controllers
                 ModelState.AddModelError("Error", ex.Message);
                 return StatusCode(500, ex);
             }
+        }
+
+        [HttpGet]
+        [Route("Rijbewijzen")]
+        public async Task<ActionResult<IEnumerable<RijbewijsViewingDto>>> GetRijbewijzen()
+        {
+            var seeds = await _unitOfWork.Rijbewijs.GetAll();
+            var view = _mapper.Map<IEnumerable<RijbewijsViewingDto>>(seeds);
+
+            return Ok(view);
         }
 
         /// <summary>
@@ -135,7 +145,7 @@ namespace FleetManagement_app_PL.Controllers
                     return Conflict("Bestuurder already exists in Database, try updating it");
                 }
 
-                if (IsRijksregisternummer(bestuurderDto.Rijksregisternummer))
+                if (!IsRijksregisternummer(bestuurderDto.Rijksregisternummer))
                 {
                     return Conflict("Rijksregisternummer is not valid!");
                 }
@@ -173,6 +183,7 @@ namespace FleetManagement_app_PL.Controllers
         /// <param name="bestuurderDto"></param>
         /// <returns>BestuurderViewingDto bestuurderDto + link naar bestuurder</returns>
         [HttpPatch]
+        [Route("update")]
         public async Task<IActionResult> UpdateBestuurder([FromBody] BestuurderViewingDto bestuurderDto)
         {
             if (ModelState.IsValid)
@@ -183,18 +194,21 @@ namespace FleetManagement_app_PL.Controllers
                     return Conflict("Bestuurder not found in Database, try creating one");
                 }
 
-                if (IsRijksregisternummer(bestuurderDto.Rijksregisternummer))
+                if (!IsRijksregisternummer(bestuurderDto.Rijksregisternummer))
                 {
                     return Conflict("Rijksregisternummer is not valid!");
                 }
 
                 try
                 {
+                   
                     var bestuurder = _mapper.Map<Bestuurder>(bestuurderDto);
-
+                    bestuurder.Koppeling = bestuurderData.Koppeling;
                     if (await _unitOfWork.Bestuurder.Update(bestuurder))
                     {
                         await _unitOfWork.CompleteAsync();
+                        bestuurder = await _unitOfWork.Bestuurder.GetById(bestuurderDto.Rijksregisternummer);
+                        bestuurderDto = _mapper.Map<BestuurderViewingDto>(bestuurder);
                         return CreatedAtAction(bestuurder.Rijksregisternummer, bestuurderDto);
                     }
                     else

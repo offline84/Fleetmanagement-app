@@ -193,9 +193,7 @@ namespace Fleetmanagement_app_BLL.Repository
             {
                 foreach (var toewijzing in bestuurder.ToewijzingenRijbewijs)
                 {
-                    toewijzing.RijbewijsId = toewijzing.Rijbewijs.Id;
-                    toewijzing.Rijksregisternummer = string.IsNullOrEmpty(toewijzing.Rijksregisternummer) ? bestuurder.Rijksregisternummer : toewijzing.Rijksregisternummer;
-                    toewijzing.Rijbewijs = null;
+                    toewijzing.Rijksregisternummer = bestuurder.Rijksregisternummer;                
                 }
             }
         }
