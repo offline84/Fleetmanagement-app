@@ -82,7 +82,6 @@ namespace Fleetmanagement_app_BLL.Repository
             }
 
             SetToewijzingRijbewijs(bestuurder);
-            bestuurder.Koppeling = entity.Koppeling;
 
             try
             {

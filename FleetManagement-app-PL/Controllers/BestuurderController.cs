@@ -201,11 +201,14 @@ namespace FleetManagement_app_PL.Controllers
 
                 try
                 {
+                   
                     var bestuurder = _mapper.Map<Bestuurder>(bestuurderDto);
-
+                    bestuurder.Koppeling = bestuurderData.Koppeling;
                     if (await _unitOfWork.Bestuurder.Update(bestuurder))
                     {
                         await _unitOfWork.CompleteAsync();
+                        bestuurder = await _unitOfWork.Bestuurder.GetById(bestuurderDto.Rijksregisternummer);
+                        bestuurderDto = _mapper.Map<BestuurderViewingDto>(bestuurder);
                         return CreatedAtAction(bestuurder.Rijksregisternummer, bestuurderDto);
                     }
                     else
