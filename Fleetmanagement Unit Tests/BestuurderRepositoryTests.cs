@@ -42,7 +42,7 @@ namespace Fleetmanagement_Unit_Tests
         /// Zorg voor de opkuis van de database. 
         /// </summary>
         /// <returns></returns>
-        internal async Task Cleanup()
+        internal void Cleanup()
         {
             var tankkaarten = _context.Tankkaarten.ToList();
             var toewijzingen = _context.ToewijzingBrandstofTankkaarten.ToList();
@@ -126,7 +126,7 @@ namespace Fleetmanagement_Unit_Tests
         [Fact]
         public async Task GetBestuurderAsync_Success_Test()
         {
-            await Cleanup();
+            Cleanup();
             await ToevoegenBestuurdersAsync();
 
             // Act
@@ -143,7 +143,7 @@ namespace Fleetmanagement_Unit_Tests
         [Fact]
         public async Task GetBestuurderByIdAsync_Success_Test()
         {
-            await Cleanup();
+            Cleanup();
             await ToevoegenBestuurdersAsync();
 
             // Act
@@ -162,7 +162,7 @@ namespace Fleetmanagement_Unit_Tests
         [Fact]
         public async Task CreateAsync_Success_Test()
         {
-            await Cleanup();
+            Cleanup();
             await ToevoegenBestuurdersAsync();
 
             // Act
@@ -185,7 +185,7 @@ namespace Fleetmanagement_Unit_Tests
         [Fact]
         public async Task CreateAsync_Failure_Test()
         {
-            await Cleanup();
+            Cleanup();
             await ToevoegenBestuurdersAsync();
 
             // Act
@@ -207,7 +207,7 @@ namespace Fleetmanagement_Unit_Tests
         [Fact]
         public async Task UpdateAsync_Success_Test()
         {
-            await Cleanup();
+            Cleanup();
             await ToevoegenBestuurdersAsync();
 
             // Act
@@ -232,7 +232,7 @@ namespace Fleetmanagement_Unit_Tests
         [Fact]
         public async Task UpdateOwnedAsync_Success_Test()
         {
-            await Cleanup();
+            Cleanup();
             await ToevoegenBestuurdersAsync();
 
             // Act
@@ -259,7 +259,7 @@ namespace Fleetmanagement_Unit_Tests
         [Fact]
         public async Task ArchiveAsync_Success_Test()
         {
-            await Cleanup();
+            Cleanup();
             await ToevoegenBestuurdersAsync();
 
             // Act
