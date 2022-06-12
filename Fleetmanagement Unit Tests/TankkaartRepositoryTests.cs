@@ -22,10 +22,12 @@ namespace Fleetmanagement_Unit_Tests
             _repo = new TankkaartRepository(_context, _loggerfactory.CreateLogger("TankkaartTestlogs"));
         }
 
-        internal Tankkaart TestCreateTankkaart(string kaartnummer, DateTime geldigheidsDatum, int pincode)
+        internal Tankkaart TestCreateTankkaart(string kaartnummer, DateTime geldigheidsDatum, int pincode, string brandstoffen)
         {
             var tankkaart = new Tankkaart(kaartnummer, geldigheidsDatum);
             if (pincode > 0) { tankkaart.Pincode = pincode; }
+            var toewijzingen = CreateToewijzingen(brandstoffen);
+            tankkaart.MogelijkeBrandstoffen = toewijzingen;
             return tankkaart;
         }
 
@@ -33,23 +35,31 @@ namespace Fleetmanagement_Unit_Tests
         {
             var tankkaart = new Tankkaart("123456789", DateTime.Now);
             tankkaart.Pincode = 1234;
-            var toewijzingen = new List<ToewijzingBrandstofTankkaart>();
 
-            ToewijzingBrandstofTankkaart toewijzing1 = new ToewijzingBrandstofTankkaart()
-            {
-                Tankkaart = tankkaart,
-                Brandstof = _context.Brandstof.Where(b => b.TypeBrandstof == "euro 95").Single()
-            };
-            ToewijzingBrandstofTankkaart toewijzing2 = new ToewijzingBrandstofTankkaart()
-            {
-                Tankkaart = tankkaart,
-                Brandstof = _context.Brandstof.Where(b => b.TypeBrandstof == "euro 98").Single()
-            };
-            toewijzingen.Add(toewijzing1);
-            toewijzingen.Add(toewijzing2);
+            var toewijzingen = CreateToewijzingen("euro 95,euro 95");
             tankkaart.MogelijkeBrandstoffen = toewijzingen;
 
             return tankkaart;
+        }
+
+        internal List<ToewijzingBrandstofTankkaart> CreateToewijzingen(string brandstoffen)
+        {
+            var toewijzingen = new List<ToewijzingBrandstofTankkaart>();
+ 
+            if (brandstoffen != "")
+            {
+                var arrayBrandstoffen = brandstoffen.Split(',');
+                foreach (var brandstof in arrayBrandstoffen)
+                {
+                    ToewijzingBrandstofTankkaart toewijzing = new ToewijzingBrandstofTankkaart()
+                    {
+                        Brandstof = _context.Brandstof.Where(b => b.TypeBrandstof == brandstof).Single()
+                    };
+                    toewijzingen.Add(toewijzing);
+                }
+            }
+
+            return toewijzingen;
         }
 
         internal void Cleanup()
@@ -63,15 +73,18 @@ namespace Fleetmanagement_Unit_Tests
         }
 
         [Theory]
-        [InlineData("123456789", "11/04/2022", 12345)]
-        [InlineData("15645", "21/12/2021", 123456)]
-        [InlineData("98jhjg84", "01/01/2020", 954865)]
-        public async Task AddTankkaart_TankkaartIsCreated_Aangemaakt(string kaartnummer, string geldigheidsDatumString, int pincode)
+        [InlineData("123456789", "11/04/2022", 9999,"")]
+        [InlineData("15645", "21/12/2021", 123456, "euro 95,euro 95")]
+        [InlineData("98jhjg84", "01/01/2029", 213322, "AdBlue")]
+        [InlineData("7894456", "06/04/2024", 12345, "")]
+        [InlineData("AF44784", "15/12/2021", 1234, "euro 95,euro 95")]
+        [InlineData("HRY87654", "02/05/2020", 954865, "AdBlue")]
+        public async Task AddTankkaart_TankkaartIsCreated_Aangemaakt(string kaartnummer, string geldigheidsDatumString, int pincode, string brandstoffen)
         {
             Cleanup();
 
             DateTime geldigheidsDatum = DateTime.Parse(geldigheidsDatumString);
-            var tankkaart = TestCreateTankkaart(kaartnummer, geldigheidsDatum, pincode);
+            var tankkaart = TestCreateTankkaart(kaartnummer, geldigheidsDatum, pincode, brandstoffen);
 
             await _repo.Add(tankkaart);
             await _context.SaveChangesAsync();
@@ -81,15 +94,18 @@ namespace Fleetmanagement_Unit_Tests
         }
 
         [Theory]
-        [InlineData("123456789", 12345)]
-        [InlineData("15645", 123456)]
-        [InlineData("98jhjg84", 954865)]
-        public async Task AddTankkaart_TankkaartZonderGeldigheidsDatum_NietAangemaakt(string kaartnummer, int pincode)
+        [InlineData("123456789", 9999, "")]
+        [InlineData("15645", 123456, "euro 95,euro 95")]
+        [InlineData("98jhjg84", 213322, "AdBlue")]
+        [InlineData("7894456", 12345, "")]
+        [InlineData("AF44784", 1234, "euro 95,euro 95")]
+        [InlineData("HRY87654", 954865, "AdBlue")]
+        public async Task AddTankkaart_TankkaartZonderGeldigheidsDatum_NietAangemaakt(string kaartnummer, int pincode, string brandstoffen)
         {
             Cleanup();
 
             DateTime geldigheidsDatum = default;
-            var tankkaart = TestCreateTankkaart(kaartnummer, geldigheidsDatum, pincode);
+            var tankkaart = TestCreateTankkaart(kaartnummer, geldigheidsDatum, pincode, brandstoffen);
 
             await _repo.Add(tankkaart);
             await _context.SaveChangesAsync();
@@ -99,16 +115,19 @@ namespace Fleetmanagement_Unit_Tests
         }
 
         [Theory]
-        [InlineData("11/04/2022", 12345)]
-        [InlineData("21/12/2021", 123456)]
-        [InlineData("01/01/2020", 954865)]
-        public async Task AddTankkaart_TankkaartZonderKaartnummer_NietAangemaakt(string geldigheidsDatumString, int pincode)
+        [InlineData("11/04/2022", 9999, "")]
+        [InlineData("21/12/2021", 123456, "euro 95,euro 95")]
+        [InlineData("01/01/2029", 213322, "AdBlue")]
+        [InlineData("06/04/2024", 12345, "")]
+        [InlineData("15/12/2021", 1234, "euro 95,euro 95")]
+        [InlineData( "02/05/2020", 954865, "AdBlue")]
+        public async Task AddTankkaart_TankkaartZonderKaartnummer_NietAangemaakt(string geldigheidsDatumString, int pincode, string brandstoffen)
         {
             Cleanup();
 
             DateTime geldigheidsDatum = DateTime.Parse(geldigheidsDatumString);
             var kaartnummer = "";
-            var tankkaart = TestCreateTankkaart(kaartnummer, geldigheidsDatum, pincode);
+            var tankkaart = TestCreateTankkaart(kaartnummer, geldigheidsDatum, pincode, brandstoffen);
 
             await _repo.Add(tankkaart);
             await _context.SaveChangesAsync();
@@ -149,6 +168,33 @@ namespace Fleetmanagement_Unit_Tests
             Assert.NotNull(addedTankkaart);
             Assert.NotNull(deletedTankkaart);
             Assert.True(deletedTankkaart.IsGearchiveerd = true);
+        }
+
+        [Theory]
+        [InlineData("123456789", "11/04/2022", 9999, "")]
+        [InlineData("123456789", "21/12/2021", 123456, "euro 95,euro 95")]
+        [InlineData("123456789", "01/01/2029", 213322, "AdBlue")]
+        [InlineData("123456789", "06/04/2024", 12345, "")]
+        [InlineData("123456789", "15/12/2021", 1234, "euro 95,euro 95")]
+        [InlineData("123456789", "02/05/2020", 954865, "AdBlue")]
+        public async Task Update_Werkt(string kaartnummer, string geldigheidsDatumString, int pincode, string brandstoffen)
+        {
+            Cleanup();
+            var tankkaart = GetTankkaart1();
+            DateTime geldigheidsDatum = DateTime.Parse(geldigheidsDatumString);
+            await _repo.Add(tankkaart);
+            await _context.SaveChangesAsync();
+
+            var tankkaartToUpdate = TestCreateTankkaart(kaartnummer, geldigheidsDatum, pincode, brandstoffen);
+            await _repo.Update(tankkaartToUpdate);
+            await _context.SaveChangesAsync();
+
+            var geupdateTankaart = await _repo.GetById(tankkaart.Kaartnummer);
+            
+            Assert.Equal(geupdateTankaart.Kaartnummer, tankkaartToUpdate.Kaartnummer);
+            Assert.Equal(geupdateTankaart.GeldigheidsDatum, tankkaartToUpdate.GeldigheidsDatum);
+            Assert.Equal(geupdateTankaart.Pincode, tankkaartToUpdate.Pincode);
+            Assert.Equal(geupdateTankaart.MogelijkeBrandstoffen, tankkaartToUpdate.MogelijkeBrandstoffen);
         }
 
         [Theory]

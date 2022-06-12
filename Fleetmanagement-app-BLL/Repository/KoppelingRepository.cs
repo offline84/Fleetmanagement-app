@@ -16,10 +16,12 @@ namespace Fleetmanagement_app_BLL.Repository
             _context = context;
         }
 
-        /// <summary>Maakt de initiele bestuurderskoppeling aan</summary>
+        /// <summary>
+        /// Maakt de initiele bestuurderskoppeling aan.
+        /// </summary>
         /// <remarks>
-        ///     Op te roepen na het aanmaken van de bestuurder.
-        ///     Controleert of de bestuurder bestaat.
+        /// Op te roepen na het aanmaken van de bestuurder.
+        /// Controleert of de bestuurder bestaat.
         /// </remarks>
         /// <param name="bestuurderRRN">Rijskregister nummer van de bestuurder</param>
         /// <returns>boolean</returns>
@@ -27,7 +29,7 @@ namespace Fleetmanagement_app_BLL.Repository
         {
             if (BestuurderBestaatNiet(bestuurderRRN))
             {
-                _logger.LogWarning("Koppeling aanmaken: bestuurder bestaan niet");
+                _logger.LogWarning("Koppeling_Aanmaken: bestuurder bestaan niet");
                 return false;
             }
             
@@ -39,18 +41,18 @@ namespace Fleetmanagement_app_BLL.Repository
                 try
                 {
                     await _context.Koppelingen.AddAsync(koppeling);
-                    _logger.LogWarning("Koppeling aanmaken: Koppeling aangemaakt");
+                    _logger.LogWarning("Koppeling_Aanmaken: Koppeling aangemaakt");
                     return true;
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError("Koppeling aanmaken Er is iets foutgelopen bij het aanmaken van de koppeling in de DB", e);
+                    _logger.LogError("Koppeling_Aanmaken Er is iets foutgelopen bij het aanmaken van de koppeling in de DB", e);
                     return false;
                 }
             }
             else
             {
-                _logger.LogWarning("Koppeling aanmaken: koppeling bestond al");
+                _logger.LogWarning("Koppeling_Aanmaken: koppeling bestond al");
                 return false;
             } 
         }
@@ -64,34 +66,21 @@ namespace Fleetmanagement_app_BLL.Repository
         {
             if (KoppelingBestuurderBestaatNiet(bestuurderRRN) | TankkaartBestaatNiet(kaartnummer))
             {
-                _logger.LogWarning("Koppeling: Koppeling, bestuurder of tankkaart bestaan niet");
+                _logger.LogWarning("Koppeling_Tankkaart: Koppeling, bestuurder of tankkaart bestaan niet");
                 return Task.FromResult(false);
             }
 
             if (BestuurderAlGekoppeldAanEenTankkaart(bestuurderRRN))
             {
-                _logger.LogWarning("Koppeling: bestuurder is al gekoppeld aan andere tankkaart");
+                _logger.LogWarning("Koppeling_Tankkaart: bestuurder is al gekoppeld aan andere tankkaart");
                 // Blokeren of niet?
                 return Task.FromResult(false);
             }
 
             if (TankkaartAlGekoppeldAanAndereBestuurder(bestuurderRRN,kaartnummer)) 
                 {
-                _logger.LogWarning("Koppeling: tankkaart al gekoppeld aan andere bestuurder");
-                // Blokeren:
+                _logger.LogWarning("Koppeling_Tankkaart: tankkaart al gekoppeld aan andere bestuurder");
                 return Task.FromResult(false);
-                // Forceren:
-                /*var koppelingTankkaart = _dbSet.Where(k => k.Kaartnummer == kaartnummer).FirstOrDefault();
-                koppelingTankkaart.Kaartnummer = null;
-                try
-                {
-                    _dbSet.Update(koppelingTankkaart);
-                    _logger.LogWarning("Koppeling: Bestaande koppeling tankkaart losgekoppeld");
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError("Koppeling: Kon tankkaart niet koppelen aan bestuurder", e);
-                }*/
             }
 
             var koppeling = _dbSet.Where(k => k.Rijksregisternummer == bestuurderRRN).FirstOrDefault();
@@ -100,19 +89,23 @@ namespace Fleetmanagement_app_BLL.Repository
             try
             {
                 _dbSet.Update(koppeling);
-                _logger.LogWarning("Koppeling: Koppeling tankkaart succesvol");
+                _logger.LogWarning("Koppeling_Tankkaart: Koppeling tankkaart succesvol");
                 return Task.FromResult(true);
             }
             catch (Exception e)
             {
-                _logger.LogError("Koppeling: Kon tankkaart niet koppelen aan bestuurder", e);
+                _logger.LogError("Koppeling_Tankkaart: Kon tankkaart niet koppelen aan bestuurder", e);
                 return Task.FromResult(false);
 
             }
         }
 
-        /// <summary>Koppelt de bestuurder met het voertuig</summary>
-        /// <remarks>Controleert eerst of het voertuig en bestuurderskoppeling bestaat.</remarks>
+        /// <summary>
+        /// Koppelt de bestuurder met het voertuig
+        /// </summary>
+        /// <remarks>
+        /// Controleert eerst of het voertuig en bestuurderskoppeling bestaat.
+        /// </remarks>
         /// <param name="bestuurderRRN">Rijskregister nummer van de bestuurder</param>
         /// <param name="chassisnummer">Chassisnummer van het voertuig</param>
         /// <returns>boolean</returns>
@@ -127,27 +120,13 @@ namespace Fleetmanagement_app_BLL.Repository
             if (BestuurderAlGekoppeldAanEenVoertuig(bestuurderRRN))
             {
                 _logger.LogWarning("Koppeling: bestuurder is al gekoppeld aan andere voertuig");
-                // Blokeren of niet?
                 return Task.FromResult(false);
             }
 
             if (VoertuigAlGekoppeldAanAndereBestuurder(bestuurderRRN, chassisnummer))
             {
                 _logger.LogWarning("Koppeling: Voertuig al gekoppeld aan andere bestuurder");
-                // Blokeren:
                 return Task.FromResult(false);
-                // Forceren:
-                /*var koppelingVoertuig = _dbSet.Where(k => k.Chassisnummer == chassisnummer).FirstOrDefault();
-                koppelingVoertuig.Chassisnummer = null;
-                try
-                {
-                    _dbSet.Update(koppelingTankkaart);
-                    _logger.LogWarning("Koppeling: Bestaande koppeling voertuig losgekoppeld");
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError("Koppeling: Kon voertuig niet koppelen aan bestuurder", e);
-                }*/
             }
             var koppeling = _dbSet.Where(k => k.Rijksregisternummer == bestuurderRRN).FirstOrDefault();
             koppeling.Chassisnummer = chassisnummer;
@@ -165,21 +144,25 @@ namespace Fleetmanagement_app_BLL.Repository
             }
         }
 
-        /// <summary>Koppelt de bestuurder los van de tankkaart</summary>
-        /// <remarks>Controleert of de tankkaart en koppeling met bestuurder bestaat</remarks>
+        /// <summary>
+        /// Koppelt de bestuurder los van de tankkaart
+        /// </summary>
+        /// <remarks>
+        /// Controleert of de tankkaart en koppeling met bestuurder bestaat
+        /// </remarks>
         /// <param name="kaartnummer">Kaartnummer van de tankkaart</param>
         /// <returns>boolean</returns>
         public Task<bool> KoppelLosTankkaart(string kaartnummer)
         {
             if (KoppelingMetTankkaartBestaatNiet(kaartnummer))
             {
-                _logger.LogWarning("Los Koppelen: Koppeling met Tankkaart bestaan niet");
+                _logger.LogWarning("LosKoppelen_Tankkaart: Koppeling met Tankkaart bestaan niet");
                 return Task.FromResult(false);
             }
             var koppeling = _dbSet.Where(k => k.Kaartnummer == kaartnummer).FirstOrDefault();
             if (koppeling == null)
             {
-                _logger.LogError("Los Koppelen: Er bestaat geen koppeling met deze tankkaart");
+                _logger.LogError("LosKoppelen_Tankkaart: Er bestaat geen koppeling met deze tankkaart");
                 return Task.FromResult(false);
             } else
             {
@@ -187,33 +170,37 @@ namespace Fleetmanagement_app_BLL.Repository
                 try
                 {
                     _dbSet.Update(koppeling);
-                    _logger.LogWarning("Los Koppelen: Tankkaart losgekoppeld van bestuuurder");
+                    _logger.LogWarning("LosKoppelen_Tankkaart: Tankkaart losgekoppeld van bestuuurder");
                     return Task.FromResult(true);
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError("Los Koppelen: Kon Tankkaart niet los koppelen van de bestuurder", e);
+                    _logger.LogError("LosKoppelen_Tankkaart: Kon Tankkaart niet los koppelen van de bestuurder", e);
                     return Task.FromResult(false);
                 }
             }
 
         }
 
-        /// <summary>Koppelt de bestuurder los van het voertuig</summary>
-        /// <remarks>Controleert of het voertuig en koppeling met bestuurder bestaat</remarks>
+        /// <summary>
+        /// Koppelt de bestuurder los van het voertuig
+        /// </summary>
+        /// <remarks>
+        /// Controleert of het voertuig en koppeling met bestuurder bestaat
+        /// </remarks>
         /// <param name="chassisnummer">Chassisnummer van het voertuig</param>
         /// <returns>boolean</returns>
         public Task<bool> KoppelLosVoertuig(string chassisnummer)
         {
             if (KoppelingMetVoertuigBestaatNiet(chassisnummer))
             {
-                _logger.LogWarning("Los Koppelen: Koppeling met Voertuig bestaan niet");
+                _logger.LogWarning("LosKoppelen_Voertuig: Koppeling met Voertuig bestaan niet");
                 return Task.FromResult(false);
             }
             var koppeling = _dbSet.Where(k => k.Chassisnummer == chassisnummer).FirstOrDefault();
             if (koppeling == null)
             {
-                _logger.LogError("Los Koppelen: Er bestaat geen koppeling met dit voertuig");
+                _logger.LogError("LosKoppelen_Voertuig: Er bestaat geen koppeling met dit voertuig");
                 return Task.FromResult(false);
             } else
             {
@@ -221,26 +208,30 @@ namespace Fleetmanagement_app_BLL.Repository
                 try
                 {
                     _dbSet.Update(koppeling);
-                    _logger.LogWarning("Los Koppelen: Voertuig losgekoppeld van bestuuurder");
+                    _logger.LogWarning("LosKoppelen_Voertuig: Voertuig losgekoppeld van bestuuurder");
                     return Task.FromResult(true);
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError("Los Koppelen: Kon Voertuig niet los gekoppelen van de bestuurder", e);
+                    _logger.LogError("LosKoppelen_Voertuig: Kon Voertuig niet los gekoppelen van de bestuurder", e);
                     return Task.FromResult(false);
                 }
             }
         }
 
-        /// <summary>Koppelt de bestuurder los van het voertuig en de tankkaart</summary>
-        /// <remarks>Controleert of de bestuurderskoppeling bestaat</remarks>
+        /// <summary>
+        /// Koppelt de bestuurder los van het voertuig en de tankkaart
+        /// </summary>
+        /// <remarks>
+        /// Controleert of de bestuurderskoppeling bestaat
+        /// </remarks>
         /// <param name="bestuurderRRN">Rijskregister nummer van de bestuurder</param>
         /// <returns>boolean</returns>
         public Task<bool> KoppelLosBestuurder(string bestuurderRRN)
         {
             if (KoppelingBestuurderBestaatNiet(bestuurderRRN))
             {
-                _logger.LogWarning("Los Koppelen: Koppeling bestuurder bestaan niet");
+                _logger.LogWarning("LosKoppelen_Bestuurder: Koppeling bestuurder bestaan niet");
                 return Task.FromResult(false);
             }
             var koppeling = _dbSet.Where(k => k.Rijksregisternummer == bestuurderRRN).FirstOrDefault();
@@ -249,12 +240,12 @@ namespace Fleetmanagement_app_BLL.Repository
             try
             {
                 _dbSet.Update(koppeling);
-                _logger.LogWarning("Los Koppelen: Bestuurder losgekoppeld van tankkaart en voertuig");
+                _logger.LogWarning("LosKoppelen_Bestuurder: Bestuurder losgekoppeld van tankkaart en voertuig");
                 return Task.FromResult(true);
             }
             catch (Exception e)
             {
-                _logger.LogError("Los Koppelen: Kon de bestuurder niet los koppelen van de tankaart en/of het voertuig", e);
+                _logger.LogError("LosKoppelen_Bestuurder: Kon de bestuurder niet los koppelen van de tankaart en/of het voertuig", e);
                 return Task.FromResult(false);
             }
         }
@@ -285,7 +276,7 @@ namespace Fleetmanagement_app_BLL.Repository
         }
 
         /// <summary>
-        /// Controleer of Bestuurder al gekoppeld is aan een ander voertuig
+        ///     Controleer of Bestuurder al gekoppeld is aan een ander voertuig
         /// </summary>
         /// <param name="bestuurderRRN"></param>
         /// <returns></returns>

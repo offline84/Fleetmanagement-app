@@ -18,8 +18,13 @@ namespace Fleetmanagement_app_BLL.Repository
             _context = context;
         }
 
-        /// <summary>Voegt de tankkaart en mogelijke brandstoffen toe aan de database.</summary>
-        /// <remarks>Er wordt eerst nagegaan of de verplichte velden aanwezig zijn.</remarks>
+        /// <summary>
+        /// Voegt de tankkaart en mogelijke brandstoffen toe aan de database.
+        /// </summary>
+        /// <remarks>
+        /// - Er wordt eerst nagegaan of de verplichte velden aanwezig zijn.
+        /// - De Brandstof Toewijzing wordt opgebouwd op basis van de Brandstof
+        /// </remarks>
         /// <param name="tankkaart">Tankkaart object</param>
         /// <returns>boolean</returns>
         public override async Task<bool> Add(Tankkaart tankkaart)
@@ -61,7 +66,9 @@ namespace Fleetmanagement_app_BLL.Repository
             return true;
         }
 
-        /// <summary>Archiveert de tankaart (IsGearchiveerd = true).</summary>
+        /// <summary>
+        /// Archiveert de tankaart (IsGearchiveerd = true).
+        /// </summary>
         /// <param name="kaartnummer">kaartnummer (string) van de tankkaart</param>
         /// <returns>boolean</returns>
         public override async Task<bool> Delete(string kaartnummer)
@@ -73,7 +80,7 @@ namespace Fleetmanagement_app_BLL.Repository
             {
                 tankkaart.LaatstGeupdate = DateTime.Now;
                 _dbSet.Update(tankkaart);
-                _logger.LogWarning("Tankkaart_Delete: Einde van Methode");
+                _logger.LogWarning("Tankkaart_Delete: Succes");
                 return true;
             }
             catch (Exception e)
@@ -82,7 +89,11 @@ namespace Fleetmanagement_app_BLL.Repository
                 return false;
             }
         }
-
+        /// <summary>
+        /// Geeft 1 Tankkaart met kaartnummer weer, samen met de koppeling en mogelijk brandstoffen
+        /// </summary>
+        /// <param name="kaartnummer"></param>
+        /// <returns></returns>
         public override async Task<Tankkaart> GetById(string kaartnummer)
         {
             return await _dbSet.Where(t => t.Kaartnummer == kaartnummer)
@@ -92,6 +103,10 @@ namespace Fleetmanagement_app_BLL.Repository
                 .FirstOrDefaultAsync();
         }
 
+        /// <summary>
+        /// Geeft alle Tankkaarten weer, samen met de koppeling en mogelijk brandstoffen
+        /// </summary>
+        /// <returns></returns>
         public override async Task<IEnumerable<Tankkaart>> GetAll()
         {
             return await _dbSet
@@ -100,7 +115,10 @@ namespace Fleetmanagement_app_BLL.Repository
                 .ThenInclude(tbt => tbt.Brandstof)
                 .ToListAsync();
         }
-
+        /// <summary>
+        /// Geeft alle active Tankkaarten weer, samen met de koppeling en mogelijk brandstoffen
+        /// </summary>
+        /// <returns></returns>
         public override async Task<IEnumerable<Tankkaart>> GetAllActive()
         {
             return await _dbSet.Where(t => t.IsGearchiveerd == false)
@@ -110,6 +128,10 @@ namespace Fleetmanagement_app_BLL.Repository
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Geeft alle verwijderde Tankkaarten weer, samen met de koppeling en mogelijk brandstoffen
+        /// </summary>
+        /// <returns></returns>
         public override async Task<IEnumerable<Tankkaart>> GetAllArchived()
         {
             return await _dbSet.Where(t => t.IsGearchiveerd == true)
@@ -119,8 +141,13 @@ namespace Fleetmanagement_app_BLL.Repository
                 .ToListAsync();
         }
 
-        /// <summary>Past de bestaande tankkaart aan met de nieuwe gegevens.</summary>
-        /// <remarks>Er wordt eerst nagegaan of de verplichte velden aanwezig zijn en of er al een tankkaart met kaartnummer bestaat</remarks>
+        /// <summary>
+        /// Past de bestaande tankkaart aan met de nieuwe gegevens.
+        /// </summary>
+        /// <remarks>
+        /// - Er wordt eerst nagegaan of de verplichte velden aanwezig zijn en of er al een tankkaart met kaartnummer bestaat
+        /// - De Brandstof Toewijzing wordt opgebouwd op basis van de Brandstof
+        /// </remarks>
         /// <param name="tankkaart">Tankkaart object</param>
         /// <returns>boolean</returns>
         public override Task<bool> Update(Tankkaart tankkaart)
@@ -159,6 +186,7 @@ namespace Fleetmanagement_app_BLL.Repository
 
                 var tankkaartToUpdate = _context.Tankkaarten.Where(t => t.Kaartnummer == tankkaart.Kaartnummer).First();
                 _dbSet.Update(tankkaartToUpdate).CurrentValues.SetValues(tankkaart);
+                _logger.LogWarning("Tankkaart_Update: Succes");
                 return Task.FromResult(true);
             }
             catch (Exception e)
@@ -169,7 +197,9 @@ namespace Fleetmanagement_app_BLL.Repository
 
         }
 
-        /// <summary>Blokeert de tankkaart</summary>
+        /// <summary>
+        /// Blokeert de tankkaart
+        /// </summary>
         /// <param name="tankkaart">Tankkaart object</param>
         /// <returns>boolean</returns>
         public async Task<bool> Blokkeren(string kaartnummer)
@@ -181,6 +211,7 @@ namespace Fleetmanagement_app_BLL.Repository
             {
                 tankkaart.LaatstGeupdate = DateTime.Now;
                 _dbSet.Update(tankkaart);
+                _logger.LogWarning("Tankkaart_Blokeren: Succes");
                 return true;
             }
             catch (Exception e)
