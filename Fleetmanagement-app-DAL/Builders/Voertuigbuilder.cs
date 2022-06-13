@@ -48,7 +48,7 @@ namespace Fleetmanagement_app_DAL.Builders
                 Chassisnummer = this.Chassisnummer.ToUpper().Trim(),
                 Merk = this.Merk.Trim(),
                 Model = this.Model.Trim(),
-                Nummerplaat = this.Nummerplaat.Trim(),
+                Nummerplaat = this.Nummerplaat.Trim().ToUpper(),
                 Brandstof = this.Brandstof,
                 BrandstofId = this.Brandstof.Id,
                 Categorie = this.Categorie,
