@@ -83,10 +83,19 @@ namespace Fleetmanagement_app_BLL.Repository
 
             SetToewijzingRijbewijs(bestuurder);
 
+            
+            var bestuurderEntry = _context.Attach(bestuurder);
+            var adressEntry = bestuurderEntry.Reference(e => e.Adres);
+            adressEntry.TargetEntry.Property(a => a.Straat).IsModified = true;
+            adressEntry.TargetEntry.Property(a => a.Huisnummer).IsModified = true;
+            adressEntry.TargetEntry.Property(a => a.Postcode).IsModified = true;
+            adressEntry.TargetEntry.Property(a => a.Stad).IsModified = true;
+
             try
             {
                 bestuurder.LaatstGeupdate = DateTime.Now;
-                _dbSet.Update(entity).CurrentValues.SetValues(bestuurder);
+               
+                _dbSet.Update(entity).CurrentValues.SetValues(bestuurderEntry);
                 _logger.LogWarning("End BestuurderRepository - UpdateFunction!");
                 return Task.FromResult(true);
             }
@@ -184,9 +193,7 @@ namespace Fleetmanagement_app_BLL.Repository
             {
                 foreach (var toewijzing in bestuurder.ToewijzingenRijbewijs)
                 {
-                    toewijzing.RijbewijsId = toewijzing.Rijbewijs.Id;
-                    toewijzing.Rijksregisternummer = string.IsNullOrEmpty(toewijzing.Rijksregisternummer) ? bestuurder.Rijksregisternummer : toewijzing.Rijksregisternummer;
-                    toewijzing.Rijbewijs = null;
+                    toewijzing.Rijksregisternummer = bestuurder.Rijksregisternummer;                
                 }
             }
         }

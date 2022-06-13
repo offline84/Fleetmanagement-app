@@ -195,6 +195,7 @@ namespace FleetManagement_app_PL.Controllers
         /// </remarks>
         /// <param name="voertuigBuilder"></param>
         /// <returns>VoertuigForViewingDto voertuig + link naar voertuig</returns>
+        [Route("update")]
         [HttpPatch]
         [Route("update")]
         public async Task<IActionResult> UpdateVoertuig([FromBody] Voertuigbuilder voertuigBuilder)
@@ -298,7 +299,7 @@ namespace FleetManagement_app_PL.Controllers
                         await _repo.Koppeling.KoppelLosVoertuig(chassisnummer);
                         await _repo.CompleteAsync();
                     }
-                    
+
                     return NoContent();
                 }
                 else

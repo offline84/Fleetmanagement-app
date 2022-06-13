@@ -42,7 +42,7 @@ namespace Fleetmanagement_Unit_Tests
         /// Zorg voor de opkuis van de database. 
         /// </summary>
         /// <returns></returns>
-        internal async Task Cleanup()
+        internal void Cleanup()
         {
             var tankkaarten = _context.Tankkaarten.ToList();
             var toewijzingen = _context.ToewijzingBrandstofTankkaarten.ToList();
@@ -91,10 +91,9 @@ namespace Fleetmanagement_Unit_Tests
         /// <param name="bestuurder"></param>
         internal void ToevoegenToewijzingenRijbewijs(Bestuurder bestuurder)
         {
-            Rijbewijs r = new Rijbewijs() { TypeRijbewijs = "D", Id = Guid.Parse("1247f201-ca7f-4d5f-83dd-ef8aa351ea8d") };
             var toewijzingen = new List<ToewijzingRijbewijsBestuurder>
                 {
-                    new ToewijzingRijbewijsBestuurder { Rijbewijs = r }
+                    new ToewijzingRijbewijsBestuurder { RijbewijsId = Guid.Parse("1247f201-ca7f-4d5f-83dd-ef8aa351ea8d")  }
                 };
             bestuurder.ToewijzingenRijbewijs = toewijzingen;
         }
@@ -126,7 +125,7 @@ namespace Fleetmanagement_Unit_Tests
         [Fact]
         public async Task GetBestuurderAsync_Success_Test()
         {
-            await Cleanup();
+            Cleanup();
             await ToevoegenBestuurdersAsync();
 
             // Act
@@ -143,7 +142,7 @@ namespace Fleetmanagement_Unit_Tests
         [Fact]
         public async Task GetBestuurderByIdAsync_Success_Test()
         {
-            await Cleanup();
+            Cleanup();
             await ToevoegenBestuurdersAsync();
 
             // Act
@@ -162,7 +161,7 @@ namespace Fleetmanagement_Unit_Tests
         [Fact]
         public async Task CreateAsync_Success_Test()
         {
-            await Cleanup();
+            Cleanup();
             await ToevoegenBestuurdersAsync();
 
             // Act
@@ -185,7 +184,7 @@ namespace Fleetmanagement_Unit_Tests
         [Fact]
         public async Task CreateAsync_Failure_Test()
         {
-            await Cleanup();
+            Cleanup();
             await ToevoegenBestuurdersAsync();
 
             // Act
@@ -207,7 +206,7 @@ namespace Fleetmanagement_Unit_Tests
         [Fact]
         public async Task UpdateAsync_Success_Test()
         {
-            await Cleanup();
+            Cleanup();
             await ToevoegenBestuurdersAsync();
 
             // Act
@@ -226,13 +225,40 @@ namespace Fleetmanagement_Unit_Tests
         }
 
         /// <summary>
+        /// Test indien het updaten van een bestuurder-adres succes.
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        public async Task UpdateOwnedAsync_Success_Test()
+        {
+            Cleanup();
+            await ToevoegenBestuurdersAsync();
+
+            // Act
+            var bestuurder = await _repo.GetById("84060103993");
+            bestuurder.Adres.Stad = "testStad";
+            bestuurder.Adres.Straat = "testStraat";
+            bestuurder.Adres.Postcode = 1500;
+            bestuurder.Adres.Huisnummer = 150;
+            await _repo.Update(bestuurder);
+            await _context.SaveChangesAsync();
+            var bestuurderDb = await _repo.GetById("84060103993");
+
+            // Assert
+            Assert.Equal(bestuurder.Adres.Stad, bestuurderDb.Adres.Stad);
+            Assert.Equal(bestuurder.Adres.Straat, bestuurderDb.Adres.Straat);
+            Assert.Equal(bestuurder.Adres.Postcode, bestuurderDb.Adres.Postcode);
+            Assert.Equal(bestuurder.Adres.Huisnummer, bestuurderDb.Adres.Huisnummer);
+        }
+
+        /// <summary>
         /// Test indien het archive van een bestuurder succes.
         /// </summary>
         /// <returns></returns>
         [Fact]
         public async Task ArchiveAsync_Success_Test()
         {
-            await Cleanup();
+            Cleanup();
             await ToevoegenBestuurdersAsync();
 
             // Act
