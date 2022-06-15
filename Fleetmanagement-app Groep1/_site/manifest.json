@@ -1,0 +1,248 @@
+{
+  "homepages": [],
+  "source_base_path": "C:/Users/Cédric van Aubel/source/repos/Fleetmanagement-app/Fleetmanagement-app Groep1",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Fleetmanagement_app_Groep1.Controllers.WeatherForecastController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Fleetmanagement_app_Groep1.Controllers.WeatherForecastController.html",
+          "hash": "dBD1MQpQShvBboh2zifnq4HmQ8k98IWlNU48JGzX/9I="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Fleetmanagement_app_Groep1.Controllers.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Fleetmanagement_app_Groep1.Controllers.html",
+          "hash": "HkWK/ipH7GXmdkK1dVFmHVUw0LTwCyTnY0vCKmj+/Bg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Fleetmanagement_app_Groep1.Helpers.DbContextHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Fleetmanagement_app_Groep1.Helpers.DbContextHelper.html",
+          "hash": "8jsQ0Jp1+xvJs8EOle9AtkPGcJquAVIsT6tvJIX842c="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Fleetmanagement_app_Groep1.Helpers.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Fleetmanagement_app_Groep1.Helpers.html",
+          "hash": "iCT2G/7+ileMZ6Ssv65Ai0bqvUTd/E+RGwg8aPF/QHA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Fleetmanagement_app_Groep1.Pages.ErrorModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Fleetmanagement_app_Groep1.Pages.ErrorModel.html",
+          "hash": "oOdyql6EuVil3iBbEUXo3ChntpANs6PMrn2fN/veMo8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Fleetmanagement_app_Groep1.Pages.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Fleetmanagement_app_Groep1.Pages.html",
+          "hash": "AX4W2QGvUCuIr0jZdQK4YKeoXZhjnMywU+cVkyYf6QI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Fleetmanagement_app_Groep1.Program.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Fleetmanagement_app_Groep1.Program.html",
+          "hash": "smqciREj12kS40J+a9c+KophAcaVl0lKhutZzv2i05E="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Fleetmanagement_app_Groep1.Startup.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Fleetmanagement_app_Groep1.Startup.html",
+          "hash": "VrMH2v5m3Cj+SAXHcbcKcwyCYHKEDCQWbOp6jRRLTpw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Fleetmanagement_app_Groep1.WeatherForecast.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Fleetmanagement_app_Groep1.WeatherForecast.html",
+          "hash": "P2vekg87jEgdxZ5tjDjpcClBYi8P029MIqvjfSIlrcI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Fleetmanagement_app_Groep1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Fleetmanagement_app_Groep1.html",
+          "hash": "ANJz+rGfuNWm1M/L+rTxySGbONARgt3Nqn66ODTqxn4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/index.html",
+          "hash": "S6HH25ziEUKWJk9c1SDkf4tv9pt+s1Em+CanR3D4XJQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html",
+          "hash": "TwjpvtjmNEXoCEL/VseP8D7pT0Vt2zf4tJE5nM1oWg8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/intro.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/intro.html",
+          "hash": "aOy2sep6UZV26oOkupcIBXuDgHQsCVz7R3i+I6vFl6Y="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "articles/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "articles/toc.html",
+          "hash": "BlPxk5mtl2kgfcZUgkEguqiSAR/EUyUTT4EdebwkQvs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html",
+          "hash": "J2Ucrckdx4dg4IZOx6kwfAACTTn8pqVwhGnYicz3XjE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html",
+          "hash": "WSuRrYiGwKKMbtdG9z8W9fXmLoCyTnGg9AxbPKLXm2Y="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    }
+  ],
+  "incremental_info": [
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Disable incremental build by force rebuild option.",
+        "incrementalPhase": "build",
+        "total_file_count": 0,
+        "skipped_file_count": 0,
+        "full_build_reason_code": "ForceRebuild"
+      },
+      "processors": {
+        "ConceptualDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 3,
+          "skipped_file_count": 0
+        },
+        "ManagedReferenceDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 10,
+          "skipped_file_count": 0
+        },
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build",
+          "total_file_count": 0,
+          "skipped_file_count": 0
+        }
+      }
+    },
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Cannot support incremental post processing, the reason is: it's disabled.",
+        "incrementalPhase": "postProcessing",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {}
+    }
+  ],
+  "version_info": {},
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}
