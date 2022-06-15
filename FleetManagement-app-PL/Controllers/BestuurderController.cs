@@ -268,7 +268,7 @@ namespace FleetManagement_app_PL.Controllers
         {
             if (ModelState.IsValid)
             {
-                var bestuurderData = await _unitOfWork.Bestuurder.GetById(bestuurderDto.Rijksregisternummer);
+                var bestuurderData = await _unitOfWork.Bestuurder.GetByIdNoTracking(bestuurderDto.Rijksregisternummer);
                 if (bestuurderData == null)
                 {
                     return Conflict("Bestuurder not found in Database, try creating one");
@@ -283,11 +283,9 @@ namespace FleetManagement_app_PL.Controllers
                 {
                     return Conflict("Geboortedatum does not correspond to Rijksregisternummer!");
                 }
-                
-
+               
                 try
                 {
-
                     var bestuurder = _mapper.Map<Bestuurder>(bestuurderDto);
                     bestuurder.Koppeling = bestuurderData.Koppeling;
                     if (await _unitOfWork.Bestuurder.Update(bestuurder))
