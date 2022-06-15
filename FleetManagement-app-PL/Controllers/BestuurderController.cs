@@ -222,6 +222,11 @@ namespace FleetManagement_app_PL.Controllers
                     return Conflict("Rijksregisternummer is not valid!");
                 }
 
+                if (!IsGeboortedatumGelijk(bestuurderDto.GeboorteDatum, bestuurderDto.Rijksregisternummer))
+                {
+                    return Conflict("Geboortedatum does not correspond to Rijksregisternummer!");
+                }
+
                 try
                 {
                     var bestuurder = _mapper.Map<Bestuurder>(bestuurderDto);
@@ -273,6 +278,12 @@ namespace FleetManagement_app_PL.Controllers
                 {
                     return Conflict("Rijksregisternummer is not valid!");
                 }
+
+                if (!IsGeboortedatumGelijk(bestuurderDto.GeboorteDatum, bestuurderDto.Rijksregisternummer))
+                {
+                    return Conflict("Geboortedatum does not correspond to Rijksregisternummer!");
+                }
+                
 
                 try
                 {
@@ -378,7 +389,7 @@ namespace FleetManagement_app_PL.Controllers
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static bool IsRijksregisternummer(string data)
+        internal bool IsRijksregisternummer(string data)
         {
             try
             {
@@ -407,6 +418,37 @@ namespace FleetManagement_app_PL.Controllers
             }
         }
 
+        /// <summary>
+        /// Return true indien het geboortedatum overeenkomt met rijksregisternummer
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        internal bool IsGeboortedatumGelijk(DateTime geboortedatum, string rijksregisternr)
+        {
+            try
+            {
+                if (rijksregisternr.Length == 11)
+                {
+                    var datum = rijksregisternr.Substring(0, 6);
+                    var jaar2 = datum.Substring(0, 2);
+                    var maand = datum.Substring(2, 2);
+                    var dag = datum.Substring(4, 2);
+                    var jaar1 = int.Parse(jaar2) - 100 > 0 ? "20":"19";
+                    datum = $"{dag}-{maand}-{jaar1}{jaar2}";
+                    if(datum.ToString() != geboortedatum.ToString("dd/MM/yyyy"))
+                    {
+                        return false;
+                    }
+                    return true;
+                }
+                return false;
+
+            }
+            catch (ApplicationException)
+            {
+                return false;
+            }
+        }
         #endregion
 
 
