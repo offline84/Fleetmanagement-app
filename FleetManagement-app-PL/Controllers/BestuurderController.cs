@@ -433,7 +433,7 @@ namespace FleetManagement_app_PL.Controllers
                     var dag = datum.Substring(4, 2);
                     var jaar1 = int.Parse(jaar2) - 100 > 0 ? "20":"19";
                     datum = $"{dag}-{maand}-{jaar1}{jaar2}";
-                    if(datum.ToString() != geboortedatum.ToString("dd/MM/yyyy"))
+                    if(datum.ToString() != geboortedatum.ToString("dd-MM-yyyy"))
                     {
                         return false;
                     }
