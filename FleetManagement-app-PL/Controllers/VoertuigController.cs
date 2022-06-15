@@ -7,12 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FleetManagement_app_PL.Controllers
 {
     [ApiController]
-    [Route("api/"+"[controller]")]
+    [Route("api/" + "[controller]")]
     public class VoertuigController : ControllerBase
     {
         private readonly IUnitOfWork _repo;
@@ -33,72 +34,187 @@ namespace FleetManagement_app_PL.Controllers
         [Route("{chassisnummer}")]
         public async Task<ActionResult<VoertuigForViewingDto>> GetVoertuigById([FromRoute] string chassisnummer)
         {
-            var voertuig = await _repo.Voertuig.GetById(chassisnummer);
+            try
+            {
+                var voertuig = await _repo.Voertuig.GetById(chassisnummer);
 
-            return Ok(_mapper.Map<VoertuigForViewingDto>(voertuig));
+                return Ok(_mapper.Map<VoertuigForViewingDto>(voertuig));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("Error", ex.Message);
+                return StatusCode(500, ex);
+            }
         }
 
         [HttpGet]
         [Route("Active")]
         public async Task<ActionResult<IEnumerable<VoertuigForViewingDto>>> GetAllActiveVoertuigen()
         {
-            var voertuigen = await _repo.Voertuig.GetAllActive();
+            try
+            {
+                var voertuigen = await _repo.Voertuig.GetAllActive();
 
-            var voertuigenForView = _mapper.Map<IEnumerable<VoertuigForViewingDto>>(voertuigen);
+                var voertuigenForView = _mapper.Map<IEnumerable<VoertuigForViewingDto>>(voertuigen);
 
-            return Ok(voertuigenForView);
+                return Ok(voertuigenForView);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("Error", ex.Message);
+                return StatusCode(500, ex);
+            }
         }
 
         [HttpGet]
         [Route("Archived")]
         public async Task<ActionResult<IEnumerable<VoertuigForViewingDto>>> GetAllArchivedVoertuigen()
         {
-            var voertuigen = await _repo.Voertuig.GetAllArchived();
+            try
+            {
+                var voertuigen = await _repo.Voertuig.GetAllArchived();
 
-            var voertuigenForView = _mapper.Map<IEnumerable<VoertuigForViewingDto>>(voertuigen);
+                var voertuigenForView = _mapper.Map<IEnumerable<VoertuigForViewingDto>>(voertuigen);
 
-            return Ok(voertuigenForView);
+                return Ok(voertuigenForView);
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("Error", ex.Message);
+                return StatusCode(500, ex);
+            }
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<VoertuigForViewingDto>>> GetAllVoertuigen()
         {
-            var voertuigen = await _repo.Voertuig.GetAll();
+            try
+            {
+                var voertuigen = await _repo.Voertuig.GetAll();
 
-            var voertuigenForView = _mapper.Map<IEnumerable<VoertuigForViewingDto>>(voertuigen);
+                var voertuigenForView = _mapper.Map<IEnumerable<VoertuigForViewingDto>>(voertuigen);
 
-            return Ok(voertuigenForView);
+                return Ok(voertuigenForView);
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("Error", ex.Message);
+                return StatusCode(500, ex);
+            }
         }
 
         [HttpGet]
         [Route("Statusses")]
         public async Task<ActionResult<IEnumerable<StatusForViewingDto>>> GetStatusses()
         {
-            var seeds = await _repo.Status.GetAll();
+            try
+            {
+                var seeds = await _repo.Status.GetAll();
 
-            var view = _mapper.Map<IEnumerable<StatusForViewingDto>>(seeds);
+                var view = _mapper.Map<IEnumerable<StatusForViewingDto>>(seeds);
 
-            return Ok(view);
+                return Ok(view);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("Error", ex.Message);
+                return StatusCode(500, ex);
+            }
         }
 
         [HttpGet]
         [Route("Categories")]
         public async Task<ActionResult<IEnumerable<CategorieForViewingDto>>> GetCategories()
         {
-            var seeds = await _repo.Categorie.GetAll();
-            var view = _mapper.Map<IEnumerable<CategorieForViewingDto>>(seeds);
+            try
+            {
+                var seeds = await _repo.Categorie.GetAll();
+                var view = _mapper.Map<IEnumerable<CategorieForViewingDto>>(seeds);
 
-            return Ok(view);
+                return Ok(view);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("Error", ex.Message);
+                return StatusCode(500, ex);
+            }
         }
 
         [HttpGet]
         [Route("brandstoffen")]
         public async Task<ActionResult<IEnumerable<BrandstofForViewingDto>>> GetFuels()
         {
-            var seeds = await _repo.Brandstof.GetAll();
-             var view = _mapper.Map<IEnumerable<BrandstofForViewingDto>>(seeds);
+            try
+            {
+                var seeds = await _repo.Brandstof.GetAll();
+                var view = _mapper.Map<IEnumerable<BrandstofForViewingDto>>(seeds);
 
-            return Ok(view);
+                return Ok(view);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("Error", ex.Message);
+                return StatusCode(500, ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("bestuurder")]
+        public async Task<ActionResult<IEnumerable<VoertuigForViewingDto>>> GetKoppelbareVoertuigenForBestuurder(string rijksregisternummer)
+        {
+            try
+            {
+                var voertuigen = await _repo.Voertuig.GetAllActive();
+                var bestuurder = await _repo.Bestuurder.GetById(rijksregisternummer);
+                var tankkaarten = await _repo.Tankkaart.GetAllActive();
+
+                _repo.Dispose();
+
+                var voertuigenToLink = new List<Voertuig>();
+
+                var voertuigenToFilter = voertuigen.Where(v => v.Koppeling == null).ToList();
+                var linkedVoertuig = voertuigen.Where(v => v.Koppeling != null && v.Koppeling.Rijksregisternummer == rijksregisternummer).FirstOrDefault();
+
+                if (linkedVoertuig != null)
+                {
+                    voertuigenToLink.Add(linkedVoertuig);
+                }
+
+                var tankkaart = tankkaarten.Where(t => t.Kaartnummer == bestuurder.Koppeling.Kaartnummer).FirstOrDefault();
+
+                if (voertuigenToFilter.Count > 0 && tankkaart != null)
+                {
+
+
+                    foreach (var voertuig in voertuigenToFilter)
+                    {
+                        foreach (var brandstof in tankkaart.MogelijkeBrandstoffen)
+                        {
+                            if (voertuig.BrandstofId == brandstof.BrandstofId)
+                            {
+                                voertuigenToLink.Add(voertuig);
+                            }
+                        }
+                    }
+
+                }
+                else
+                {
+                    voertuigenToLink = voertuigenToFilter;
+                }
+
+                var voertuigenForView = _mapper.Map<IEnumerable<VoertuigForViewingDto>>(voertuigenToLink);
+
+                return Ok(voertuigenForView);
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("Error", ex.Message);
+                return StatusCode(500, ex);
+            }
         }
 
         /// <summary>
@@ -195,7 +311,6 @@ namespace FleetManagement_app_PL.Controllers
         /// </remarks>
         /// <param name="voertuigBuilder"></param>
         /// <returns>VoertuigForViewingDto voertuig + link naar voertuig</returns>
-        [Route("update")]
         [HttpPatch]
         [Route("update")]
         public async Task<IActionResult> UpdateVoertuig([FromBody] Voertuigbuilder voertuigBuilder)
@@ -294,7 +409,7 @@ namespace FleetManagement_app_PL.Controllers
                     await _repo.CompleteAsync();
 
                     var k = await _repo.Koppeling.GetByvoertuig(chassisnummer);
-                    if(await _repo.Koppeling.GetByvoertuig(chassisnummer) != null)
+                    if (await _repo.Koppeling.GetByvoertuig(chassisnummer) != null)
                     {
                         await _repo.Koppeling.KoppelLosVoertuig(chassisnummer);
                         await _repo.CompleteAsync();

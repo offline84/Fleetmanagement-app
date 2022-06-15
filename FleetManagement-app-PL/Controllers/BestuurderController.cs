@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FleetManagement_app_PL.Controllers
@@ -123,6 +124,77 @@ namespace FleetManagement_app_PL.Controllers
                 return StatusCode(500, ex);
             }
         }
+
+        [HttpGet]
+        [Route("voertuig")]
+        public async Task<ActionResult<IEnumerable<BestuurderViewingDto>>> GetKoppelbareBestuurdersAanVoertuig([FromQuery] string chassisnummer, [FromQuery] string typeBrandstof)
+        {
+            try
+            {
+                var bestuurders = await _unitOfWork.Bestuurder.GetAllActive();
+                var tankkaarten = await _unitOfWork.Tankkaart.GetAllActive();
+
+                var filteredListOfBestuurders = bestuurders.Where(b => ((b.Koppeling.Chassisnummer == null || b.Koppeling.Chassisnummer == chassisnummer) && b.Koppeling.Kaartnummer == null)).ToList();
+                var listToFilter = bestuurders.Where(b => ((b.Koppeling.Chassisnummer == null || b.Koppeling.Chassisnummer == chassisnummer) && b.Koppeling.Kaartnummer != null)).ToList();
+                
+                if (listToFilter != null)
+                {
+                    foreach (var bestuurder in listToFilter)
+                    {
+                        var tankkaart = tankkaarten.Where(t => t.Kaartnummer == bestuurder.Koppeling.Kaartnummer).Single();
+                        if (tankkaart.MogelijkeBrandstoffen.Any(t => t.Brandstof.TypeBrandstof == typeBrandstof))
+                        {
+                            filteredListOfBestuurders.Add(bestuurder);
+                        }
+                    }
+                }
+
+                var result = _mapper.Map<IEnumerable<BestuurderViewingDto>>(filteredListOfBestuurders);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("Error", ex.Message);
+                return StatusCode(500, ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("tankkaart")]
+         public async Task<ActionResult<IEnumerable<BestuurderViewingDto>>> GetKoppelbareBestuurdersAanTankkaart([FromQuery] string kaartnummer)
+        {
+           try
+            {
+                var bestuurders = await _unitOfWork.Bestuurder.GetAllActive();
+                var voertuigen = await _unitOfWork.Voertuig.GetAllActive();
+                var tankkaart = await _unitOfWork.Tankkaart.GetById(kaartnummer);
+
+                var filteredListOfBestuurders = bestuurders.Where(b => ((b.Koppeling.Kaartnummer == null || b.Koppeling.Kaartnummer == kaartnummer) && b.Koppeling.Chassisnummer == null)).ToList();
+                var listToFilter = bestuurders.Where(b => ((b.Koppeling.Kaartnummer == null || b.Koppeling.Kaartnummer == kaartnummer) && b.Koppeling.Chassisnummer != null)).ToList();
+                
+                if (listToFilter != null)
+                {
+                    foreach (var bestuurder in listToFilter)
+                    {
+                        var voertuig = voertuigen.Where(t => t.Chassisnummer == bestuurder.Koppeling.Chassisnummer).Single();
+                        if(tankkaart.MogelijkeBrandstoffen.Any(t => t.Brandstof.TypeBrandstof == voertuig.Brandstof.TypeBrandstof))
+                        {
+                            filteredListOfBestuurders.Add(bestuurder);
+                        }
+                        
+                    }
+                }
+
+                var result = _mapper.Map<IEnumerable<BestuurderViewingDto>>(filteredListOfBestuurders);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("Error", ex.Message);
+                return StatusCode(500, ex);
+            }
+        }
+
 
         #endregion
 

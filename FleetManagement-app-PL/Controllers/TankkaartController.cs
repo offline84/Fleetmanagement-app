@@ -6,12 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FleetManagement_app_PL.Controllers
 {
     [ApiController]
-    [Route("api/"+"[controller]")]
+    [Route("api/" + "[controller]")]
     public class TankkaartController : ControllerBase
     {
         private readonly IUnitOfWork _repo;
@@ -92,6 +93,53 @@ namespace FleetManagement_app_PL.Controllers
         {
             var brandstoffen = await _repo.Brandstof.GetAll();
             return Ok(brandstoffen);
+        }
+
+        [HttpGet]
+        [Route("bestuurder")]
+        public async Task<ActionResult<IEnumerable<TankkaartForViewingDto>>> GetKoppelbareTankkaartenForBestuurder(string rijksregisternummer)
+        {
+            try
+            {
+                var tankkaarten = await _repo.Tankkaart.GetAllActive();
+                var bestuurder = await _repo.Bestuurder.GetById(rijksregisternummer);
+                var voertuigen = await _repo.Voertuig.GetAllActive();
+
+                var tankkaartenToLink = new List<Tankkaart>();
+
+                var tankkaartenToFilter = tankkaarten.Where(v => v.Koppeling == null).ToList();
+                var linkedTankkaart = tankkaarten.Where(v => v.Koppeling != null && v.Koppeling.Rijksregisternummer == rijksregisternummer).FirstOrDefault();
+                var voertuig = voertuigen.Where(t => t.Chassisnummer == bestuurder.Koppeling.Chassisnummer).FirstOrDefault();
+
+                if (linkedTankkaart != null)
+                {
+                    tankkaartenToLink.Add(linkedTankkaart);
+                }
+
+                if (tankkaartenToFilter.Count > 0 && voertuig != null)
+                {
+                    foreach (var tankkaart in tankkaartenToFilter)
+                    {
+                        if (tankkaart.MogelijkeBrandstoffen.Any(t => t.BrandstofId == voertuig.Brandstof.Id))
+                        {
+                            tankkaartenToLink.Add(tankkaart);
+                        }
+                    }
+                }
+                else
+                {
+                    tankkaartenToLink = tankkaartenToFilter;
+                }
+
+                var tankkaartenForView = _mapper.Map<IEnumerable<TankkaartForViewingDto>>(tankkaartenToLink);
+                return Ok(tankkaartenForView);
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("Error", ex.Message);
+                return StatusCode(500, ex);
+            }
         }
 
         /// <summary>
@@ -176,7 +224,7 @@ namespace FleetManagement_app_PL.Controllers
             return StatusCode(500);
         }
 
-        
+
         [HttpDelete(Name = "DeleteTankkaart")]
         [Route("delete/{kaartnummer}")]
         public async Task<IActionResult> DeleteTankkaart([FromRoute] string kaartnummer)
