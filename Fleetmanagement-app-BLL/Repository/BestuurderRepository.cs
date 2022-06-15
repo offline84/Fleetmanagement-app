@@ -62,6 +62,7 @@ namespace Fleetmanagement_app_BLL.Repository
         /// <returns></returns>
         public override Task<bool> Update(Bestuurder bestuurder)
         {
+            var bestaandeToewijzingen = _context.ToewijzingRijbewijsBestuurders.Where(t => t.Rijksregisternummer == bestuurder.Rijksregisternummer).ToList();
             _logger.LogWarning("Start BestuurderRepository - UpdateFunction:", bestuurder);
             if (string.IsNullOrEmpty(bestuurder.Rijksregisternummer) |
               string.IsNullOrEmpty(bestuurder.Naam) |
@@ -78,17 +79,22 @@ namespace Fleetmanagement_app_BLL.Repository
                 _logger.LogWarning("Something went wrong, Bestuurder not found!", bestuurder);
                 return Task.FromResult(false);
             }
-
+            foreach (var toewijzing in bestaandeToewijzingen)
+            {
+                _context.ToewijzingRijbewijsBestuurders.Remove(toewijzing);
+            }
             SetToewijzingRijbewijs(bestuurder);
-
-            var bestuurderEntry = _context.Attach(bestuurder);
-            var adressEntry = bestuurderEntry.Reference(e => e.Adres).IsModified = true;
+            _context.ToewijzingRijbewijsBestuurders.AddRangeAsync(bestuurder.ToewijzingenRijbewijs);
 
             try
             {
+                var bestuurderToUpdate = _context.Bestuurders.Where(b => b.Rijksregisternummer == bestuurder.Rijksregisternummer).First();
                 bestuurder.LaatstGeupdate = DateTime.Now;
-                var entity = _context.Bestuurders.Where(b => b.Rijksregisternummer.Equals(bestuurder.Rijksregisternummer)).SingleOrDefault();
-                _dbSet.Update(entity).CurrentValues.SetValues(bestuurder);
+
+                _context.Attach(bestuurderToUpdate.Adres);
+                _context.Update(bestuurderToUpdate.Adres).CurrentValues.SetValues(bestuurder.Adres);
+
+                _dbSet.Update(bestuurderToUpdate).CurrentValues.SetValues(bestuurder);
                 _logger.LogWarning("End BestuurderRepository - UpdateFunction!");
                 return Task.FromResult(true);
             }
@@ -168,29 +174,13 @@ namespace Fleetmanagement_app_BLL.Repository
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public override async Task<Bestuurder> GetById(string id) 
+        public override async Task<Bestuurder> GetById(string id)
         {
             return await _dbSet
                 .Where(b => b.Rijksregisternummer.Equals(id))
                 .Include(k => k.Koppeling)
                 .Include(t => t.ToewijzingenRijbewijs)
                 .ThenInclude(tr => tr.Rijbewijs)
-                .FirstOrDefaultAsync();
-        }
-
-        /// <summary>
-        /// Geeft een bestuurder terug afhankelijk van zijn id (rijksregisternummer) zonder tracking.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<Bestuurder> GetByIdNoTracking(string id)
-        {
-            return await _dbSet
-                .Where(b => b.Rijksregisternummer.Equals(id))
-                .Include(k => k.Koppeling)
-                .Include(t => t.ToewijzingenRijbewijs)
-                .ThenInclude(tr => tr.Rijbewijs)
-                .AsNoTracking()
                 .FirstOrDefaultAsync();
         }
 
@@ -202,7 +192,9 @@ namespace Fleetmanagement_app_BLL.Repository
             {
                 foreach (var toewijzing in bestuurder.ToewijzingenRijbewijs)
                 {
-                    toewijzing.Rijksregisternummer = bestuurder.Rijksregisternummer;                
+                    toewijzing.Rijksregisternummer = bestuurder.Rijksregisternummer;
+                    toewijzing.Rijbewijs = null;
+                    toewijzing.RijbewijsId = toewijzing.RijbewijsId;
                 }
             }
         }
