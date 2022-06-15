@@ -268,7 +268,7 @@ namespace FleetManagement_app_PL.Controllers
         {
             if (ModelState.IsValid)
             {
-                var bestuurderData = await _unitOfWork.Bestuurder.GetByIdNoTracking(bestuurderDto.Rijksregisternummer);
+                var bestuurderData = await _unitOfWork.Bestuurder.GetById(bestuurderDto.Rijksregisternummer);
                 if (bestuurderData == null)
                 {
                     return Conflict("Bestuurder not found in Database, try creating one");
