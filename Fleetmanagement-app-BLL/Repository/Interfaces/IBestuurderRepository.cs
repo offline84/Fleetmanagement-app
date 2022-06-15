@@ -7,5 +7,6 @@ namespace Fleetmanagement_app_BLL.Repository
 {
     public interface IBestuurderRepository : IGenericRepository<Bestuurder>
     {
+        Task<Bestuurder> GetByIdNoTracking(string id);
     }
 }

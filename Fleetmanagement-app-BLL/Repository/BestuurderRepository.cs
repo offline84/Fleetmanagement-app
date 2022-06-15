@@ -73,9 +73,7 @@ namespace Fleetmanagement_app_BLL.Repository
                 return Task.FromResult(false);
             }
 
-            var entity = _dbSet.Where(b => b.Rijksregisternummer.Equals(bestuurder.Rijksregisternummer)).SingleOrDefault();
-
-            if (entity == null)
+            if (!_context.Bestuurders.Where(b => b.Rijksregisternummer == bestuurder.Rijksregisternummer).Any())
             {
                 _logger.LogWarning("Something went wrong, Bestuurder not found!", bestuurder);
                 return Task.FromResult(false);
@@ -83,14 +81,13 @@ namespace Fleetmanagement_app_BLL.Repository
 
             SetToewijzingRijbewijs(bestuurder);
 
-            
             var bestuurderEntry = _context.Attach(bestuurder);
             var adressEntry = bestuurderEntry.Reference(e => e.Adres).IsModified = true;
 
             try
             {
                 bestuurder.LaatstGeupdate = DateTime.Now;
-               
+                var entity = _context.Bestuurders.Where(b => b.Rijksregisternummer.Equals(bestuurder.Rijksregisternummer)).SingleOrDefault();
                 _dbSet.Update(entity).CurrentValues.SetValues(bestuurder);
                 _logger.LogWarning("End BestuurderRepository - UpdateFunction!");
                 return Task.FromResult(true);
@@ -171,13 +168,29 @@ namespace Fleetmanagement_app_BLL.Repository
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public override async Task<Bestuurder> GetById(string id)
+        public override async Task<Bestuurder> GetById(string id) 
         {
             return await _dbSet
                 .Where(b => b.Rijksregisternummer.Equals(id))
                 .Include(k => k.Koppeling)
                 .Include(t => t.ToewijzingenRijbewijs)
                 .ThenInclude(tr => tr.Rijbewijs)
+                .FirstOrDefaultAsync();
+        }
+
+        /// <summary>
+        /// Geeft een bestuurder terug afhankelijk van zijn id (rijksregisternummer) zonder tracking.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Bestuurder> GetByIdNoTracking(string id)
+        {
+            return await _dbSet
+                .Where(b => b.Rijksregisternummer.Equals(id))
+                .Include(k => k.Koppeling)
+                .Include(t => t.ToewijzingenRijbewijs)
+                .ThenInclude(tr => tr.Rijbewijs)
+                .AsNoTracking()
                 .FirstOrDefaultAsync();
         }
 
