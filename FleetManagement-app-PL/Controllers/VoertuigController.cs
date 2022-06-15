@@ -30,6 +30,13 @@ namespace FleetManagement_app_PL.Controllers
             _loggerFactory.CreateLogger("VoertuigController");
         }
 
+        /// <summary>
+        /// Haalt een voertuig op uit de database op chassisnummer.
+        /// </summary>
+        /// <param name="chassisnummer"></param> string: chassisnummer meegegeven door de frontend url.
+        /// <returns> 
+        /// VoertuigForViewingDto + httpstatus
+        /// </returns>
         [HttpGet]
         [Route("{chassisnummer}")]
         public async Task<ActionResult<VoertuigForViewingDto>> GetVoertuigById([FromRoute] string chassisnummer)
@@ -47,6 +54,12 @@ namespace FleetManagement_app_PL.Controllers
             }
         }
 
+        /// <summary>
+        /// Haalt alle niet gearchiveerde voertuigen op.
+        /// </summary>
+        /// <returns>
+        ///     IEnumerable<VoertuigForViewingDto> + httpstatus
+        /// </returns>
         [HttpGet]
         [Route("Active")]
         public async Task<ActionResult<IEnumerable<VoertuigForViewingDto>>> GetAllActiveVoertuigen()
@@ -66,6 +79,10 @@ namespace FleetManagement_app_PL.Controllers
             }
         }
 
+        /// <summary>
+        /// haalt alle gearchiveerde voertuigen op. is enkel voor administratorische doeleinden.
+        /// </summary>
+        /// <returns>IEnumerable<VoertuigForViewingDto> + httpstatus</returns>
         [HttpGet]
         [Route("Archived")]
         public async Task<ActionResult<IEnumerable<VoertuigForViewingDto>>> GetAllArchivedVoertuigen()
@@ -86,6 +103,10 @@ namespace FleetManagement_app_PL.Controllers
             }
         }
 
+        /// <summary>
+        /// Haal alle voertuigen op uit de db. is enkel voor administratorische doeleinden.
+        /// </summary>
+        /// <returns>IEnumerable<VoertuigForViewingDto> + httpstatus</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<VoertuigForViewingDto>>> GetAllVoertuigen()
         {
@@ -104,7 +125,11 @@ namespace FleetManagement_app_PL.Controllers
                 return StatusCode(500, ex);
             }
         }
-
+        
+        /// <summary>
+        /// haalt alle statussen aanwezig in de database op
+        /// </summary>
+        /// <returns>IEnumerable<StatusForViewingDto> + httpstatus</returns>
         [HttpGet]
         [Route("Statusses")]
         public async Task<ActionResult<IEnumerable<StatusForViewingDto>>> GetStatusses()
@@ -124,6 +149,10 @@ namespace FleetManagement_app_PL.Controllers
             }
         }
 
+        /// <summary>
+        /// haalt alle categorien aanwezig in de database op
+        /// </summary>
+        /// <returns>IEnumerable<CategorieForViewingDto> + httpstatus</returns>
         [HttpGet]
         [Route("Categories")]
         public async Task<ActionResult<IEnumerable<CategorieForViewingDto>>> GetCategories()
@@ -142,6 +171,10 @@ namespace FleetManagement_app_PL.Controllers
             }
         }
 
+        /// <summary>
+        /// haalt alle brandstoffen aanwezig in de database op
+        /// </summary>
+        /// <returns>IEnumerable<BrandstofForViewingDto> + httpstatus</returns>
         [HttpGet]
         [Route("brandstoffen")]
         public async Task<ActionResult<IEnumerable<BrandstofForViewingDto>>> GetFuels()
@@ -160,6 +193,12 @@ namespace FleetManagement_app_PL.Controllers
             }
         }
 
+        /// <summary>
+        /// Haalt de voertuigen op die kunnen gekoppeld worden aan een bepaalde bestuurder. Hierbij wordt gekeken naar de andere gekoppelde entiteiten.
+        /// Het reeds gekoppelde voertuigen is ook toegevoegd aan de lijst.
+        /// </summary>
+        /// <param name="rijksregisternummer"></param> het rijksregisternummer van de bestuurder die dient gekoppelt te worden.
+        /// <returns>IEnumerable<VoertuigForViewingDto> + httpstatus</returns>
         [HttpGet]
         [Route("bestuurder")]
         public async Task<ActionResult<IEnumerable<VoertuigForViewingDto>>> GetKoppelbareVoertuigenForBestuurder(string rijksregisternummer)
