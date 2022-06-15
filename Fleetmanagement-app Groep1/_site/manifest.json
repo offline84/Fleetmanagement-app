@@ -1,6 +1,6 @@
 {
   "homepages": [],
-  "source_base_path": "C:/Users/Cédric van Aubel/source/repos/Fleetmanagement-app/Fleetmanagement-app Groep1",
+  "source_base_path": "C:/tmp/BackendTest/Fleetmanagement-app Groep1",
   "xrefmap": "xrefmap.yml",
   "files": [
     {
@@ -9,7 +9,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Fleetmanagement_app_Groep1.Controllers.WeatherForecastController.html",
-          "hash": "dBD1MQpQShvBboh2zifnq4HmQ8k98IWlNU48JGzX/9I="
+          "hash": "cYqS9GMB1E5ikL6vtn0d1ZtN3t6lbV9H91uMdgk+r9I="
         }
       },
       "is_incremental": false,
@@ -21,7 +21,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Fleetmanagement_app_Groep1.Controllers.html",
-          "hash": "HkWK/ipH7GXmdkK1dVFmHVUw0LTwCyTnY0vCKmj+/Bg="
+          "hash": "1ocROdSyiLYtreomNQfIi0XjCR1ROy9ShOyTWzsS/UA="
         }
       },
       "is_incremental": false,
@@ -33,7 +33,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Fleetmanagement_app_Groep1.Helpers.DbContextHelper.html",
-          "hash": "8jsQ0Jp1+xvJs8EOle9AtkPGcJquAVIsT6tvJIX842c="
+          "hash": "aVw+P6Jy50IoVF0SqV43652USQU4u+ZG9CaAw0fFpEg="
         }
       },
       "is_incremental": false,
@@ -45,7 +45,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Fleetmanagement_app_Groep1.Helpers.html",
-          "hash": "iCT2G/7+ileMZ6Ssv65Ai0bqvUTd/E+RGwg8aPF/QHA="
+          "hash": "v+wcfHTrxI4fZAfSY5bTMhJrJiPTkcXmbmlM7ja6Cxc="
         }
       },
       "is_incremental": false,
@@ -57,7 +57,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Fleetmanagement_app_Groep1.Pages.ErrorModel.html",
-          "hash": "oOdyql6EuVil3iBbEUXo3ChntpANs6PMrn2fN/veMo8="
+          "hash": "+M4OqkW8lr2asNTMjWg1bYKZwwfbYR18XngWTn/2rIo="
         }
       },
       "is_incremental": false,
@@ -69,7 +69,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Fleetmanagement_app_Groep1.Pages.html",
-          "hash": "AX4W2QGvUCuIr0jZdQK4YKeoXZhjnMywU+cVkyYf6QI="
+          "hash": "QRaHvtKNZo5iEWssbiegmMcd7GQuXtIRoib+ugEAu3I="
         }
       },
       "is_incremental": false,
@@ -81,7 +81,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Fleetmanagement_app_Groep1.Program.html",
-          "hash": "smqciREj12kS40J+a9c+KophAcaVl0lKhutZzv2i05E="
+          "hash": "AYylpMRWtasj5D8N52CNddGWeBkHiVMriWSh2j0JBr8="
         }
       },
       "is_incremental": false,
@@ -93,7 +93,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Fleetmanagement_app_Groep1.Startup.html",
-          "hash": "VrMH2v5m3Cj+SAXHcbcKcwyCYHKEDCQWbOp6jRRLTpw="
+          "hash": "ZrjfH57h1p9HKYwCEvzW5ucK/bLe9AneMDlnn7yYqOE="
         }
       },
       "is_incremental": false,
@@ -105,7 +105,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Fleetmanagement_app_Groep1.WeatherForecast.html",
-          "hash": "P2vekg87jEgdxZ5tjDjpcClBYi8P029MIqvjfSIlrcI="
+          "hash": "g3DB8aucGLdCGN0DHCUuonpVRkBZcKUByy7HoP0jHpM="
         }
       },
       "is_incremental": false,
@@ -117,7 +117,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Fleetmanagement_app_Groep1.html",
-          "hash": "ANJz+rGfuNWm1M/L+rTxySGbONARgt3Nqn66ODTqxn4="
+          "hash": "kurVUPrdsaJchrwmRa4kPARrbTMuzmm+7JPfUinXbck="
         }
       },
       "is_incremental": false,
@@ -129,19 +129,7 @@
       "output": {
         ".html": {
           "relative_path": "api/index.html",
-          "hash": "S6HH25ziEUKWJk9c1SDkf4tv9pt+s1Em+CanR3D4XJQ="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "Toc",
-      "source_relative_path": "api/toc.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/toc.html",
-          "hash": "TwjpvtjmNEXoCEL/VseP8D7pT0Vt2zf4tJE5nM1oWg8="
+          "hash": "zGl2ciSRI7bB2LZm9toqT+p69boZc7HL96KeFhcRGD0="
         }
       },
       "is_incremental": false,
@@ -153,19 +141,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/intro.html",
-          "hash": "aOy2sep6UZV26oOkupcIBXuDgHQsCVz7R3i+I6vFl6Y="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "Toc",
-      "source_relative_path": "articles/toc.yml",
-      "output": {
-        ".html": {
-          "relative_path": "articles/toc.html",
-          "hash": "BlPxk5mtl2kgfcZUgkEguqiSAR/EUyUTT4EdebwkQvs="
+          "hash": "vq7iHozeK3LgD88RQgAXDhNk+eh1e85vc3rxcNq31Ls="
         }
       },
       "is_incremental": false,
@@ -177,19 +153,7 @@
       "output": {
         ".html": {
           "relative_path": "index.html",
-          "hash": "J2Ucrckdx4dg4IZOx6kwfAACTTn8pqVwhGnYicz3XjE="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "Toc",
-      "source_relative_path": "toc.yml",
-      "output": {
-        ".html": {
-          "relative_path": "toc.html",
-          "hash": "WSuRrYiGwKKMbtdG9z8W9fXmLoCyTnGg9AxbPKLXm2Y="
+          "hash": "r2j83CJlxadRxkUJqiMZeHAWQR1HMflSAsk3lxQDhZw="
         }
       },
       "is_incremental": false,
@@ -199,25 +163,23 @@
   "incremental_info": [
     {
       "status": {
-        "can_incremental": false,
-        "details": "Disable incremental build by force rebuild option.",
+        "can_incremental": true,
         "incrementalPhase": "build",
         "total_file_count": 0,
-        "skipped_file_count": 0,
-        "full_build_reason_code": "ForceRebuild"
+        "skipped_file_count": 0
       },
       "processors": {
         "ConceptualDocumentProcessor": {
-          "can_incremental": false,
+          "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 3,
-          "skipped_file_count": 0
+          "skipped_file_count": 3
         },
         "ManagedReferenceDocumentProcessor": {
-          "can_incremental": false,
+          "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 10,
-          "skipped_file_count": 0
+          "skipped_file_count": 10
         },
         "TocDocumentProcessor": {
           "can_incremental": false,
@@ -230,8 +192,8 @@
     },
     {
       "status": {
-        "can_incremental": false,
-        "details": "Cannot support incremental post processing, the reason is: it's disabled.",
+        "can_incremental": true,
+        "details": "Can support incremental post processing.",
         "incrementalPhase": "postProcessing",
         "total_file_count": 0,
         "skipped_file_count": 0
