@@ -69,18 +69,19 @@ namespace Fleetmanagement_app_Groep1
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
-            
-                app.Use(async (context, next) =>
+            app.Use(async (context, next) =>
+            {
+                context.Response.OnStarting(() =>
                 {
-                    context.Response.OnStarting(() =>
-                    {
-                        context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-                        return Task.FromResult(0);
-                    });
-
-                    await next();
+                    context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+                    return Task.FromResult(0);
                 });
+
+                await next();
+            });
+
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
             app.UseRouting();
             app.UseCors();
