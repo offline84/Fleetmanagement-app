@@ -39,7 +39,17 @@ namespace Fleetmanagement_app_Groep1
             {
                 string url = Configuration.GetSection("UrlToApi").Value;
 
+                //if (url == "")
+                //{
+                //    options.AddDefaultPolicy(builder =>
+                //        builder.SetIsOriginAllowed(o => new Uri(o).Host == "localhost")
+                //            .AllowAnyHeader()
+                //            .AllowAnyMethod());
+                //}
+                //else
+
                     options.AddDefaultPolicy(builder => builder.WithOrigins(url)
+                            .AllowAnyOrigin()
                             .AllowAnyHeader()
                             .AllowAnyMethod());
             });
@@ -68,20 +78,21 @@ namespace Fleetmanagement_app_Groep1
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+ 
+                //app.Use(async (context, next) =>
+                //{
+                //    context.Response.OnStarting(() =>
+                //    {
+                //        context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+                //        return Task.FromResult(0);
+                //    });
+
+                //    await next();
+                //});
+
 
             app.UseHttpsRedirection();
-            
-                app.Use(async (context, next) =>
-                {
-                    context.Response.OnStarting(() =>
-                    {
-                        context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-                        return Task.FromResult(0);
-                    });
-
-                    await next();
-                });
-
+            app.UseStaticFiles();
             app.UseRouting();
             app.UseCors();
 
