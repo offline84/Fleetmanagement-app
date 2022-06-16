@@ -3,13 +3,13 @@ using Fleetmanagement_app_DAL.Database;
 using FleetManagement_app_PL.Profiles;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading.Tasks;
 
 namespace Fleetmanagement_app_Groep1
 {
@@ -39,14 +39,6 @@ namespace Fleetmanagement_app_Groep1
             {
                 string url = Configuration.GetSection("UrlToApi").Value;
 
-                if (url == "")
-                {
-                    options.AddDefaultPolicy(builder =>
-                        builder.SetIsOriginAllowed(o => new Uri(o).Host == "localhost")
-                            .AllowAnyHeader()
-                            .AllowAnyMethod());
-                }
-                else
                     options.AddDefaultPolicy(builder => builder.WithOrigins(url)
                             .AllowAnyHeader()
                             .AllowAnyMethod());
@@ -61,11 +53,6 @@ namespace Fleetmanagement_app_Groep1
             services.AddAutoMapper(typeof(TankkaartProfile));
 
             services.AddControllersWithViews(o => o.EnableEndpointRouting = true);
-            // In production, the Angular files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/dist";
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -83,11 +70,17 @@ namespace Fleetmanagement_app_Groep1
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            if (!env.IsDevelopment())
-            {
-                app.UseSpaStaticFiles();
-            }
+            
+                app.Use(async (context, next) =>
+                {
+                    context.Response.OnStarting(() =>
+                    {
+                        context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+                        return Task.FromResult(0);
+                    });
+
+                    await next();
+                });
 
             app.UseRouting();
             app.UseCors();
@@ -97,19 +90,6 @@ namespace Fleetmanagement_app_Groep1
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
-            });
-
-            app.UseSpa(spa =>
-            {
-                // To learn more about options for serving an Angular SPA from ASP.NET Core,
-                // see https://go.microsoft.com/fwlink/?linkid=864501
-
-                spa.Options.SourcePath = "ClientApp";
-
-                if (env.IsDevelopment())
-                {
-                    spa.UseAngularCliServer(npmScript: "start");
-                }
             });
         }
     }
