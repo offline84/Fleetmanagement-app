@@ -39,14 +39,14 @@ namespace Fleetmanagement_app_Groep1
             {
                 string url = Configuration.GetSection("UrlToApi").Value;
 
-                if (url == "")
-                {
-                    options.AddDefaultPolicy(builder =>
-                        builder.SetIsOriginAllowed(o => new Uri(o).Host == "localhost")
-                            .AllowAnyHeader()
-                            .AllowAnyMethod());
-                }
-                else
+                //if (url == "")
+                //{
+                //    options.AddDefaultPolicy(builder =>
+                //        builder.SetIsOriginAllowed(o => new Uri(o).Host == "localhost")
+                //            .AllowAnyHeader()
+                //            .AllowAnyMethod());
+                //}
+                //else
                     options.AddDefaultPolicy(builder => builder.WithOrigins(url)
                             .AllowAnyOrigin()
                             .AllowAnyHeader()
