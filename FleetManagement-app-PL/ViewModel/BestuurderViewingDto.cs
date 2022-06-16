@@ -6,14 +6,6 @@ namespace FleetManagement_app_PL.ViewModel
 {
     public class BestuurderViewingDto
     {
-        public BestuurderViewingDto(string naam, string achternaam, DateTime geboorteDatum, string rijksregisternummer)
-        {
-            Naam = naam;
-            Achternaam = achternaam;
-            GeboorteDatum = geboorteDatum;
-            Rijksregisternummer = rijksregisternummer;
-        }
-
         public BestuurderViewingDto()
         {
         }

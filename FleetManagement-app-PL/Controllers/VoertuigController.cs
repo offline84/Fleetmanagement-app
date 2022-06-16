@@ -91,10 +91,10 @@ namespace FleetManagement_app_PL.Controllers
             {
                 var voertuigen = await _repo.Voertuig.GetAllArchived();
 
+
                 var voertuigenForView = _mapper.Map<IEnumerable<VoertuigForViewingDto>>(voertuigen);
 
                 return Ok(voertuigenForView);
-
             }
             catch (Exception ex)
             {
@@ -117,7 +117,6 @@ namespace FleetManagement_app_PL.Controllers
                 var voertuigenForView = _mapper.Map<IEnumerable<VoertuigForViewingDto>>(voertuigen);
 
                 return Ok(voertuigenForView);
-
             }
             catch (Exception ex)
             {
@@ -183,7 +182,6 @@ namespace FleetManagement_app_PL.Controllers
             {
                 var seeds = await _repo.Brandstof.GetAll();
                 var view = _mapper.Map<IEnumerable<BrandstofForViewingDto>>(seeds);
-
                 return Ok(view);
             }
             catch (Exception ex)
@@ -193,12 +191,6 @@ namespace FleetManagement_app_PL.Controllers
             }
         }
 
-        /// <summary>
-        /// Haalt de voertuigen op die kunnen gekoppeld worden aan een bepaalde bestuurder. Hierbij wordt gekeken naar de andere gekoppelde entiteiten.
-        /// Het reeds gekoppelde voertuigen is ook toegevoegd aan de lijst.
-        /// </summary>
-        /// <param name="rijksregisternummer"></param> het rijksregisternummer van de bestuurder die dient gekoppelt te worden.
-        /// <returns>IEnumerable<VoertuigForViewingDto> + httpstatus</returns>
         [HttpGet]
         [Route("bestuurder")]
         public async Task<ActionResult<IEnumerable<VoertuigForViewingDto>>> GetKoppelbareVoertuigenForBestuurder(string rijksregisternummer)
@@ -225,8 +217,6 @@ namespace FleetManagement_app_PL.Controllers
 
                 if (voertuigenToFilter.Count > 0 && tankkaart != null)
                 {
-
-
                     foreach (var voertuig in voertuigenToFilter)
                     {
                         foreach (var brandstof in tankkaart.MogelijkeBrandstoffen)
