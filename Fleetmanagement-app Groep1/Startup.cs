@@ -10,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Threading.Tasks;
 
 namespace Fleetmanagement_app_Groep1
 {
@@ -89,16 +88,6 @@ namespace Fleetmanagement_app_Groep1
             {
                 app.UseSpaStaticFiles();
             }
-            app.Use(async (context, next) =>
-            {
-                context.Response.OnStarting(() =>
-                {
-                    context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-                    return Task.FromResult(0);
-                });
-
-                await next();
-            });
 
             app.UseRouting();
             app.UseCors();
