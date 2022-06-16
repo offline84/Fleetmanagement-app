@@ -30,6 +30,13 @@ namespace FleetManagement_app_PL.Controllers
             _loggerFactory.CreateLogger("VoertuigController");
         }
 
+        /// <summary>
+        /// Haalt een voertuig op uit de database op chassisnummer.
+        /// </summary>
+        /// <param name="chassisnummer"></param> string: chassisnummer meegegeven door de frontend url.
+        /// <returns> 
+        /// VoertuigForViewingDto + httpstatus
+        /// </returns>
         [HttpGet]
         [Route("{chassisnummer}")]
         public async Task<ActionResult<VoertuigForViewingDto>> GetVoertuigById([FromRoute] string chassisnummer)
@@ -47,6 +54,12 @@ namespace FleetManagement_app_PL.Controllers
             }
         }
 
+        /// <summary>
+        /// Haalt alle niet gearchiveerde voertuigen op.
+        /// </summary>
+        /// <returns>
+        ///     IEnumerable<VoertuigForViewingDto> + httpstatus
+        /// </returns>
         [HttpGet]
         [Route("Active")]
         public async Task<ActionResult<IEnumerable<VoertuigForViewingDto>>> GetAllActiveVoertuigen()
@@ -66,6 +79,10 @@ namespace FleetManagement_app_PL.Controllers
             }
         }
 
+        /// <summary>
+        /// haalt alle gearchiveerde voertuigen op. is enkel voor administratorische doeleinden.
+        /// </summary>
+        /// <returns>IEnumerable<VoertuigForViewingDto> + httpstatus</returns>
         [HttpGet]
         [Route("Archived")]
         public async Task<ActionResult<IEnumerable<VoertuigForViewingDto>>> GetAllArchivedVoertuigen()
@@ -74,10 +91,10 @@ namespace FleetManagement_app_PL.Controllers
             {
                 var voertuigen = await _repo.Voertuig.GetAllArchived();
 
+
                 var voertuigenForView = _mapper.Map<IEnumerable<VoertuigForViewingDto>>(voertuigen);
 
                 return Ok(voertuigenForView);
-
             }
             catch (Exception ex)
             {
@@ -86,6 +103,10 @@ namespace FleetManagement_app_PL.Controllers
             }
         }
 
+        /// <summary>
+        /// Haal alle voertuigen op uit de db. is enkel voor administratorische doeleinden.
+        /// </summary>
+        /// <returns>IEnumerable<VoertuigForViewingDto> + httpstatus</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<VoertuigForViewingDto>>> GetAllVoertuigen()
         {
@@ -96,7 +117,6 @@ namespace FleetManagement_app_PL.Controllers
                 var voertuigenForView = _mapper.Map<IEnumerable<VoertuigForViewingDto>>(voertuigen);
 
                 return Ok(voertuigenForView);
-
             }
             catch (Exception ex)
             {
@@ -104,7 +124,11 @@ namespace FleetManagement_app_PL.Controllers
                 return StatusCode(500, ex);
             }
         }
-
+        
+        /// <summary>
+        /// haalt alle statussen aanwezig in de database op
+        /// </summary>
+        /// <returns>IEnumerable<StatusForViewingDto> + httpstatus</returns>
         [HttpGet]
         [Route("Statusses")]
         public async Task<ActionResult<IEnumerable<StatusForViewingDto>>> GetStatusses()
@@ -124,6 +148,10 @@ namespace FleetManagement_app_PL.Controllers
             }
         }
 
+        /// <summary>
+        /// haalt alle categorien aanwezig in de database op
+        /// </summary>
+        /// <returns>IEnumerable<CategorieForViewingDto> + httpstatus</returns>
         [HttpGet]
         [Route("Categories")]
         public async Task<ActionResult<IEnumerable<CategorieForViewingDto>>> GetCategories()
@@ -142,6 +170,10 @@ namespace FleetManagement_app_PL.Controllers
             }
         }
 
+        /// <summary>
+        /// haalt alle brandstoffen aanwezig in de database op
+        /// </summary>
+        /// <returns>IEnumerable<BrandstofForViewingDto> + httpstatus</returns>
         [HttpGet]
         [Route("brandstoffen")]
         public async Task<ActionResult<IEnumerable<BrandstofForViewingDto>>> GetFuels()
@@ -150,7 +182,6 @@ namespace FleetManagement_app_PL.Controllers
             {
                 var seeds = await _repo.Brandstof.GetAll();
                 var view = _mapper.Map<IEnumerable<BrandstofForViewingDto>>(seeds);
-
                 return Ok(view);
             }
             catch (Exception ex)
@@ -186,8 +217,6 @@ namespace FleetManagement_app_PL.Controllers
 
                 if (voertuigenToFilter.Count > 0 && tankkaart != null)
                 {
-
-
                     foreach (var voertuig in voertuigenToFilter)
                     {
                         foreach (var brandstof in tankkaart.MogelijkeBrandstoffen)
