@@ -47,6 +47,7 @@ namespace Fleetmanagement_app_Groep1
                 //            .AllowAnyMethod());
                 //}
                 //else
+
                     options.AddDefaultPolicy(builder => builder.WithOrigins(url)
                             .AllowAnyOrigin()
                             .AllowAnyHeader()
@@ -92,7 +93,6 @@ namespace Fleetmanagement_app_Groep1
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
             app.UseCors();
 
